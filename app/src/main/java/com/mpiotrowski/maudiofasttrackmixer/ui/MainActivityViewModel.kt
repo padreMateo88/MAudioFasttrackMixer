@@ -1,0 +1,3 @@
+package com.mpiotrowski.maudiofasttrackmixer.ui
+
+class MainActivityViewModel
