@@ -1,23 +1,166 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-         <variable
+
+        <variable
             name="viewmodel"
-            type="com.mpiotrowski.maudiofasttrackmixer.ui.MainActivityViewModel"/>
+            type="com.mpiotrowski.maudiofasttrackmixer.ui.MainActivityViewModel" />
     </data>
 
     <LinearLayout
         android:id="@+id/layoutMain"
-        android:orientation="horizontal"
-        android:gravity="center"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:gravity="center_horizontal"
+        android:padding="16dp"
+        android:orientation="vertical">
+
         <TextView
             android:id="@+id/textView"
-            android:layout_height="wrap_content"
             android:layout_width="wrap_content"
-            android:text="SettingsFragment"/>
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:text="Settings"/>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <FrameLayout
+                android:id="@+id/layoutSeparator"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginTop="16dp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textViewVolume" />
+
+            <FrameLayout
+                android:id="@+id/layoutBackground"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:background="@color/colorPrimaryDark"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="@+id/barrier3"/>
+
+            <TextView
+                android:id="@+id/textViewEffectType"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:paddingLeft="16dp"
+                android:text="Effect type"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/textViewDuration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:paddingLeft="16dp"
+                android:text="Duration"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textViewEffectType" />
+
+            <TextView
+                android:id="@+id/textViewFeedback"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:paddingLeft="16dp"
+                android:text="Feedback"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textViewDuration" />
+
+            <TextView
+                android:id="@+id/textViewVolume"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:paddingLeft="16dp"
+                android:text="Volume"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textViewFeedback" />
+
+            <TextView
+                android:id="@+id/textViewSampleRate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:paddingLeft="16dp"
+                android:text="Sample rate"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/barrier3" />
+
+            <androidx.constraintlayout.widget.Barrier
+                android:id="@+id/barrier"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:barrierDirection="right"
+                app:constraint_referenced_ids="textViewFeedback,textViewVolume,textViewEffectType,textViewDuration,textViewSampleRate"
+                tools:layout_editor_absoluteX="85dp"
+                tools:layout_editor_absoluteY="16dp" />
+
+            <Spinner
+                android:id="@+id/spinnerEffectType"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                app:layout_constraintBottom_toBottomOf="@+id/textViewEffectType"
+                app:layout_constraintLeft_toRightOf="@id/barrier"
+                app:layout_constraintTop_toTopOf="@+id/textViewEffectType" />
+
+            <SeekBar
+                android:id="@+id/seekBarDuration"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:paddingRight="16dp"
+                app:layout_constraintBottom_toBottomOf="@+id/textViewDuration"
+                app:layout_constraintLeft_toRightOf="@id/barrier"
+                app:layout_constraintTop_toTopOf="@+id/textViewDuration" />
+
+            <SeekBar
+                android:id="@+id/seekBarFeedback"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                app:layout_constraintBottom_toBottomOf="@+id/textViewFeedback"
+                app:layout_constraintLeft_toRightOf="@id/barrier"
+                app:layout_constraintTop_toTopOf="@+id/textViewFeedback" />
+
+            <SeekBar
+                android:id="@+id/seekBarVolume"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                app:layout_constraintBottom_toBottomOf="@+id/textViewVolume"
+                app:layout_constraintLeft_toRightOf="@id/barrier"
+                app:layout_constraintTop_toTopOf="@+id/textViewVolume" />
+
+            <Spinner
+                android:id="@+id/spinnerSampleRate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                app:layout_constraintBottom_toBottomOf="@+id/textViewSampleRate"
+                app:layout_constraintLeft_toRightOf="@id/barrier"
+                app:layout_constraintTop_toTopOf="@+id/textViewSampleRate" />
+
+            <androidx.constraintlayout.widget.Barrier
+                android:id="@+id/barrier3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:barrierDirection="bottom"
+                app:constraint_referenced_ids="layoutSeparator"
+                tools:layout_editor_absoluteY="178dp" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </LinearLayout>
 </layout>
