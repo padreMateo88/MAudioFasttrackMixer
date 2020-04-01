@@ -15,15 +15,16 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center_horizontal"
-        android:padding="16dp"
+        tools:ignore="RtlHardcoded,RtlSymmetry"
+        android:padding="@dimen/dimen_16dp"
         android:orientation="vertical">
 
         <TextView
             android:id="@+id/textView"
+            android:text="@string/label_settings"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:text="Settings"/>
+            android:layout_marginBottom="@dimen/dimen_16dp"/>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="wrap_content"
@@ -33,7 +34,7 @@
                 android:id="@+id/layoutSeparator"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="@dimen/dimen_16dp"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textViewVolume" />
@@ -42,39 +43,39 @@
                 android:id="@+id/layoutBackground"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:background="@color/colorPrimaryDark"
+                android:background="@drawable/panel_background"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="@+id/barrier3"/>
+                app:layout_constraintBottom_toBottomOf="@+id/barrierFxParameters"/>
 
             <TextView
                 android:id="@+id/textViewEffectType"
+                android:text="@string/spinner_effectType"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:paddingLeft="16dp"
-                android:text="Effect type"
+                android:layout_marginTop="@dimen/dimen_16dp"
+                android:paddingLeft="@dimen/dimen_16dp"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"/>
 
             <TextView
                 android:id="@+id/textViewDuration"
+                android:text="@string/seekBar_duration"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:paddingLeft="16dp"
-                android:text="Duration"
+                android:layout_marginTop="@dimen/dimen_16dp"
+                android:paddingLeft="@dimen/dimen_16dp"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textViewEffectType" />
 
             <TextView
                 android:id="@+id/textViewFeedback"
+                android:text="@string/seekBar_feedback"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:paddingLeft="16dp"
-                android:text="Feedback"
+                android:layout_marginTop="@dimen/dimen_16dp"
+                android:paddingLeft="@dimen/dimen_16dp"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textViewDuration" />
 
@@ -82,84 +83,81 @@
                 android:id="@+id/textViewVolume"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:paddingLeft="16dp"
-                android:text="Volume"
+                android:layout_marginTop="@dimen/dimen_16dp"
+                android:paddingLeft="@dimen/dimen_16dp"
+                android:text="@string/seekBar_volume"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textViewFeedback" />
 
             <TextView
                 android:id="@+id/textViewSampleRate"
+                android:text="@string/spinner_sampleRate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:paddingLeft="16dp"
-                android:text="Sample rate"
+                android:layout_marginTop="@dimen/dimen_16dp"
+                android:paddingLeft="@dimen/dimen_16dp"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/barrier3" />
+                app:layout_constraintTop_toBottomOf="@+id/barrierFxParameters" />
 
             <androidx.constraintlayout.widget.Barrier
-                android:id="@+id/barrier"
+                android:id="@+id/barrierPresetsButtons"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:barrierDirection="right"
-                app:constraint_referenced_ids="textViewFeedback,textViewVolume,textViewEffectType,textViewDuration,textViewSampleRate"
-                tools:layout_editor_absoluteX="85dp"
-                tools:layout_editor_absoluteY="16dp" />
+                app:constraint_referenced_ids="textViewFeedback,textViewVolume,textViewEffectType,textViewDuration,textViewSampleRate"/>
 
             <Spinner
                 android:id="@+id/spinnerEffectType"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
+                android:layout_marginLeft="@dimen/dimen_16dp"
                 app:layout_constraintBottom_toBottomOf="@+id/textViewEffectType"
-                app:layout_constraintLeft_toRightOf="@id/barrier"
+                app:layout_constraintLeft_toRightOf="@id/barrierPresetsButtons"
                 app:layout_constraintTop_toTopOf="@+id/textViewEffectType" />
 
             <SeekBar
                 android:id="@+id/seekBarDuration"
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:paddingRight="16dp"
+                android:layout_marginLeft="@dimen/dimen_16dp"
+                android:paddingRight="@dimen/dimen_16dp"
                 app:layout_constraintBottom_toBottomOf="@+id/textViewDuration"
-                app:layout_constraintLeft_toRightOf="@id/barrier"
+                app:layout_constraintLeft_toRightOf="@id/barrierPresetsButtons"
                 app:layout_constraintTop_toTopOf="@+id/textViewDuration" />
 
             <SeekBar
                 android:id="@+id/seekBarFeedback"
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
+                android:layout_marginLeft="@dimen/dimen_16dp"
                 app:layout_constraintBottom_toBottomOf="@+id/textViewFeedback"
-                app:layout_constraintLeft_toRightOf="@id/barrier"
+                app:layout_constraintLeft_toRightOf="@id/barrierPresetsButtons"
                 app:layout_constraintTop_toTopOf="@+id/textViewFeedback" />
 
             <SeekBar
                 android:id="@+id/seekBarVolume"
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
+                android:layout_marginLeft="@dimen/dimen_16dp"
                 app:layout_constraintBottom_toBottomOf="@+id/textViewVolume"
-                app:layout_constraintLeft_toRightOf="@id/barrier"
+                app:layout_constraintLeft_toRightOf="@id/barrierPresetsButtons"
                 app:layout_constraintTop_toTopOf="@+id/textViewVolume" />
 
             <Spinner
                 android:id="@+id/spinnerSampleRate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
+                android:layout_marginLeft="@dimen/dimen_16dp"
                 app:layout_constraintBottom_toBottomOf="@+id/textViewSampleRate"
-                app:layout_constraintLeft_toRightOf="@id/barrier"
+                app:layout_constraintLeft_toRightOf="@id/barrierPresetsButtons"
                 app:layout_constraintTop_toTopOf="@+id/textViewSampleRate" />
 
             <androidx.constraintlayout.widget.Barrier
-                android:id="@+id/barrier3"
+                android:id="@+id/barrierFxParameters"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:barrierDirection="bottom"
-                app:constraint_referenced_ids="layoutSeparator"
-                tools:layout_editor_absoluteY="178dp" />
+                app:constraint_referenced_ids="layoutSeparator"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </LinearLayout>

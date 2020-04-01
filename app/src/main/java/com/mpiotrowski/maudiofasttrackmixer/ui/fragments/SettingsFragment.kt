@@ -23,7 +23,7 @@ class SettingsFragment : Fragment() {
         effectTypeAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item)
         viewDataBinding.spinnerEffectType.adapter = effectTypeAdapter
 
-        var sampleRateeValues = arrayOf("44.1kHZ","48kHz","96kHz")
+        var sampleRateeValues = arrayOf("44.1kHz","48kHz","96kHz")
         val sampleRateAdapter = ArrayAdapter(requireContext(), R.layout.simple_spinner_item, sampleRateeValues)
         sampleRateAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item)
         viewDataBinding.spinnerSampleRate.adapter = sampleRateAdapter

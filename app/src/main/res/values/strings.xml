@@ -1,3 +1,18 @@
 <resources>
     <string name="app_name">MAudioFasttrackMixer</string>
+    <string name="placeholder_PresetName">Preset name</string>
+    <string name="placeholder_sceneName">Scene name</string>
+    <string name="button_save">Save</string>
+    <string name="button_load">Load</string>
+    <string name="button_new">New</string>
+    <string name="button_delete">Delete</string>
+    <string name="button_saveAs">Save as</string>
+    <string name="label_scenes">Scenes</string>
+    <string name="label_settings">Settings</string>
+    <string name="label_presets">Presets</string>
+    <string name="spinner_effectType">Effect type</string>
+    <string name="spinner_sampleRate">Sample rate</string>
+    <string name="seekBar_duration">Duration</string>
+    <string name="seekBar_feedback">Feedback</string>
+    <string name="seekBar_volume">Volume</string>
 </resources>
