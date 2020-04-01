@@ -1,4 +1,4 @@
-package com.mpiotrowski.maudiofasttrackmixer.ui.fragments
+package com.mpiotrowski.maudiofasttrackmixer.ui.settings
 
 import android.R
 import android.os.Bundle
@@ -33,6 +33,7 @@ class SettingsFragment : Fragment() {
     }
 
     companion object {
-        fun newInstance() = SettingsFragment()
+        fun newInstance() =
+            SettingsFragment()
     }
 }

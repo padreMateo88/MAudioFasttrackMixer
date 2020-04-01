@@ -1,3 +1,3 @@
 package com.mpiotrowski.maudiofasttrackmixer.ui
 
-class MainActivityViewModel
+class MainViewModel

@@ -3,9 +3,9 @@ package com.mpiotrowski.maudiofasttrackmixer.ui
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
-import com.mpiotrowski.maudiofasttrackmixer.ui.fragments.MixerFragment
-import com.mpiotrowski.maudiofasttrackmixer.ui.fragments.PresetsFragment
-import com.mpiotrowski.maudiofasttrackmixer.ui.fragments.SettingsFragment
+import com.mpiotrowski.maudiofasttrackmixer.ui.mixer.MixerFragment
+import com.mpiotrowski.maudiofasttrackmixer.ui.presets.PresetsFragment
+import com.mpiotrowski.maudiofasttrackmixer.ui.settings.SettingsFragment
 
 class MainViewPagerAdapter(fm: FragmentManager) : FragmentStatePagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 

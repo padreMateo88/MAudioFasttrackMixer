@@ -1,4 +1,4 @@
-package com.mpiotrowski.maudiofasttrackmixer.ui.fragments
+package com.mpiotrowski.maudiofasttrackmixer.ui.presets
 
 import android.os.Bundle
 import android.view.LayoutInflater
