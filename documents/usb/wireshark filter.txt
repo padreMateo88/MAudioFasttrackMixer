@@ -1,0 +1,1 @@
+((usb.irp_info == 0x00) && (usb.endpoint_address == 0x00)) && (usb.data_len == 2)

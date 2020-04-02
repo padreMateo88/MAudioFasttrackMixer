@@ -1,0 +1,61 @@
+class Channel {
+	int pan
+	int fader
+	int id
+
+	boolean mute
+	boolean solo
+}
+
+class Master {
+	int value
+	int mute
+	int fxReturn
+	int fxPresent
+}
+
+class Mixer {
+	int id
+	HashMap<Integer, Channel> channels
+    Master master
+}
+
+class FX {
+	FXtype type
+	int duration
+	int volulume
+	int feedback
+
+	enum FXtype {
+		boolean feedbackPresent		
+		Room1(false)
+		Room2(false)
+		Room3(false)
+		Hall1(false)
+		Hall2(false)
+		Plate(false)
+		Delay(true)
+		Echo(true)
+	}
+}
+
+class Scene {
+	int id
+	String name
+	HashMap<Integer, Integer> fxSends
+	HashMap<Integer, Mixer> mixers
+	FX fx
+	int sampleRate
+	int bufferSize
+}
+
+class Preset {
+	int id
+	String name
+	HashMap<Integer,Scene> scenes
+}
+
+class ApplicationState {
+	Preset currentPreset
+	HashMap<Integer,Preset> presets
+}

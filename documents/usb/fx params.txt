@@ -1,0 +1,14 @@
+fx type  0001
+volume   0002 
+duration 0003
+feedback 0004
+
+wartości:
+Room 1 0000h
+Room 2 0100h
+Room 2 0200h
+Hall 1 0300h
+Hall 2 0400h
+Plate  0500h
+Delay  0600h
+Echo   0700h

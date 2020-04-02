@@ -1,0 +1,5 @@
+keepAlive:
+1) host: ramka zapytania
+
+2) fasttrack: ramka z poziomami wejść 54 bajty
+3) fasttrack: jeszcze jedna ramka. nie wiadomo co :)
