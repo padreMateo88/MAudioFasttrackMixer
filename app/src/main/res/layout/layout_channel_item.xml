@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="audioChannel"
+            type="com.mpiotrowski.maudiofasttrackmixer.model.AudioChannel"/>
+
+        <variable
+            name="viewmodel"
+            type="com.mpiotrowski.maudiofasttrackmixer.ui.MainViewModel"/>
+    </data>
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent">
+        <com.mpiotrowski.maudiofasttrackmixer.ui.views.audio_channel.AudioChannelView
+            android:layout_gravity="center_horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            app:volume="@={audioChannel.volume}"
+            app:onVolumeChanged="@{() -> viewmodel.onVolumeChanged(audioChannel)}"/>
+    </FrameLayout>
+</layout>
