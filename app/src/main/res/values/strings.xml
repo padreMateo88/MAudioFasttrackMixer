@@ -15,4 +15,6 @@
     <string name="seekBar_duration">Duration</string>
     <string name="seekBar_feedback">Feedback</string>
     <string name="seekBar_volume">Volume</string>
+    <string name="button_mute">M</string>
+    <string name="button_solo">S</string>
 </resources>

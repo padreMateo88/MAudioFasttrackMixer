@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <SeekBar
+            android:id="@+id/seekBarPanorama"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    </FrameLayout>
+    <FrameLayout
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="5"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp">
+        <com.mpiotrowski.maudiofasttrackmixer.ui.views.vertical_seek_bar.VerticalSeekBar
+            android:id="@+id/seekBarVolume"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"/>
+    </FrameLayout>
+    <ToggleButton
+        android:id="@+id/buttonMute"
+        android:textOn="@string/button_mute"
+        android:textOff="@string/button_mute"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
+
+    <ToggleButton
+        android:id="@+id/buttonSolo"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:textOn="@string/button_solo"
+        android:textOff="@string/button_solo" />
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <SeekBar
+            android:id="@+id/seekBarFx"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    </FrameLayout>
+    <TextView
+        android:id="@+id/textViewChannelId"
+        android:layout_marginTop="@dimen/dimen_8dp"
+        android:layout_marginBottom="@dimen/dimen_8dp"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+</LinearLayout>

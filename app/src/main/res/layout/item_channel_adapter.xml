@@ -9,6 +9,10 @@
             type="com.mpiotrowski.maudiofasttrackmixer.model.AudioChannel"/>
 
         <variable
+            name="fxSend"
+            type="com.mpiotrowski.maudiofasttrackmixer.model.FxSend"/>
+
+        <variable
             name="viewmodel"
             type="com.mpiotrowski.maudiofasttrackmixer.ui.MainViewModel"/>
     </data>
@@ -19,7 +23,11 @@
             android:layout_gravity="center_horizontal"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            app:channelId="@{audioChannel.channelId}"
             app:volume="@={audioChannel.volume}"
-            app:onVolumeChanged="@{() -> viewmodel.onVolumeChanged(audioChannel)}"/>
+            app:panorama="@={audioChannel.panorama}"
+            app:fxSend="@={fxSend.volume}"
+            app:onVolumeChanged="@{() -> viewmodel.onChannelChanged(audioChannel)}"
+            app:onFxSendChanged="@{() -> viewmodel.onFxSendChanged(fxSend)}"/>
     </FrameLayout>
 </layout>
