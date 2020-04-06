@@ -36,7 +36,7 @@ class MainViewModel : ViewModel() {
     }
 
     fun onChannelChanged(audioChannel: AudioChannel) {
-        Log.d("MPdebug", "channel ${audioChannel.channelId} volume ${audioChannel.volume} + panorama ${audioChannel.panorama}")
+        Log.d("MPdebug", "channel ${audioChannel.channelId} volume ${audioChannel.volume} panorama ${audioChannel.panorama} mute ${audioChannel.mute} solo ${audioChannel.solo}")
     }
 
     fun onFxSendChanged(fxSend: FxSend) {

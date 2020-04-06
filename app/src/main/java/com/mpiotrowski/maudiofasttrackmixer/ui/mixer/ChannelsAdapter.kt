@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.RecyclerView
-import com.mpiotrowski.maudiofasttrackmixer.databinding.ItemChannelAdapterBinding
+import com.mpiotrowski.maudiofasttrackmixer.databinding.ChannelsAdapterItemBinding
 import com.mpiotrowski.maudiofasttrackmixer.ui.MainViewModel
 
 class ChannelsAdapter(
@@ -18,14 +18,14 @@ class ChannelsAdapter(
     override fun onCreateViewHolder(parent: ViewGroup,
                                     viewType: Int): ChannelViewHolder {
         val inflater = LayoutInflater.from(parent.context)
-        val binding = ItemChannelAdapterBinding.inflate(inflater,parent,false)
+        val binding = ChannelsAdapterItemBinding.inflate(inflater,parent,false)
         this.viewGroup = parent
         binding.viewmodel = ViewModelProviders.of(appCompatActivity).get(MainViewModel::class.java)
         binding.lifecycleOwner = appCompatActivity
         return ChannelViewHolder(binding)
     }
 
-    class ChannelViewHolder(var customView : ItemChannelAdapterBinding) : RecyclerView.ViewHolder(customView.root)
+    class ChannelViewHolder(var customView : ChannelsAdapterItemBinding) : RecyclerView.ViewHolder(customView.root)
 
     override fun onBindViewHolder(holder: ChannelViewHolder, position: Int) {
         holder.customView.root.minimumWidth = viewGroup.width/mainViewModel.audioChannels.value!!.size

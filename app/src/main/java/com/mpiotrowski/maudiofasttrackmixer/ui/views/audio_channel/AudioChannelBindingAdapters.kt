@@ -1,5 +1,7 @@
 package com.mpiotrowski.maudiofasttrackmixer.ui.views.audio_channel
 
+import android.widget.CompoundButton
+import android.widget.RadioGroup
 import androidx.databinding.BindingAdapter
 import androidx.databinding.InverseBindingAdapter
 import androidx.databinding.InverseBindingListener
@@ -12,7 +14,6 @@ object AudioChannelBindingAdapters {
     @JvmStatic fun setChannelId(audioChannelView: AudioChannelView, channelId: Int) {
         audioChannelView.textViewChannelId.text = "$channelId"
     }
-
 
 //region volume
     @BindingAdapter("onVolumeChanged")
@@ -52,6 +53,87 @@ object AudioChannelBindingAdapters {
     }
 //endregion volume
 
+//region panorama
+    @BindingAdapter("panorama")
+    @JvmStatic fun setPanorama(audioChannelView: AudioChannelView, panorama: Int) {
+        if (audioChannelView.seekBarPanorama.progress != panorama) {
+            audioChannelView.seekBarPanorama.progress = panorama
+        }
+    }
+
+    @InverseBindingAdapter(attribute = "panorama")
+    @JvmStatic fun getPanorama(audioChannelView: AudioChannelView): Int {
+        return audioChannelView.seekBarPanorama.progress
+    }
+
+    @BindingAdapter(value = ["panoramaAttrChanged"])
+    @JvmStatic fun setPanoramaAttrChangedListener(
+        audioChannelView: AudioChannelView,
+        inverseBindingListener: InverseBindingListener
+    ) {
+        audioChannelView.panoramaSeekBarListener = object : SimpleOnSeekBarChangeListener() {
+            override fun onProgressChanged(i: Int) {
+                inverseBindingListener.onChange()
+                audioChannelView.volumeChangedListener?.onVolumeChanged()
+            }
+        }
+        audioChannelView.seekBarPanorama.setOnSeekBarChangeListener(audioChannelView.panoramaSeekBarListener)
+    }
+//endregion panorama
+
+//region mute
+    @BindingAdapter("mute")
+    @JvmStatic fun setMute(audioChannelView: AudioChannelView, mute: Boolean) {
+        if (audioChannelView.toggleButtonMute.isChecked != mute) {
+            audioChannelView.toggleButtonMute.isChecked = mute
+        }
+    }
+
+    @InverseBindingAdapter(attribute = "mute")
+    @JvmStatic fun getMute(audioChannelView: AudioChannelView): Boolean {
+        return audioChannelView.toggleButtonMute.isChecked
+    }
+
+    @BindingAdapter(value = ["muteAttrChanged"])
+    @JvmStatic fun setMuteAttrChangedListener(
+        audioChannelView: AudioChannelView,
+        inverseBindingListener: InverseBindingListener
+    ) {
+        audioChannelView.muteListener =
+            CompoundButton.OnCheckedChangeListener { _, _ ->
+                inverseBindingListener.onChange()
+                audioChannelView.volumeChangedListener?.onVolumeChanged()
+            }
+        audioChannelView.toggleButtonMute.setOnCheckedChangeListener(audioChannelView.muteListener)
+    }
+//endregion mute
+
+//region solo
+    @BindingAdapter("solo")
+    @JvmStatic fun setSolo(audioChannelView: AudioChannelView, solo: Boolean) {
+        if (audioChannelView.toggleButtonSolo.isChecked != solo) {
+            audioChannelView.toggleButtonSolo.isChecked = solo
+        }
+    }
+
+    @InverseBindingAdapter(attribute = "solo")
+    @JvmStatic fun getSolo(audioChannelView: AudioChannelView): Boolean {
+        return audioChannelView.toggleButtonSolo.isChecked
+    }
+
+    @BindingAdapter(value = ["soloAttrChanged"])
+    @JvmStatic fun setSoloAttrChangedListener(
+        audioChannelView: AudioChannelView,
+        inverseBindingListener: InverseBindingListener
+    ) {
+        audioChannelView.soloListener =
+            CompoundButton.OnCheckedChangeListener { _, _ ->
+                inverseBindingListener.onChange()
+                audioChannelView.volumeChangedListener?.onVolumeChanged()
+            }
+        audioChannelView.toggleButtonSolo.setOnCheckedChangeListener(audioChannelView.soloListener)
+    }
+//endregion mute
 
 //region fxSend
     @BindingAdapter("onFxSendChanged")
@@ -89,34 +171,6 @@ object AudioChannelBindingAdapters {
             }
         }
         audioChannelView.seekBarVolume.setOnSeekBarChangeListener(audioChannelView.fxSendSeekBarListener)
-    }
-//endregion fxSend
-
-//region fxSend
-    @BindingAdapter("panorama")
-    @JvmStatic fun setPanorama(audioChannelView: AudioChannelView, panorama: Int) {
-        if (audioChannelView.seekBarPanorama.progress != panorama) {
-            audioChannelView.seekBarPanorama.progress = panorama
-        }
-    }
-
-    @InverseBindingAdapter(attribute = "panorama")
-    @JvmStatic fun getPanorama(audioChannelView: AudioChannelView): Int {
-        return audioChannelView.seekBarPanorama.progress
-    }
-
-    @BindingAdapter(value = ["panoramaAttrChanged"])
-    @JvmStatic fun setPanoramaAttrChangedListener(
-        audioChannelView: AudioChannelView,
-        inverseBindingListener: InverseBindingListener
-    ) {
-        audioChannelView.panoramaSeekBarListener = object : SimpleOnSeekBarChangeListener() {
-            override fun onProgressChanged(i: Int) {
-                inverseBindingListener.onChange()
-                audioChannelView.volumeChangedListener?.onVolumeChanged()
-            }
-        }
-        audioChannelView.seekBarPanorama.setOnSeekBarChangeListener(audioChannelView.panoramaSeekBarListener)
     }
 //endregion fxSend
 }

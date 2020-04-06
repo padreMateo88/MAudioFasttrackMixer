@@ -27,6 +27,8 @@
             app:volume="@={audioChannel.volume}"
             app:panorama="@={audioChannel.panorama}"
             app:fxSend="@={fxSend.volume}"
+            app:mute="@={audioChannel.mute}"
+            app:solo="@={audioChannel.solo}"
             app:onVolumeChanged="@{() -> viewmodel.onChannelChanged(audioChannel)}"
             app:onFxSendChanged="@{() -> viewmodel.onFxSendChanged(fxSend)}"/>
     </FrameLayout>
