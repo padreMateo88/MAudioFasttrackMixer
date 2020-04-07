@@ -23,7 +23,7 @@
             android:layout_height="match_parent"/>
     </FrameLayout>
     <ToggleButton
-        android:id="@+id/buttonMute"
+        android:id="@+id/toggleButtonMute"
         android:textOn="@string/button_mute"
         android:textOff="@string/button_mute"
         android:layout_width="match_parent"
@@ -31,7 +31,7 @@
         android:layout_weight="1"/>
 
     <ToggleButton
-        android:id="@+id/buttonSolo"
+        android:id="@+id/toggleButtonSolo"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"

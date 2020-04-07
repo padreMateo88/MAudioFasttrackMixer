@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.widget.*
 import com.mpiotrowski.maudiofasttrackmixer.R
 import com.mpiotrowski.maudiofasttrackmixer.ui.views.vertical_seek_bar.SimpleOnSeekBarChangeListener
-import com.mpiotrowski.maudiofasttrackmixer.ui.views.vertical_seek_bar.VerticalSeekBar
 
 
 class AudioChannelView @JvmOverloads constructor(
@@ -14,13 +13,9 @@ class AudioChannelView @JvmOverloads constructor(
     attrs: AttributeSet? = null
 ) : LinearLayout(context, attrs) {
 
-    val seekBarVolume: VerticalSeekBar
-    val seekBarPanorama: SeekBar
-    val toggleButtonMute: ToggleButton
-    val toggleButtonSolo: ToggleButton
-
     //attribute listener
     var volumeChangedListener: VolumeChangedListener? = null
+    var soloChangedListener: SoloChangedListener? = null
     var fxSendChangedListener: FxSendChangedListener? = null
 
     //view listeners
@@ -35,6 +30,10 @@ class AudioChannelView @JvmOverloads constructor(
         fun onVolumeChanged()
     }
 
+    interface SoloChangedListener {
+        fun onSoloChanged()
+    }
+
     interface FxSendChangedListener {
         fun onFxSendChanged()
     }
@@ -42,9 +41,5 @@ class AudioChannelView @JvmOverloads constructor(
     init {
         val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         inflater.inflate(R.layout.view_channel, this, true)
-        seekBarVolume = findViewById(R.id.seekBarVolume)
-        seekBarPanorama = findViewById(R.id.seekBarPanorama)
-        toggleButtonMute = findViewById(R.id.buttonMute)
-        toggleButtonSolo = findViewById(R.id.buttonSolo)
     }
 }

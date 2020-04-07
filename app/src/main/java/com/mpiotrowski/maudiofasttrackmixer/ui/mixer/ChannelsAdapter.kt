@@ -29,8 +29,7 @@ class ChannelsAdapter(
 
     override fun onBindViewHolder(holder: ChannelViewHolder, position: Int) {
         holder.customView.root.minimumWidth = viewGroup.width/mainViewModel.audioChannels.value!!.size
-        holder.customView.audioChannel = mainViewModel.audioChannels.value!![position]
-        holder.customView.fxSend = mainViewModel.fxSends.value!![position]
+        holder.customView.channelIndex = position
     }
 
     override fun getItemCount() = mainViewModel.audioChannels.value!!.size

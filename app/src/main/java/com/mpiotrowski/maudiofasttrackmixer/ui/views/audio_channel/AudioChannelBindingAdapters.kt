@@ -1,7 +1,6 @@
 package com.mpiotrowski.maudiofasttrackmixer.ui.views.audio_channel
 
 import android.widget.CompoundButton
-import android.widget.RadioGroup
 import androidx.databinding.BindingAdapter
 import androidx.databinding.InverseBindingAdapter
 import androidx.databinding.InverseBindingListener
@@ -17,7 +16,7 @@ object AudioChannelBindingAdapters {
 
 //region volume
     @BindingAdapter("onVolumeChanged")
-    @JvmStatic fun setVolumeAttrChangedListener (
+    @JvmStatic fun setVolumeChangedListener (
         audioChannelView: AudioChannelView,
         volumeChangedListener: AudioChannelView.VolumeChangedListener?
     ) {
@@ -116,6 +115,17 @@ object AudioChannelBindingAdapters {
         }
     }
 
+    @BindingAdapter("onSoloChanged")
+    @JvmStatic fun setSoloChangedListener (
+        audioChannelView: AudioChannelView,
+        soloChangedListener: AudioChannelView.SoloChangedListener?
+    ) {
+        if (audioChannelView.soloChangedListener == null) {
+            audioChannelView.soloChangedListener = soloChangedListener
+        }
+        audioChannelView.seekBarVolume.setOnSeekBarChangeListener(audioChannelView.volumeSeekBarListener)
+    }
+
     @InverseBindingAdapter(attribute = "solo")
     @JvmStatic fun getSolo(audioChannelView: AudioChannelView): Boolean {
         return audioChannelView.toggleButtonSolo.isChecked
@@ -129,6 +139,7 @@ object AudioChannelBindingAdapters {
         audioChannelView.soloListener =
             CompoundButton.OnCheckedChangeListener { _, _ ->
                 inverseBindingListener.onChange()
+                audioChannelView.soloChangedListener?.onSoloChanged()
                 audioChannelView.volumeChangedListener?.onVolumeChanged()
             }
         audioChannelView.toggleButtonSolo.setOnCheckedChangeListener(audioChannelView.soloListener)

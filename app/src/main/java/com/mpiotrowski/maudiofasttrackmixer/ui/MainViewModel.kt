@@ -5,11 +5,12 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.mpiotrowski.maudiofasttrackmixer.model.AudioChannel
 import com.mpiotrowski.maudiofasttrackmixer.model.FxSend
+import com.mpiotrowski.maudiofasttrackmixer.util.mutation
 
 class MainViewModel : ViewModel() {
 
-    val audioChannels = MutableLiveData<List<AudioChannel>>()
-    val fxSends = MutableLiveData<List<FxSend>>()
+    var audioChannels: MutableLiveData<MutableList<AudioChannel>> = MutableLiveData()
+    var fxSends: MutableLiveData<MutableList<FxSend>> = MutableLiveData()
 
     init {
         audioChannels.value = mutableListOf(
@@ -34,9 +35,21 @@ class MainViewModel : ViewModel() {
             FxSend(channelId = 8)
         )
     }
-
     fun onChannelChanged(audioChannel: AudioChannel) {
         Log.d("MPdebug", "channel ${audioChannel.channelId} volume ${audioChannel.volume} panorama ${audioChannel.panorama} mute ${audioChannel.mute} solo ${audioChannel.solo}")
+    }
+
+    fun onSoloChanged(audioChannel: AudioChannel) {
+        if (!audioChannel.solo)
+            return
+
+        for(audioChannelItem in this.audioChannels.value!!) {
+            if(audioChannelItem.solo && audioChannelItem != audioChannel) {
+                audioChannels.mutation {
+                    audioChannelItem.solo = false
+                }
+            }
+        }
     }
 
     fun onFxSendChanged(fxSend: FxSend) {

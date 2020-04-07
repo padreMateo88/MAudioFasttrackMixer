@@ -5,12 +5,8 @@
 
     <data>
         <variable
-            name="audioChannel"
-            type="com.mpiotrowski.maudiofasttrackmixer.model.AudioChannel"/>
-
-        <variable
-            name="fxSend"
-            type="com.mpiotrowski.maudiofasttrackmixer.model.FxSend"/>
+            name="channelIndex"
+            type="Integer"/>
 
         <variable
             name="viewmodel"
@@ -23,13 +19,14 @@
             android:layout_gravity="center_horizontal"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            app:channelId="@{audioChannel.channelId}"
-            app:volume="@={audioChannel.volume}"
-            app:panorama="@={audioChannel.panorama}"
-            app:fxSend="@={fxSend.volume}"
-            app:mute="@={audioChannel.mute}"
-            app:solo="@={audioChannel.solo}"
-            app:onVolumeChanged="@{() -> viewmodel.onChannelChanged(audioChannel)}"
-            app:onFxSendChanged="@{() -> viewmodel.onFxSendChanged(fxSend)}"/>
+            app:channelId="@{viewmodel.audioChannels.get(channelIndex).channelId}"
+            app:volume="@={viewmodel.audioChannels.get(channelIndex).volume}"
+            app:panorama="@={viewmodel.audioChannels.get(channelIndex).panorama}"
+            app:fxSend="@={viewmodel.fxSends.get(channelIndex).volume}"
+            app:mute="@={viewmodel.audioChannels.get(channelIndex).mute}"
+            app:solo="@={viewmodel.audioChannels.get(channelIndex).solo}"
+            app:onSoloChanged="@{() -> viewmodel.onSoloChanged(viewmodel.audioChannels.get(channelIndex))}"
+            app:onVolumeChanged="@{() -> viewmodel.onChannelChanged(viewmodel.audioChannels.get(channelIndex))}"
+            app:onFxSendChanged="@{() -> viewmodel.onFxSendChanged(viewmodel.fxSends.get(channelIndex))}"/>
     </FrameLayout>
 </layout>
