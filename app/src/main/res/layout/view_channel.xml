@@ -24,16 +24,22 @@
     </FrameLayout>
     <ToggleButton
         android:id="@+id/toggleButtonMute"
+        android:background="@drawable/mute_selector"
         android:textOn="@string/button_mute"
         android:textOff="@string/button_mute"
+        android:textColor="@color/radio_button_text_color_selector"
+        android:layout_margin="@dimen/dimen_2dp"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"/>
 
     <ToggleButton
         android:id="@+id/toggleButtonSolo"
+        android:layout_margin="@dimen/dimen_2dp"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:textColor="@color/radio_button_text_color_selector"
+        android:background="@drawable/solo_selector"
         android:layout_weight="1"
         android:textOn="@string/button_solo"
         android:textOff="@string/button_solo" />

@@ -31,45 +31,69 @@
                 android:layout_height="match_parent"
                 android:scrollbars="vertical"/>
         </LinearLayout>
-        <LinearLayout
-            android:orientation="horizontal"
+
+        <com.mpiotrowski.maudiofasttrackmixer.ui.views.audio_channel.MasterChannelView
             android:gravity="center"
             android:layout_weight="1"
             android:layout_width="0dp"
+            android:layout_height="match_parent"
             android:layout_margin="@dimen/dimen_4dp"
-            android:background="@drawable/panel_background"
-            android:layout_height="match_parent">
-            <TextView
-                android:text="Master"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-        </LinearLayout>
+            android:background="@drawable/panel_background"/>
         <LinearLayout
             android:orientation="vertical"
-            android:gravity="center"
+
             android:layout_weight="2"
             android:layout_width="0dp"
             android:layout_marginRight="@dimen/dimen_4dp"
             android:layout_height="match_parent"
             tools:ignore="RtlHardcoded">
+
             <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/dimen_4dp"
                 android:background="@drawable/panel_background"
-                android:orientation="horizontal"
                 android:gravity="center"
-                android:layout_weight="2"
-                android:layout_width="match_parent"
-                android:layout_height="0dp">
+                android:orientation="vertical">
                 <TextView
-                    android:text="Output"
+                    android:layout_marginTop="@dimen/dimen_4dp"
+                    android:layout_marginBottom="@dimen/dimen_4dp"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    android:text="@string/label_output" />
+                <LinearLayout
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent">
+
+                    <Button
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="&lt;" />
+
+                    <TextView
+                        android:layout_marginRight="@dimen/dimen_4dp"
+                        android:layout_marginLeft="@dimen/dimen_4dp"
+                        android:layout_gravity="center_vertical"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="1-2" />
+                    <Button
+                        android:text="&gt;"
+                        android:layout_weight="1"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"/>
+                </LinearLayout>
             </LinearLayout>
-            <Button
-                android:text="Fine"
-                android:layout_weight="1"
+
+            <ToggleButton
+                android:layout_margin="@dimen/dimen_4dp"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"/>
+                android:layout_height="wrap_content"
+                android:background="@drawable/fine_selector"
+                android:textOn="@string/button_fine"
+                android:textOff="@string/button_fine"/>
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerViewSceneButtons"
                 android:layout_width="match_parent"
