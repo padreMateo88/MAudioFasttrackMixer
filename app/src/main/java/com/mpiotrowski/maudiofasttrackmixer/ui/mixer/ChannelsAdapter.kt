@@ -19,7 +19,7 @@ class ChannelsAdapter(
                                     viewType: Int): ChannelViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         val binding = ChannelsAdapterItemBinding.inflate(inflater,parent,false)
-        this.viewGroup = parent
+        viewGroup = parent
         binding.viewmodel = ViewModelProviders.of(appCompatActivity).get(MainViewModel::class.java)
         binding.lifecycleOwner = appCompatActivity
         return ChannelViewHolder(binding)

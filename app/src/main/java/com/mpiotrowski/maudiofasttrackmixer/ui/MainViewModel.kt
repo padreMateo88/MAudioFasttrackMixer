@@ -35,6 +35,11 @@ class MainViewModel : ViewModel() {
             FxSend(channelId = 8)
         )
     }
+
+    fun onSceneSelected(sceneIndex :Int) {
+        Log.d("MPdebug", "scene $sceneIndex")
+    }
+
     fun onChannelChanged(audioChannel: AudioChannel) {
         Log.d("MPdebug", "channel ${audioChannel.channelId} volume ${audioChannel.volume} panorama ${audioChannel.panorama} mute ${audioChannel.mute} solo ${audioChannel.solo}")
     }

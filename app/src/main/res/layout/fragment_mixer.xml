@@ -70,19 +70,14 @@
                 android:layout_weight="1"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"/>
-            <LinearLayout
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewSceneButtons"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/dimen_4dp"
                 android:background="@drawable/panel_background"
                 android:orientation="horizontal"
-                android:gravity="center"
-                android:layout_weight="9"
-                android:layout_width="match_parent"
-                android:layout_height="0dp">
-                <TextView
-                    android:text="Scenes"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
-            </LinearLayout>
+                android:gravity="center"/>
         </LinearLayout>
     </LinearLayout>
 </layout>
