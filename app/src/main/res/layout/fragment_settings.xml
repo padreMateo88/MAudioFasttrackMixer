@@ -121,6 +121,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/dimen_16dp"
                 android:paddingRight="@dimen/dimen_16dp"
+                app:progress="@{viewmodel.fxSettings.duration"
                 app:layout_constraintBottom_toBottomOf="@+id/textViewDuration"
                 app:layout_constraintLeft_toRightOf="@id/barrierPresetsButtons"
                 app:layout_constraintTop_toTopOf="@+id/textViewDuration" />
@@ -130,6 +131,7 @@
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/dimen_16dp"
+                app:progress="@{viewmodel.fxSettings.feedback"
                 app:layout_constraintBottom_toBottomOf="@+id/textViewFeedback"
                 app:layout_constraintLeft_toRightOf="@id/barrierPresetsButtons"
                 app:layout_constraintTop_toTopOf="@+id/textViewFeedback" />
@@ -139,6 +141,7 @@
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/dimen_16dp"
+                app:progress="@{viewmodel.fxSettings.volume"
                 app:layout_constraintBottom_toBottomOf="@+id/textViewVolume"
                 app:layout_constraintLeft_toRightOf="@id/barrierPresetsButtons"
                 app:layout_constraintTop_toTopOf="@+id/textViewVolume" />

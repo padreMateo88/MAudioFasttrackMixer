@@ -3,9 +3,7 @@ package com.mpiotrowski.maudiofasttrackmixer.ui
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.mpiotrowski.maudiofasttrackmixer.model.AudioChannel
-import com.mpiotrowski.maudiofasttrackmixer.model.FxSend
-import com.mpiotrowski.maudiofasttrackmixer.model.MasterChannel
+import com.mpiotrowski.maudiofasttrackmixer.model.*
 import com.mpiotrowski.maudiofasttrackmixer.util.mutation
 
 class MainViewModel : ViewModel() {
@@ -13,6 +11,8 @@ class MainViewModel : ViewModel() {
     var audioChannels: MutableLiveData<MutableList<AudioChannel>> = MutableLiveData()
     var masterChannel: MutableLiveData<MasterChannel> = MutableLiveData()
     var fxSends: MutableLiveData<MutableList<FxSend>> = MutableLiveData()
+    var fxSettings: MutableLiveData<FxSettings> = MutableLiveData()
+    var sampleRate: MutableLiveData<SampleRate> = MutableLiveData()
 
     init {
         audioChannels.value = mutableListOf(
@@ -38,6 +38,10 @@ class MainViewModel : ViewModel() {
         )
 
         masterChannel.value = MasterChannel()
+
+        fxSettings.value = FxSettings()
+
+        sampleRate.value = SampleRate.SR_96
     }
 
     fun onSceneSelected(sceneIndex :Int) {
@@ -62,7 +66,7 @@ class MainViewModel : ViewModel() {
     }
 
     fun onFxSendChanged(fxSend: FxSend) {
-        Log.d("MPdebug", "channel ${fxSend.channelId} fxSend ${fxSend.volume}")
+        Log.d("MPdebug", "channel $fxSend")
     }
 
     fun onFxReturnChanged(fxReturn: Int) {
@@ -70,6 +74,10 @@ class MainViewModel : ViewModel() {
     }
 
     fun onMasterVolumeChanged(masterChannel: MasterChannel) {
-        Log.d("MPdebug", "master volume ${masterChannel.volume} mute ${masterChannel.mute}")
+        Log.d("MPdebug", "master volume $masterChannel")
+    }
+
+    fun onFxSettingsChanged(fxSettings: FxSettings) {
+        Log.d("MPdebug", "fxSettings $fxSettings")
     }
 }
