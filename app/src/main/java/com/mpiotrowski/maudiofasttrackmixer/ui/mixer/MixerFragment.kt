@@ -29,6 +29,7 @@ class MixerFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProviders.of(requireActivity()).get(MainViewModel::class.java)
+        viewDataBinding.viewmodel = viewModel
         prepareChannelMixer()
         prepareSceneSelector()
     }

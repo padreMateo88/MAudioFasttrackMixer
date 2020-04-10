@@ -1,12 +1,9 @@
-package com.mpiotrowski.maudiofasttrackmixer.ui.views.audio_channel
+package com.mpiotrowski.maudiofasttrackmixer.ui.views.master_channel
 
 import android.content.Context
 import android.util.AttributeSet
-import android.view.LayoutInflater
 import android.view.View
-import android.widget.*
-import com.mpiotrowski.maudiofasttrackmixer.R
-import com.mpiotrowski.maudiofasttrackmixer.ui.views.vertical_seek_bar.SimpleOnSeekBarChangeListener
+import com.mpiotrowski.maudiofasttrackmixer.ui.views.audio_channel.AudioChannelView
 import kotlinx.android.synthetic.main.view_channel.view.*
 
 

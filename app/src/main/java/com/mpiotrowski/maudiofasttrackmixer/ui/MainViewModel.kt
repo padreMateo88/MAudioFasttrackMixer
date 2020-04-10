@@ -5,11 +5,13 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.mpiotrowski.maudiofasttrackmixer.model.AudioChannel
 import com.mpiotrowski.maudiofasttrackmixer.model.FxSend
+import com.mpiotrowski.maudiofasttrackmixer.model.MasterChannel
 import com.mpiotrowski.maudiofasttrackmixer.util.mutation
 
 class MainViewModel : ViewModel() {
 
     var audioChannels: MutableLiveData<MutableList<AudioChannel>> = MutableLiveData()
+    var masterChannel: MutableLiveData<MasterChannel> = MutableLiveData()
     var fxSends: MutableLiveData<MutableList<FxSend>> = MutableLiveData()
 
     init {
@@ -34,6 +36,8 @@ class MainViewModel : ViewModel() {
             FxSend(channelId = 7),
             FxSend(channelId = 8)
         )
+
+        masterChannel.value = MasterChannel()
     }
 
     fun onSceneSelected(sceneIndex :Int) {
@@ -59,5 +63,13 @@ class MainViewModel : ViewModel() {
 
     fun onFxSendChanged(fxSend: FxSend) {
         Log.d("MPdebug", "channel ${fxSend.channelId} fxSend ${fxSend.volume}")
+    }
+
+    fun onFxReturnChanged(fxReturn: Int) {
+        Log.d("MPdebug", "fxReturn $fxReturn")
+    }
+
+    fun onMasterVolumeChanged(masterChannel: MasterChannel) {
+        Log.d("MPdebug", "master volume ${masterChannel.volume} mute ${masterChannel.mute}")
     }
 }
