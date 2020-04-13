@@ -15,8 +15,6 @@ open class AudioChannelView @JvmOverloads constructor(
 
     //attribute listener
     open var volumeChangedListener: VolumeChangedListener? = null
-    open var soloChangedListener: SoloChangedListener? = null
-    open var fxVolumeChangedListener: FxVolumeChangedListener? = null
 
     //view listeners
     var volumeSeekBarListener: SimpleOnSeekBarChangeListener? = null

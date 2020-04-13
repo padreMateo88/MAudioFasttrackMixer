@@ -11,7 +11,7 @@ class MainViewModel : ViewModel() {
     var audioChannels: MutableLiveData<MutableList<AudioChannel>> = MutableLiveData()
     var masterChannel: MutableLiveData<MasterChannel> = MutableLiveData()
     var fxSends: MutableLiveData<MutableList<FxSend>> = MutableLiveData()
-    var fxSettings: MutableLiveData<FxSettings> = MutableLiveData()
+    var fxSettings: FxSettings = FxSettings()
     var sampleRate: MutableLiveData<SampleRate> = MutableLiveData()
 
     init {
@@ -38,8 +38,6 @@ class MainViewModel : ViewModel() {
         )
 
         masterChannel.value = MasterChannel()
-
-        fxSettings.value = FxSettings()
 
         sampleRate.value = SampleRate.SR_96
     }
@@ -76,8 +74,25 @@ class MainViewModel : ViewModel() {
     fun onMasterVolumeChanged(masterChannel: MasterChannel) {
         Log.d("MPdebug", "master volume $masterChannel")
     }
-
-    fun onFxSettingsChanged(fxSettings: FxSettings) {
-        Log.d("MPdebug", "fxSettings $fxSettings")
+//region Fx listeners
+    fun onFxVolumeChanged(fxVolume: Int) {
+        Log.d("MPdebug", "fxVolume $fxVolume")
     }
+
+    fun onFxDurationChanged(fxDuration: Int) {
+        Log.d("MPdebug", "fxDuration $fxDuration")
+    }
+
+    fun onFxFeedbackChanged(fxFeedback: Int) {
+        Log.d("MPdebug", "fxFeedback $fxFeedback")
+    }
+
+    fun onFxTypeChanged(fxType: FxType) {
+        Log.d("MPdebug", "fxType $fxType")
+    }
+
+    fun onSampleRateChanged(sampleRate: SampleRate) {
+        Log.d("MPdebug", "sampleRate $sampleRate")
+    }
+//endRegion FX listeners
 }
