@@ -106,11 +106,13 @@
                 app:barrierDirection="right"
                 app:constraint_referenced_ids="textViewFeedback,textViewVolume,textViewEffectType,textViewDuration,textViewSampleRate"/>
 
-            <Spinner
+            <com.mpiotrowski.maudiofasttrackmixer.ui.views.observable_spinner.ObservableSpinner
                 android:id="@+id/spinnerEffectType"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/dimen_16dp"
+                app:selectedItem="@={viewmodel.fxSettings.fxType}"
+                app:onSelectedItemChanged="@{() -> viewmodel.onFxTypeChanged(viewmodel.fxSettings.fxType)}"
                 app:layout_constraintBottom_toBottomOf="@+id/textViewEffectType"
                 app:layout_constraintLeft_toRightOf="@id/barrierPresetsButtons"
                 app:layout_constraintTop_toTopOf="@+id/textViewEffectType" />
@@ -121,6 +123,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/dimen_16dp"
                 android:paddingRight="@dimen/dimen_16dp"
+                android:progress="@={viewmodel.fxSettings.duration}"
+                android:onProgressChanged="@{() -> viewmodel.onFxDurationChanged(viewmodel.fxSettings.duration)}"
                 app:layout_constraintBottom_toBottomOf="@+id/textViewDuration"
                 app:layout_constraintLeft_toRightOf="@id/barrierPresetsButtons"
                 app:layout_constraintTop_toTopOf="@+id/textViewDuration" />
@@ -130,24 +134,30 @@
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/dimen_16dp"
+                android:progress="@={viewmodel.fxSettings.feedback}"
+                android:onProgressChanged="@{() -> viewmodel.onFxFeedbackChanged(viewmodel.fxSettings.feedback)}"
                 app:layout_constraintBottom_toBottomOf="@+id/textViewFeedback"
                 app:layout_constraintLeft_toRightOf="@id/barrierPresetsButtons"
-                app:layout_constraintTop_toTopOf="@+id/textViewFeedback" />
+                app:layout_constraintTop_toTopOf="@+id/textViewFeedback"/>
 
             <SeekBar
                 android:id="@+id/seekBarVolume"
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/dimen_16dp"
+                android:progress="@={viewmodel.fxSettings.volume}"
+                android:onProgressChanged="@{() -> viewmodel.onFxVolumeChanged(viewmodel.fxSettings.volume)}"
                 app:layout_constraintBottom_toBottomOf="@+id/textViewVolume"
                 app:layout_constraintLeft_toRightOf="@id/barrierPresetsButtons"
                 app:layout_constraintTop_toTopOf="@+id/textViewVolume" />
 
-            <Spinner
+            <com.mpiotrowski.maudiofasttrackmixer.ui.views.observable_spinner.ObservableSpinner
                 android:id="@+id/spinnerSampleRate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/dimen_16dp"
+                app:selectedItem="@={viewmodel.sampleRate}"
+                app:onSelectedItemChanged="@{() -> viewmodel.onSampleRateChanged(viewmodel.sampleRate)}"
                 app:layout_constraintBottom_toBottomOf="@+id/textViewSampleRate"
                 app:layout_constraintLeft_toRightOf="@id/barrierPresetsButtons"
                 app:layout_constraintTop_toTopOf="@+id/textViewSampleRate" />

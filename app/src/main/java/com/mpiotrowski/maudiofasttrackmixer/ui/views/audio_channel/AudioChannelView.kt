@@ -14,13 +14,11 @@ open class AudioChannelView @JvmOverloads constructor(
 ) : LinearLayout(context, attrs) {
 
     //attribute listener
-    var volumeChangedListener: VolumeChangedListener? = null
-    var soloChangedListener: SoloChangedListener? = null
-    var fxSendChangedListener: FxSendChangedListener? = null
+    open var volumeChangedListener: VolumeChangedListener? = null
 
     //view listeners
     var volumeSeekBarListener: SimpleOnSeekBarChangeListener? = null
-    var fxSendSeekBarListener: SimpleOnSeekBarChangeListener? = null
+    var fxVolumeSeekBarListener: SimpleOnSeekBarChangeListener? = null
     var panoramaSeekBarListener: SimpleOnSeekBarChangeListener? = null
 
     var muteListener: CompoundButton.OnCheckedChangeListener? = null
@@ -34,8 +32,8 @@ open class AudioChannelView @JvmOverloads constructor(
         fun onSoloChanged()
     }
 
-    interface FxSendChangedListener {
-        fun onFxSendChanged()
+    interface FxVolumeChangedListener {
+        fun onFxVolumeChanged()
     }
 
     init {

@@ -15,37 +15,28 @@ object AudioChannelBindingAdapters {
     }
 
 //region volume
-    @BindingAdapter("onVolumeChanged")
-    @JvmStatic fun setVolumeChangedListener (
-        audioChannelView: AudioChannelView,
-        volumeChangedListener: AudioChannelView.VolumeChangedListener?
-    ) {
-        if (audioChannelView.volumeChangedListener == null) {
-            audioChannelView.volumeChangedListener = volumeChangedListener
-        }
-        audioChannelView.seekBarVolume.setOnSeekBarChangeListener(audioChannelView.volumeSeekBarListener)
-    }
-
     @BindingAdapter("volume")
     @JvmStatic fun setVolume(audioChannelView: AudioChannelView, volume: Int) {
         if (audioChannelView.seekBarVolume.progress != volume)
             audioChannelView.seekBarVolume.progress = volume
     }
 
-    @InverseBindingAdapter(attribute = "volume")
+    @InverseBindingAdapter(attribute = "volume",event = "volumeAttrChanged")
     @JvmStatic fun getVolume(audioChannelView: AudioChannelView): Int {
         return audioChannelView.seekBarVolume.progress
     }
 
-    @BindingAdapter(value = ["volumeAttrChanged"])
+    @BindingAdapter(value = ["onVolumeChanged","volumeAttrChanged"], requireAll = false)
     @JvmStatic fun setVolumeAttrChangedListener(
         audioChannelView: AudioChannelView,
+        volumeChangedListener: AudioChannelView.VolumeChangedListener?,
         inverseBindingListener: InverseBindingListener
     ) {
+        audioChannelView.volumeChangedListener = volumeChangedListener
         audioChannelView.volumeSeekBarListener = object : SimpleOnSeekBarChangeListener() {
             override fun onProgressChanged(i: Int) {
                 inverseBindingListener.onChange()
-                audioChannelView.volumeChangedListener?.onVolumeChanged()
+                volumeChangedListener?.onVolumeChanged()
             }
         }
         audioChannelView.seekBarVolume.setOnSeekBarChangeListener(audioChannelView.volumeSeekBarListener)
@@ -115,73 +106,53 @@ object AudioChannelBindingAdapters {
         }
     }
 
-    @BindingAdapter("onSoloChanged")
-    @JvmStatic fun setSoloChangedListener (
-        audioChannelView: AudioChannelView,
-        soloChangedListener: AudioChannelView.SoloChangedListener?
-    ) {
-        if (audioChannelView.soloChangedListener == null) {
-            audioChannelView.soloChangedListener = soloChangedListener
-        }
-        audioChannelView.seekBarVolume.setOnSeekBarChangeListener(audioChannelView.volumeSeekBarListener)
-    }
-
     @InverseBindingAdapter(attribute = "solo")
     @JvmStatic fun getSolo(audioChannelView: AudioChannelView): Boolean {
         return audioChannelView.toggleButtonSolo.isChecked
     }
 
-    @BindingAdapter(value = ["soloAttrChanged"])
+    @BindingAdapter(value = ["onSoloChanged","soloAttrChanged"],requireAll = false)
     @JvmStatic fun setSoloAttrChangedListener(
         audioChannelView: AudioChannelView,
+        soloChangedListener: AudioChannelView.SoloChangedListener?,
         inverseBindingListener: InverseBindingListener
     ) {
         audioChannelView.soloListener =
             CompoundButton.OnCheckedChangeListener { _, _ ->
                 inverseBindingListener.onChange()
-                audioChannelView.soloChangedListener?.onSoloChanged()
+                soloChangedListener?.onSoloChanged()
                 audioChannelView.volumeChangedListener?.onVolumeChanged()
             }
         audioChannelView.toggleButtonSolo.setOnCheckedChangeListener(audioChannelView.soloListener)
     }
 //endregion mute
 
-//region fxSend
-    @BindingAdapter("onFxSendChanged")
-    @JvmStatic fun setFxSendAttrChangedListener (
-        audioChannelView: AudioChannelView,
-        fxSendChangedListener: AudioChannelView.FxSendChangedListener?
-    ) {
-        if (audioChannelView.fxSendChangedListener == null) {
-            audioChannelView.fxSendChangedListener = fxSendChangedListener
-        }
-        audioChannelView.seekBarFx.setOnSeekBarChangeListener(audioChannelView.fxSendSeekBarListener)
-    }
-
-    @BindingAdapter("fxSend")
-    @JvmStatic fun setFxSend(audioChannelView: AudioChannelView, fxSend: Int) {
-        if (audioChannelView.seekBarFx.progress != fxSend) {
-            audioChannelView.seekBarFx.progress = fxSend
+//region fxVolume
+    @BindingAdapter("fxVolume")
+    @JvmStatic fun setFxVolume(audioChannelView: AudioChannelView, fxVolume: Int) {
+        if (audioChannelView.seekBarFx.progress != fxVolume) {
+            audioChannelView.seekBarFx.progress = fxVolume
         }
     }
 
-    @InverseBindingAdapter(attribute = "fxSend")
-    @JvmStatic fun getFxSend(audioChannelView: AudioChannelView): Int {
+    @InverseBindingAdapter(attribute = "fxVolume")
+    @JvmStatic fun getFxVolume(audioChannelView: AudioChannelView): Int {
         return audioChannelView.seekBarFx.progress
     }
 
-    @BindingAdapter(value = ["fxSendAttrChanged"])
-    @JvmStatic fun setFxSendAttrChangedListener(
+    @BindingAdapter(value = ["onFxVolumeChanged","fxVolumeAttrChanged"], requireAll = false)
+    @JvmStatic fun setFxVolumeAttrChangedListener(
         audioChannelView: AudioChannelView,
+        fxVolumeChangedListener: AudioChannelView.FxVolumeChangedListener?,
         inverseBindingListener: InverseBindingListener
     ) {
-        audioChannelView.fxSendSeekBarListener = object : SimpleOnSeekBarChangeListener() {
+        audioChannelView.fxVolumeSeekBarListener = object : SimpleOnSeekBarChangeListener() {
             override fun onProgressChanged(i: Int) {
                 inverseBindingListener.onChange()
-                audioChannelView.fxSendChangedListener?.onFxSendChanged()
+                fxVolumeChangedListener?.onFxVolumeChanged()
             }
         }
-        audioChannelView.seekBarVolume.setOnSeekBarChangeListener(audioChannelView.fxSendSeekBarListener)
+        audioChannelView.seekBarFx.setOnSeekBarChangeListener(audioChannelView.fxVolumeSeekBarListener)
     }
-//endregion fxSend
+//endregion fxVolume
 }
