@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/navigation_graph"
+    xmlns:tools="http://schemas.android.com/tools"
+    app:startDestination="@id/mixer">
+
+    <fragment
+        android:id="@+id/settings"
+        android:name="com.mpiotrowski.maudiofasttrackmixer.ui.settings.SettingsFragment"
+        android:label="SettingsFragment"
+        tools:layout="@layout/fragment_settings">
+    </fragment>
+    <fragment
+        android:id="@+id/mixer"
+        android:name="com.mpiotrowski.maudiofasttrackmixer.ui.mixer.MixerFragment"
+        android:label="MixerFragment"
+        tools:layout="@layout/fragment_mixer">
+    </fragment>
+    <fragment
+        android:id="@+id/presets"
+        android:name="com.mpiotrowski.maudiofasttrackmixer.ui.presets.PresetsFragment"
+        android:label="PresetsFragment"
+        tools:layout="@layout/fragment_presets">
+    </fragment>
+</navigation>
