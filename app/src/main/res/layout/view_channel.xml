@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
     <FrameLayout
         android:layout_width="wrap_content"
@@ -17,10 +17,16 @@
         android:layout_weight="5"
         android:layout_width="wrap_content"
         android:layout_height="0dp">
-        <com.mpiotrowski.maudiofasttrackmixer.ui.views.vertical_seek_bar.VerticalSeekBar
-            android:id="@+id/seekBarVolume"
+        <com.h6ah4i.android.widget.verticalseekbar.VerticalSeekBarWrapper
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent">
+            <com.h6ah4i.android.widget.verticalseekbar.VerticalSeekBar
+                android:id="@+id/seekBarVolume"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:splitTrack="false"
+                app:seekBarRotation="CW270" />
+        </com.h6ah4i.android.widget.verticalseekbar.VerticalSeekBarWrapper>
     </FrameLayout>
     <ToggleButton
         android:id="@+id/toggleButtonMute"
