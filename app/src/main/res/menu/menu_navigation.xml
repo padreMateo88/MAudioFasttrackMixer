@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/settings"
+        android:title="@string/label_settings"
+        android:icon="@android:drawable/ic_menu_manage"/>
+    <item
+        android:id="@+id/mixer"
+        android:title="@string/label_mixer"
+        android:icon="@android:drawable/ic_menu_slideshow"/>
+    <item
+        android:id="@+id/presets"
+        android:title="@string/label_presets"
+        android:icon="@android:drawable/ic_menu_add"/>
+</menu>

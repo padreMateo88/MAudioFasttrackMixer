@@ -10,6 +10,7 @@
     <string name="label_scenes">Scenes</string>
     <string name="label_settings">Settings</string>
     <string name="label_presets">Presets</string>
+    <string name="label_mixer">Mixer</string>
     <string name="spinner_effectType">Effect type</string>
     <string name="spinner_sampleRate">Sample rate</string>
     <string name="seekBar_duration">Duration</string>
