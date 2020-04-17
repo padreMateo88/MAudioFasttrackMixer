@@ -5,13 +5,13 @@
     <item
         android:id="@+id/settings"
         android:title="@string/label_settings"
-        android:icon="@android:drawable/ic_menu_manage"/>
+        android:icon="@drawable/ic_settings"/>
     <item
         android:id="@+id/mixer"
         android:title="@string/label_mixer"
-        android:icon="@android:drawable/ic_menu_slideshow"/>
+        android:icon="@drawable/ic_mixer"/>
     <item
         android:id="@+id/presets"
         android:title="@string/label_presets"
-        android:icon="@android:drawable/ic_menu_add"/>
+        android:icon="@drawable/ic_save"/>
 </menu>
