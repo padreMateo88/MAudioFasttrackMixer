@@ -1,9 +1,10 @@
 package com.mpiotrowski.maudiofasttrackmixer.ui
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import androidx.viewpager.widget.ViewPager
+import androidx.appcompat.app.AppCompatActivity
 import com.mpiotrowski.maudiofasttrackmixer.R
+import kotlinx.android.synthetic.main.activity_main.*
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -12,7 +13,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         val adapter = MainViewPagerAdapter(supportFragmentManager)
-        val viewPager: ViewPager = findViewById(R.id.viewPager)
         viewPager.adapter = adapter
         viewPager.currentItem = 1
     }

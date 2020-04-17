@@ -30,6 +30,7 @@
                 android:id="@+id/recyclerViewChannels"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:overScrollMode="never"
                 android:scrollbars="vertical"/>
         </LinearLayout>
 
@@ -107,6 +108,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/dimen_4dp"
+                android:overScrollMode="never"
                 android:background="@drawable/panel_background"
                 android:orientation="horizontal"
                 android:gravity="center"/>

@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.mpiotrowski.maudiofasttrackmixer.databinding.FragmentMixerBinding
 import com.mpiotrowski.maudiofasttrackmixer.ui.MainViewModel
 
-
 class MixerFragment : Fragment() {
 
     lateinit var viewModel: MainViewModel
@@ -57,7 +56,6 @@ class MixerFragment : Fragment() {
     }
 
     companion object {
-        fun newInstance() =
-            MixerFragment()
+        fun newInstance() = MixerFragment()
     }
 }
