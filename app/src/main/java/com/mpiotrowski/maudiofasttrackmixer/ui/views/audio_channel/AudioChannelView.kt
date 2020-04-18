@@ -5,8 +5,7 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.*
 import com.mpiotrowski.maudiofasttrackmixer.R
-import com.mpiotrowski.maudiofasttrackmixer.ui.views.vertical_seek_bar.SimpleOnSeekBarChangeListener
-
+import com.mpiotrowski.maudiofasttrackmixer.ui.views.faders.Fader
 
 open class AudioChannelView @JvmOverloads constructor(
     context: Context,
@@ -17,9 +16,9 @@ open class AudioChannelView @JvmOverloads constructor(
     open var volumeChangedListener: VolumeChangedListener? = null
 
     //view listeners
-    var volumeSeekBarListener: SimpleOnSeekBarChangeListener? = null
-    var fxVolumeSeekBarListener: SimpleOnSeekBarChangeListener? = null
-    var panoramaSeekBarListener: SimpleOnSeekBarChangeListener? = null
+    var volumeListener: Fader.ValueChangedListener? = null
+    var fxVolumeListener: Fader.ValueChangedListener? = null
+    var panoramaListener: Fader.ValueChangedListener? = null
 
     var muteListener: CompoundButton.OnCheckedChangeListener? = null
     var soloListener: CompoundButton.OnCheckedChangeListener? = null

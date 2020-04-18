@@ -17,7 +17,7 @@
         android:layout_height="match_parent">
         <com.mpiotrowski.maudiofasttrackmixer.ui.views.audio_channel.AudioChannelView
             android:layout_gravity="center_horizontal"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:channelId="@{viewmodel.audioChannels.get(channelIndex).channelId}"
             app:volume="@={viewmodel.audioChannels.get(channelIndex).volume}"

@@ -4,30 +4,17 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
-    <FrameLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-        <SeekBar
-            android:id="@+id/seekBarPanorama"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-    </FrameLayout>
-    <FrameLayout
+    <com.mpiotrowski.maudiofasttrackmixer.ui.views.faders.SignedHorizontalFader
+        android:id="@+id/panoramaFader"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
+    <com.mpiotrowski.maudiofasttrackmixer.ui.views.faders.VerticalFader
+        android:id="@+id/volumeFader"
         android:layout_gravity="center_horizontal"
         android:layout_weight="5"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp">
-        <com.h6ah4i.android.widget.verticalseekbar.VerticalSeekBarWrapper
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent">
-            <com.h6ah4i.android.widget.verticalseekbar.VerticalSeekBar
-                android:id="@+id/seekBarVolume"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:splitTrack="false"
-                app:seekBarRotation="CW270" />
-        </com.h6ah4i.android.widget.verticalseekbar.VerticalSeekBarWrapper>
-    </FrameLayout>
+        android:layout_height="0dp"
+        android:layout_width="match_parent"/>
     <ToggleButton
         android:id="@+id/toggleButtonMute"
         android:background="@drawable/mute_selector"
@@ -49,14 +36,11 @@
         android:layout_weight="1"
         android:textOn="@string/button_solo"
         android:textOff="@string/button_solo" />
-    <FrameLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-        <SeekBar
-            android:id="@+id/seekBarFx"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-    </FrameLayout>
+    <com.mpiotrowski.maudiofasttrackmixer.ui.views.faders.UnsignedHorizontalFader
+        android:id="@+id/fxVolumeFader"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
     <TextView
         android:id="@+id/textViewChannelId"
         android:layout_marginTop="@dimen/dimen_8dp"
