@@ -41,7 +41,7 @@ abstract class Fader @JvmOverloads constructor(
 
     init{
         this.setOnTouchListener { _, event ->
-
+            parent.requestDisallowInterceptTouchEvent(true)
             if(event.action == KeyEvent.ACTION_DOWN) {
                 isSeeking = true
                 initialPosition = calculateInitialPosition(event)

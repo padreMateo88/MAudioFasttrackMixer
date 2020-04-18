@@ -30,11 +30,11 @@ class UnsignedHorizontalFader @JvmOverloads constructor(
         paint.strokeWidth = 3f
         paint.style = Paint.Style.FILL
 
-        for (i in 0 .. 30 step 4)
+        for (i in 4 .. 26 step 4)
             canvas?.drawLine(width*(32-i)/32f-4,height*(i/4f)/20f,width*(32-i)/32f-4,height*(20-i/4f)/20f,paint)
 
         paint.strokeWidth = 3f
         paint.color = Color.BLACK
-        canvas?.drawLine(0f,height/2f,width.toFloat(),height/2f,paint)
+        canvas?.drawLine(width*0.1f,height/2f,width*0.9f,height/2f,paint)
     }
 }

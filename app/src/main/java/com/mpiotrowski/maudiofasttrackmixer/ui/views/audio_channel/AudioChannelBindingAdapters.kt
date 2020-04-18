@@ -5,7 +5,6 @@ import androidx.databinding.BindingAdapter
 import androidx.databinding.InverseBindingAdapter
 import androidx.databinding.InverseBindingListener
 import com.mpiotrowski.maudiofasttrackmixer.ui.views.faders.Fader
-import com.mpiotrowski.maudiofasttrackmixer.ui.views.vertical_seek_bar.SimpleOnSeekBarChangeListener
 import kotlinx.android.synthetic.main.view_channel.view.*
 
 object AudioChannelBindingAdapters {

@@ -9,12 +9,16 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"/>
+    <FrameLayout
+        android:layout_weight="5"
+        android:layout_height="0dp"
+        android:layout_width="match_parent">
     <com.mpiotrowski.maudiofasttrackmixer.ui.views.faders.VerticalFader
         android:id="@+id/volumeFader"
         android:layout_gravity="center_horizontal"
-        android:layout_weight="5"
-        android:layout_height="0dp"
+        android:layout_height="match_parent"
         android:layout_width="match_parent"/>
+    </FrameLayout>
     <ToggleButton
         android:id="@+id/toggleButtonMute"
         android:background="@drawable/mute_selector"
@@ -36,11 +40,15 @@
         android:layout_weight="1"
         android:textOn="@string/button_solo"
         android:textOff="@string/button_solo" />
-    <com.mpiotrowski.maudiofasttrackmixer.ui.views.faders.UnsignedHorizontalFader
-        android:id="@+id/fxVolumeFader"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"/>
+        android:layout_weight="1">
+        <com.mpiotrowski.maudiofasttrackmixer.ui.views.faders.UnsignedHorizontalFader
+            android:id="@+id/fxVolumeFader"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+    </FrameLayout>
     <TextView
         android:id="@+id/textViewChannelId"
         android:layout_marginTop="@dimen/dimen_8dp"

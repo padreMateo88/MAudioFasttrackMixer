@@ -65,13 +65,8 @@ class VerticalFader @JvmOverloads constructor(
 
         for (i in 1 .. 9 step 2){
             paint.strokeWidth = if(i==3) 5f else 3f
-//            val leftMultiplier: Float = if(i == 3) 0f else 0.2f
-//            val rightMultiplier: Float = if(i == 3) 1f else 0.8f
-//
             val leftMultiplier: Float = if(i == 3) 0.15f else 0.2f
             val rightMultiplier: Float = if(i == 3) 0.85f else 0.8f
-//            val leftMultiplier: Float = 0f
-//            val rightMultiplier: Float = 1f
             canvas?.drawLine(width*leftMultiplier,height*i/10f,width*rightMultiplier,height*i/10f,paint)
         }
 
