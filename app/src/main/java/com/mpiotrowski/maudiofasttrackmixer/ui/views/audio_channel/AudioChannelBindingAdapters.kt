@@ -4,7 +4,7 @@ import android.widget.CompoundButton
 import androidx.databinding.BindingAdapter
 import androidx.databinding.InverseBindingAdapter
 import androidx.databinding.InverseBindingListener
-import com.mpiotrowski.maudiofasttrackmixer.ui.views.vertical_seek_bar.SimpleOnSeekBarChangeListener
+import com.mpiotrowski.maudiofasttrackmixer.ui.views.faders.Fader
 import kotlinx.android.synthetic.main.view_channel.view.*
 
 object AudioChannelBindingAdapters {
@@ -17,13 +17,13 @@ object AudioChannelBindingAdapters {
 //region volume
     @BindingAdapter("volume")
     @JvmStatic fun setVolume(audioChannelView: AudioChannelView, volume: Int) {
-        if (audioChannelView.seekBarVolume.progress != volume)
-            audioChannelView.seekBarVolume.progress = volume
+        if (audioChannelView.volumeFader.faderValue != volume)
+            audioChannelView.volumeFader.faderValue = volume
     }
 
     @InverseBindingAdapter(attribute = "volume",event = "volumeAttrChanged")
     @JvmStatic fun getVolume(audioChannelView: AudioChannelView): Int {
-        return audioChannelView.seekBarVolume.progress
+        return audioChannelView.volumeFader.faderValue
     }
 
     @BindingAdapter(value = ["onVolumeChanged","volumeAttrChanged"], requireAll = false)
@@ -33,27 +33,27 @@ object AudioChannelBindingAdapters {
         inverseBindingListener: InverseBindingListener
     ) {
         audioChannelView.volumeChangedListener = volumeChangedListener
-        audioChannelView.volumeSeekBarListener = object : SimpleOnSeekBarChangeListener() {
-            override fun onProgressChanged(i: Int) {
+        audioChannelView.volumeListener = object : Fader.ValueChangedListener {
+            override fun onValueChanged(value: Int) {
                 inverseBindingListener.onChange()
                 volumeChangedListener?.onVolumeChanged()
             }
         }
-        audioChannelView.seekBarVolume.setOnSeekBarChangeListener(audioChannelView.volumeSeekBarListener)
+        audioChannelView.volumeFader.valueChangedListener = audioChannelView.volumeListener as Fader.ValueChangedListener
     }
 //endregion volume
 
 //region panorama
     @BindingAdapter("panorama")
     @JvmStatic fun setPanorama(audioChannelView: AudioChannelView, panorama: Int) {
-        if (audioChannelView.seekBarPanorama.progress != panorama) {
-            audioChannelView.seekBarPanorama.progress = panorama
+        if (audioChannelView.panoramaFader.faderValue != panorama) {
+            audioChannelView.panoramaFader.faderValue = panorama
         }
     }
 
     @InverseBindingAdapter(attribute = "panorama")
     @JvmStatic fun getPanorama(audioChannelView: AudioChannelView): Int {
-        return audioChannelView.seekBarPanorama.progress
+        return audioChannelView.panoramaFader.faderValue
     }
 
     @BindingAdapter(value = ["panoramaAttrChanged"])
@@ -61,13 +61,13 @@ object AudioChannelBindingAdapters {
         audioChannelView: AudioChannelView,
         inverseBindingListener: InverseBindingListener
     ) {
-        audioChannelView.panoramaSeekBarListener = object : SimpleOnSeekBarChangeListener() {
-            override fun onProgressChanged(i: Int) {
+        audioChannelView.panoramaListener = object : Fader.ValueChangedListener {
+            override fun onValueChanged(value: Int) {
                 inverseBindingListener.onChange()
                 audioChannelView.volumeChangedListener?.onVolumeChanged()
             }
         }
-        audioChannelView.seekBarPanorama.setOnSeekBarChangeListener(audioChannelView.panoramaSeekBarListener)
+        audioChannelView.panoramaFader.valueChangedListener = audioChannelView.panoramaListener as Fader.ValueChangedListener
     }
 //endregion panorama
 
@@ -130,14 +130,14 @@ object AudioChannelBindingAdapters {
 //region fxVolume
     @BindingAdapter("fxVolume")
     @JvmStatic fun setFxVolume(audioChannelView: AudioChannelView, fxVolume: Int) {
-        if (audioChannelView.seekBarFx.progress != fxVolume) {
-            audioChannelView.seekBarFx.progress = fxVolume
+        if (audioChannelView.fxVolumeFader.faderValue != fxVolume) {
+            audioChannelView.fxVolumeFader.faderValue = fxVolume
         }
     }
 
     @InverseBindingAdapter(attribute = "fxVolume")
     @JvmStatic fun getFxVolume(audioChannelView: AudioChannelView): Int {
-        return audioChannelView.seekBarFx.progress
+        return audioChannelView.fxVolumeFader.faderValue
     }
 
     @BindingAdapter(value = ["onFxVolumeChanged","fxVolumeAttrChanged"], requireAll = false)
@@ -146,13 +146,13 @@ object AudioChannelBindingAdapters {
         fxVolumeChangedListener: AudioChannelView.FxVolumeChangedListener?,
         inverseBindingListener: InverseBindingListener
     ) {
-        audioChannelView.fxVolumeSeekBarListener = object : SimpleOnSeekBarChangeListener() {
-            override fun onProgressChanged(i: Int) {
+        audioChannelView.fxVolumeListener = object : Fader.ValueChangedListener {
+            override fun onValueChanged(value: Int) {
                 inverseBindingListener.onChange()
                 fxVolumeChangedListener?.onFxVolumeChanged()
             }
         }
-        audioChannelView.seekBarFx.setOnSeekBarChangeListener(audioChannelView.fxVolumeSeekBarListener)
+        audioChannelView.fxVolumeFader.valueChangedListener = audioChannelView.fxVolumeListener as Fader.ValueChangedListener
     }
 //endregion fxVolume
 }

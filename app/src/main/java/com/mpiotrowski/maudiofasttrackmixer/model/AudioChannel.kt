@@ -1,6 +1,6 @@
 package com.mpiotrowski.maudiofasttrackmixer.model
 
-data class AudioChannel(var volume : Int = 0,
+data class AudioChannel(var volume : Int = 75,
                         var channelId : Int = 0,
                         var panorama: Int = 0,
                         var mute: Boolean = false,

@@ -14,7 +14,7 @@ class MasterChannelView @JvmOverloads constructor(
 
     init {
         toggleButtonSolo.visibility = View.INVISIBLE
-        seekBarPanorama.visibility = View.INVISIBLE
+        panoramaFader.visibility = View.INVISIBLE
         textViewChannelId.text = "M"
     }
 }

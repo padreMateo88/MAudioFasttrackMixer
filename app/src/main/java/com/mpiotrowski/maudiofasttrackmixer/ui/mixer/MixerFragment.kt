@@ -2,7 +2,9 @@ package com.mpiotrowski.maudiofasttrackmixer.ui.mixer
 
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
+import android.view.View.OnTouchListener
 import android.view.ViewGroup
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import androidx.appcompat.app.AppCompatActivity
@@ -12,6 +14,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mpiotrowski.maudiofasttrackmixer.databinding.FragmentMixerBinding
 import com.mpiotrowski.maudiofasttrackmixer.ui.MainViewModel
+
 
 class MixerFragment : Fragment() {
 
@@ -44,6 +47,8 @@ class MixerFragment : Fragment() {
                 )
                 viewDataBinding.recyclerViewChannels.adapter =
                     ChannelsAdapter(requireActivity() as AppCompatActivity, viewModel)
+
+                viewDataBinding.recyclerViewChannels.requestDisallowInterceptTouchEvent(true)
             }
         })
     }

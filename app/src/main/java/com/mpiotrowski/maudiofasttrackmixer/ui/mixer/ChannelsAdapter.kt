@@ -28,7 +28,7 @@ class ChannelsAdapter(
     class ChannelViewHolder(var customView : ChannelsAdapterItemBinding) : RecyclerView.ViewHolder(customView.root)
 
     override fun onBindViewHolder(holder: ChannelViewHolder, position: Int) {
-        holder.customView.root.minimumWidth = viewGroup.width/mainViewModel.audioChannels.value!!.size
+        holder.customView.root.layoutParams.width = viewGroup.width/mainViewModel.audioChannels.value!!.size
         holder.customView.channelIndex = position
     }
 
