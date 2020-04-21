@@ -98,7 +98,8 @@
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintLeft_toRightOf="@id/barrierPresetsButtons"
                 app:layout_constraintTop_toBottomOf="@+id/buttonSavePreset"
-                android:gravity="center" />
+                android:gravity="center"
+                tools:listitem="@layout/item_preset"/>
 
             <androidx.constraintlayout.widget.Barrier
                 android:id="@+id/barrierPresetsButtons"
@@ -179,7 +180,8 @@
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintLeft_toRightOf="@id/barrierScenesButtons"
                 app:layout_constraintTop_toBottomOf="@+id/buttonSaveSceneAs"
-                android:gravity="center" />
+                android:gravity="center"
+                tools:listitem="@layout/item_scene"/>
 
             <androidx.constraintlayout.widget.Barrier
                 android:id="@+id/barrierScenesButtons"
