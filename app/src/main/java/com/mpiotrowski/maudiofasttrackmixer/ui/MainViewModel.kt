@@ -3,7 +3,11 @@ package com.mpiotrowski.maudiofasttrackmixer.ui
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.mpiotrowski.maudiofasttrackmixer.model.*
+import com.mpiotrowski.maudiofasttrackmixer.model.preset.preset_components.scene.scene_components.mixer.mixer_components.MasterChannel
+import com.mpiotrowski.maudiofasttrackmixer.model.preset.preset_components.scene.scene_components.mixer.mixer_components.AudioChannel
+import com.mpiotrowski.maudiofasttrackmixer.model.preset.preset_components.SampleRate
+import com.mpiotrowski.maudiofasttrackmixer.model.preset.preset_components.scene.scene_components.FxSend
+import com.mpiotrowski.maudiofasttrackmixer.model.preset.preset_components.scene.scene_components.FxSettings
 import com.mpiotrowski.maudiofasttrackmixer.util.mutation
 
 class MainViewModel : ViewModel() {
@@ -17,28 +21,61 @@ class MainViewModel : ViewModel() {
 
     init {
         audioChannels.value = mutableListOf(
-            AudioChannel(channelNumber = 1),
-            AudioChannel(channelNumber = 2),
-            AudioChannel(channelNumber = 3),
-            AudioChannel(channelNumber = 4),
-            AudioChannel(channelNumber = 5),
-            AudioChannel(channelNumber = 6),
-            AudioChannel(channelNumber = 7),
-            AudioChannel(channelNumber = 8)
+            AudioChannel(
+                channelNumber = 1
+            ),
+            AudioChannel(
+                channelNumber = 2
+            ),
+            AudioChannel(
+                channelNumber = 3
+            ),
+            AudioChannel(
+                channelNumber = 4
+            ),
+            AudioChannel(
+                channelNumber = 5
+            ),
+            AudioChannel(
+                channelNumber = 6
+            ),
+            AudioChannel(
+                channelNumber = 7
+            ),
+            AudioChannel(
+                channelNumber = 8
+            )
         )
 
         fxSends.value = mutableListOf(
-            FxSend(channelId = 1),
-            FxSend(channelId = 2),
-            FxSend(channelId = 3),
-            FxSend(channelId = 4),
-            FxSend(channelId = 5),
-            FxSend(channelId = 6),
-            FxSend(channelId = 7),
-            FxSend(channelId = 8)
+            FxSend(
+                channelId = 1
+            ),
+            FxSend(
+                channelId = 2
+            ),
+            FxSend(
+                channelId = 3
+            ),
+            FxSend(
+                channelId = 4
+            ),
+            FxSend(
+                channelId = 5
+            ),
+            FxSend(
+                channelId = 6
+            ),
+            FxSend(
+                channelId = 7
+            ),
+            FxSend(
+                channelId = 8
+            )
         )
 
-        masterChannel.value = MasterChannel()
+        masterChannel.value =
+            MasterChannel()
 
         sampleRate.value = SampleRate.SR_96
     }
@@ -88,7 +125,7 @@ class MainViewModel : ViewModel() {
         Log.d("MPdebug", "fxFeedback $fxFeedback")
     }
 
-    fun onFxTypeChanged(fxType: FxType) {
+    fun onFxTypeChanged(fxType: FxSettings.FxType) {
         Log.d("MPdebug", "fxType $fxType")
     }
 
