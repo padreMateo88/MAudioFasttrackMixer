@@ -17,14 +17,14 @@ class MainViewModel : ViewModel() {
 
     init {
         audioChannels.value = mutableListOf(
-            AudioChannel(channelId = 1),
-            AudioChannel(channelId = 2),
-            AudioChannel(channelId = 3),
-            AudioChannel(channelId = 4),
-            AudioChannel(channelId = 5),
-            AudioChannel(channelId = 6),
-            AudioChannel(channelId = 7),
-            AudioChannel(channelId = 8)
+            AudioChannel(channelNumber = 1),
+            AudioChannel(channelNumber = 2),
+            AudioChannel(channelNumber = 3),
+            AudioChannel(channelNumber = 4),
+            AudioChannel(channelNumber = 5),
+            AudioChannel(channelNumber = 6),
+            AudioChannel(channelNumber = 7),
+            AudioChannel(channelNumber = 8)
         )
 
         fxSends.value = mutableListOf(
@@ -48,7 +48,7 @@ class MainViewModel : ViewModel() {
     }
 
     fun onChannelChanged(audioChannel: AudioChannel) {
-        Log.d("MPdebug", "channel ${audioChannel.channelId} volume ${audioChannel.volume} panorama ${audioChannel.panorama} mute ${audioChannel.mute} solo ${audioChannel.solo}")
+        Log.d("MPdebug", "channel ${audioChannel.channelNumber} volume ${audioChannel.volume} panorama ${audioChannel.panorama} mute ${audioChannel.mute} solo ${audioChannel.solo}")
     }
 
     fun onSoloChanged(audioChannel: AudioChannel) {

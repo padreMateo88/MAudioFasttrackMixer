@@ -1,7 +1,12 @@
 package com.mpiotrowski.maudiofasttrackmixer.model
 
-class Preset {
-//    var presetName: String
-//    var List<Scene> //ilość scen w presecie nieograniczona, ale pierwsze 8 kontrolowane przez guziki po prawo od miksera
-//    var sampleRate: Enum
-}
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+@Entity
+data class Preset(
+    @PrimaryKey var id: Int,
+    @ColumnInfo(name = "preset_name")var presetName: String,
+    @ColumnInfo(name = "sample_rate")var sampleRate: SampleRate
+)
