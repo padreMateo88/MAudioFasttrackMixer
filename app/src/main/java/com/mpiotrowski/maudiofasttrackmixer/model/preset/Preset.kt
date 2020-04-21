@@ -6,9 +6,9 @@ import androidx.room.PrimaryKey
 import com.mpiotrowski.maudiofasttrackmixer.model.preset.preset_components.SampleRate
 
 @Entity
-data class Preset(
-    @PrimaryKey var presetId: Long,
-    var presetName: String,
+data class Preset(var presetName: String,
     @Embedded
     var sampleRate: SampleRate
-)
+) {
+    @PrimaryKey(autoGenerate = true) var presetId: Long = 0
+}
