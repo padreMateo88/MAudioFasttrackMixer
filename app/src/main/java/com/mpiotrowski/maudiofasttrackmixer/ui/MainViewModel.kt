@@ -10,6 +10,7 @@ class MainViewModel : ViewModel() {
 
     var audioChannels: MutableLiveData<MutableList<AudioChannel>> = MutableLiveData()
     var masterChannel: MutableLiveData<MasterChannel> = MutableLiveData()
+
     var fxSends: MutableLiveData<MutableList<FxSend>> = MutableLiveData()
     var fxSettings: FxSettings = FxSettings()
     var sampleRate: MutableLiveData<SampleRate> = MutableLiveData()
