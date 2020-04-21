@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import com.mpiotrowski.maudiofasttrackmixer.model.preset.preset_components.scene.scene_components.mixer.mixer_components.MasterChannel
 import com.mpiotrowski.maudiofasttrackmixer.model.preset.preset_components.scene.scene_components.mixer.mixer_components.AudioChannel
 import com.mpiotrowski.maudiofasttrackmixer.model.preset.preset_components.SampleRate
+import com.mpiotrowski.maudiofasttrackmixer.model.preset.preset_components.scene.Scene
 import com.mpiotrowski.maudiofasttrackmixer.model.preset.preset_components.scene.scene_components.FxSend
 import com.mpiotrowski.maudiofasttrackmixer.model.preset.preset_components.scene.scene_components.FxSettings
 import com.mpiotrowski.maudiofasttrackmixer.util.mutation
@@ -18,6 +19,8 @@ class MainViewModel : ViewModel() {
     var fxSends: MutableLiveData<MutableList<FxSend>> = MutableLiveData()
     var fxSettings: FxSettings = FxSettings()
     var sampleRate: MutableLiveData<SampleRate> = MutableLiveData()
+
+    var currentScene: MutableLiveData<Scene> = MutableLiveData()
 
     init {
         audioChannels.value = mutableListOf(
@@ -78,6 +81,8 @@ class MainViewModel : ViewModel() {
             MasterChannel()
 
         sampleRate.value = SampleRate.SR_96
+
+        currentScene.value = Scene("default scene's name", fxSettings)
     }
 
     fun onSceneSelected(sceneIndex :Int) {
