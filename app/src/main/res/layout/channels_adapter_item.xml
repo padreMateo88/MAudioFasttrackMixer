@@ -19,7 +19,7 @@
             android:layout_gravity="center_horizontal"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:channelId="@{viewmodel.audioChannels.get(channelIndex).channelId}"
+            app:channelId="@{viewmodel.audioChannels.get(channelIndex).channelNumber}"
             app:volume="@={viewmodel.audioChannels.get(channelIndex).volume}"
             app:panorama="@={viewmodel.audioChannels.get(channelIndex).panorama}"
             app:fxVolume="@={viewmodel.fxSends.get(channelIndex).volume}"

@@ -3,41 +3,79 @@ package com.mpiotrowski.maudiofasttrackmixer.ui
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.mpiotrowski.maudiofasttrackmixer.model.*
+import com.mpiotrowski.maudiofasttrackmixer.model.preset.preset_components.scene.scene_components.mixer.mixer_components.MasterChannel
+import com.mpiotrowski.maudiofasttrackmixer.model.preset.preset_components.scene.scene_components.mixer.mixer_components.AudioChannel
+import com.mpiotrowski.maudiofasttrackmixer.model.preset.preset_components.SampleRate
+import com.mpiotrowski.maudiofasttrackmixer.model.preset.preset_components.scene.scene_components.FxSend
+import com.mpiotrowski.maudiofasttrackmixer.model.preset.preset_components.scene.scene_components.FxSettings
 import com.mpiotrowski.maudiofasttrackmixer.util.mutation
 
 class MainViewModel : ViewModel() {
 
     var audioChannels: MutableLiveData<MutableList<AudioChannel>> = MutableLiveData()
     var masterChannel: MutableLiveData<MasterChannel> = MutableLiveData()
+
     var fxSends: MutableLiveData<MutableList<FxSend>> = MutableLiveData()
     var fxSettings: FxSettings = FxSettings()
     var sampleRate: MutableLiveData<SampleRate> = MutableLiveData()
 
     init {
         audioChannels.value = mutableListOf(
-            AudioChannel(channelId = 1),
-            AudioChannel(channelId = 2),
-            AudioChannel(channelId = 3),
-            AudioChannel(channelId = 4),
-            AudioChannel(channelId = 5),
-            AudioChannel(channelId = 6),
-            AudioChannel(channelId = 7),
-            AudioChannel(channelId = 8)
+            AudioChannel(
+                channelNumber = 1
+            ),
+            AudioChannel(
+                channelNumber = 2
+            ),
+            AudioChannel(
+                channelNumber = 3
+            ),
+            AudioChannel(
+                channelNumber = 4
+            ),
+            AudioChannel(
+                channelNumber = 5
+            ),
+            AudioChannel(
+                channelNumber = 6
+            ),
+            AudioChannel(
+                channelNumber = 7
+            ),
+            AudioChannel(
+                channelNumber = 8
+            )
         )
 
         fxSends.value = mutableListOf(
-            FxSend(channelId = 1),
-            FxSend(channelId = 2),
-            FxSend(channelId = 3),
-            FxSend(channelId = 4),
-            FxSend(channelId = 5),
-            FxSend(channelId = 6),
-            FxSend(channelId = 7),
-            FxSend(channelId = 8)
+            FxSend(
+                channelId = 1
+            ),
+            FxSend(
+                channelId = 2
+            ),
+            FxSend(
+                channelId = 3
+            ),
+            FxSend(
+                channelId = 4
+            ),
+            FxSend(
+                channelId = 5
+            ),
+            FxSend(
+                channelId = 6
+            ),
+            FxSend(
+                channelId = 7
+            ),
+            FxSend(
+                channelId = 8
+            )
         )
 
-        masterChannel.value = MasterChannel()
+        masterChannel.value =
+            MasterChannel()
 
         sampleRate.value = SampleRate.SR_96
     }
@@ -47,7 +85,7 @@ class MainViewModel : ViewModel() {
     }
 
     fun onChannelChanged(audioChannel: AudioChannel) {
-        Log.d("MPdebug", "channel ${audioChannel.channelId} volume ${audioChannel.volume} panorama ${audioChannel.panorama} mute ${audioChannel.mute} solo ${audioChannel.solo}")
+        Log.d("MPdebug", "channel ${audioChannel.channelNumber} volume ${audioChannel.volume} panorama ${audioChannel.panorama} mute ${audioChannel.mute} solo ${audioChannel.solo}")
     }
 
     fun onSoloChanged(audioChannel: AudioChannel) {
@@ -87,7 +125,7 @@ class MainViewModel : ViewModel() {
         Log.d("MPdebug", "fxFeedback $fxFeedback")
     }
 
-    fun onFxTypeChanged(fxType: FxType) {
+    fun onFxTypeChanged(fxType: FxSettings.FxType) {
         Log.d("MPdebug", "fxType $fxType")
     }
 
