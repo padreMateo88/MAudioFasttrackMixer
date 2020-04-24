@@ -1,6 +1,6 @@
 package com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components
 
-enum class SampleRate(sampleRate: Int, var frequencyName: String) {
+enum class SampleRate(val frequencyValue: Int, var frequencyName: String) {
     SR_44_1(44100, "44.1 kHz"),
     SR_48(48000, "48 kHz"),
     SR_88_2(88200, "88.2 kHz"),

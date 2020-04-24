@@ -3,6 +3,7 @@ package com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components
 import androidx.lifecycle.MutableLiveData
 import androidx.room.Embedded
 import androidx.room.Entity
+import androidx.room.TypeConverter
 
 @Entity
 data class FxSettings(
