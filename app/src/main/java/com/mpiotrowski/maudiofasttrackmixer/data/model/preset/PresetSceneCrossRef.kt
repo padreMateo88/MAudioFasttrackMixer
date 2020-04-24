@@ -1,9 +1,9 @@
-package com.mpiotrowski.maudiofasttrackmixer.model.preset
+package com.mpiotrowski.maudiofasttrackmixer.data.model.preset
 
 import androidx.room.Entity
 
 @Entity(primaryKeys = ["presetId", "sceneId"])
 data class PresetSceneCrossRef(
-    val presetId: Long,
+    val presetId: String,
     val sceneId: Long
 )

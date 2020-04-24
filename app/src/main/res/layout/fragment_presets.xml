@@ -45,7 +45,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:layout_constraintBaseline_toBaselineOf="@+id/buttonSavePreset"
-                app:layout_constraintLeft_toLeftOf="@+id/recyclerViewPresets" />
+                app:layout_constraintLeft_toLeftOf="@+id/linearLayoutPresets" />
 
             <Button
                 android:id="@+id/buttonSavePreset"
@@ -85,21 +85,19 @@
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/buttonNewPreset" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerViewPresets"
+            <LinearLayout
+                android:id="@+id/linearLayoutPresets"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_marginLeft="@dimen/dimen_8dp"
                 android:layout_marginRight="@dimen/dimen_4dp"
                 android:layout_marginBottom="@dimen/dimen_4dp"
                 android:background="@drawable/panel_background"
-                android:orientation="vertical"
+                android:orientation="horizontal"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintLeft_toRightOf="@id/barrierPresetsButtons"
-                app:layout_constraintTop_toBottomOf="@+id/buttonSavePreset"
-                android:gravity="center"
-                tools:listitem="@layout/item_preset"/>
+                app:layout_constraintTop_toBottomOf="@+id/buttonSavePreset"/>
 
             <androidx.constraintlayout.widget.Barrier
                 android:id="@+id/barrierPresetsButtons"
@@ -112,12 +110,14 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_marginLeft="@dimen/dimen_4dp"
             android:layout_marginTop="@dimen/dimen_4dp"
             android:layout_marginRight="@dimen/dimen_4dp"
             android:layout_marginBottom="@dimen/dimen_4dp"
             android:layout_weight="1"
-            android:background="@drawable/panel_background">
+            android:background="@drawable/panel_background"
+            android:gravity="center"
+            android:orientation="horizontal"
+            tools:ignore="RtlHardcoded">
 
             <TextView
                 android:id="@+id/textViewScenesLabel"
@@ -126,7 +126,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/dimen_12dp"
                 android:layout_marginTop="@dimen/dimen_8dp"
-                android:layout_marginBottom="@dimen/dimen_16dp"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -136,18 +135,19 @@
                 android:textStyle="italic"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:layout_constraintBaseline_toBaselineOf="@+id/buttonSaveSceneAs"
-                app:layout_constraintLeft_toLeftOf="@+id/recyclerViewScenes" />
+                android:layout_marginTop="@dimen/dimen_8dp"
+                android:layout_marginLeft="@dimen/dimen_8dp"
+                app:layout_constraintLeft_toRightOf="@+id/barrierScenesButtons"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <Button
                 android:id="@+id/buttonSaveSceneAs"
+                android:text="@string/button_saveAs"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/dimen_8dp"
-                android:layout_marginTop="@dimen/dimen_8dp"
-                android:text="@string/button_saveAs"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textViewScenesLabel" />
+                app:layout_constraintTop_toTopOf="@+id/linearLayout" />
 
             <Button
                 android:id="@+id/buttonNewScene"
@@ -167,21 +167,22 @@
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/buttonNewScene" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerViewScenes"
+            <LinearLayout
+                android:id="@+id/linearLayout"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_marginLeft="@dimen/dimen_8dp"
+                android:layout_marginTop="@dimen/dimen_8dp"
                 android:layout_marginRight="@dimen/dimen_4dp"
                 android:layout_marginBottom="@dimen/dimen_4dp"
                 android:background="@drawable/panel_background"
-                android:orientation="vertical"
+                android:orientation="horizontal"
                 app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintLeft_toRightOf="@+id/barrierScenesButtons"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintLeft_toRightOf="@id/barrierScenesButtons"
-                app:layout_constraintTop_toBottomOf="@+id/buttonSaveSceneAs"
-                android:gravity="center"
-                tools:listitem="@layout/item_scene"/>
+                app:layout_constraintTop_toBottomOf="@+id/textViewSceneName"
+                app:layout_constraintVertical_bias="0.0" />
 
             <androidx.constraintlayout.widget.Barrier
                 android:id="@+id/barrierScenesButtons"

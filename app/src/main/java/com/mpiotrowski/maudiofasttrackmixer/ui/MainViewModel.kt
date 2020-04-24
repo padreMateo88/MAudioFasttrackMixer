@@ -3,12 +3,12 @@ package com.mpiotrowski.maudiofasttrackmixer.ui
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.mpiotrowski.maudiofasttrackmixer.model.preset.preset_components.scene.scene_components.mixer.mixer_components.MasterChannel
-import com.mpiotrowski.maudiofasttrackmixer.model.preset.preset_components.scene.scene_components.mixer.mixer_components.AudioChannel
-import com.mpiotrowski.maudiofasttrackmixer.model.preset.preset_components.SampleRate
-import com.mpiotrowski.maudiofasttrackmixer.model.preset.preset_components.scene.Scene
-import com.mpiotrowski.maudiofasttrackmixer.model.preset.preset_components.scene.scene_components.FxSend
-import com.mpiotrowski.maudiofasttrackmixer.model.preset.preset_components.scene.scene_components.FxSettings
+import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.scene_components.MasterChannel
+import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.scene_components.AudioChannel
+import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.SampleRate
+import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.Scene
+import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.scene_components.FxSend
+import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.scene_components.FxSettings
 import com.mpiotrowski.maudiofasttrackmixer.util.mutation
 
 class MainViewModel : ViewModel() {
@@ -51,30 +51,14 @@ class MainViewModel : ViewModel() {
         )
 
         fxSends.value = mutableListOf(
-            FxSend(
-                channelId = 1
-            ),
-            FxSend(
-                channelId = 2
-            ),
-            FxSend(
-                channelId = 3
-            ),
-            FxSend(
-                channelId = 4
-            ),
-            FxSend(
-                channelId = 5
-            ),
-            FxSend(
-                channelId = 6
-            ),
-            FxSend(
-                channelId = 7
-            ),
-            FxSend(
-                channelId = 8
-            )
+            FxSend(channelId = 1),
+            FxSend(channelId = 2),
+            FxSend(channelId = 3),
+            FxSend(channelId = 4),
+            FxSend(channelId = 5),
+            FxSend(channelId = 6),
+            FxSend(channelId = 7),
+            FxSend(channelId = 8)
         )
 
         masterChannel.value =

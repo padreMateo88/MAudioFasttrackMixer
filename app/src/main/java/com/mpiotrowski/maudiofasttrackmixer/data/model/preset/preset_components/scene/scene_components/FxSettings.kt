@@ -1,13 +1,11 @@
-package com.mpiotrowski.maudiofasttrackmixer.model.preset.preset_components.scene.scene_components
+package com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.scene_components
 
 import androidx.lifecycle.MutableLiveData
 import androidx.room.Embedded
 import androidx.room.Entity
-import androidx.room.PrimaryKey
 
 @Entity
 data class FxSettings(
-    @PrimaryKey var fxSettingsId: Long = Long.MIN_VALUE,
     @Embedded var fxType: MutableLiveData<FxType> = MutableLiveData(),
     var duration: MutableLiveData<Int> = MutableLiveData(),
     var feedback: MutableLiveData<Int> = MutableLiveData(),
