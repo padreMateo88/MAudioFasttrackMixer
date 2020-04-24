@@ -4,7 +4,7 @@
     <data>
         <variable
             name="scene"
-            type="com.mpiotrowski.maudiofasttrackmixer.model.preset.preset_components.scene.Scene"/>
+            type="com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.Scene"/>
     </data>
 
     <LinearLayout

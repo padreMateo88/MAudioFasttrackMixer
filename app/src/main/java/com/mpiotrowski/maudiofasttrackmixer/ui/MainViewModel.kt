@@ -50,15 +50,16 @@ class MainViewModel : ViewModel() {
             )
         )
 
+        val sceneId = currentScene.value?.sceneId ?: -1
         fxSends.value = mutableListOf(
-            FxSend(channelId = 1),
-            FxSend(channelId = 2),
-            FxSend(channelId = 3),
-            FxSend(channelId = 4),
-            FxSend(channelId = 5),
-            FxSend(channelId = 6),
-            FxSend(channelId = 7),
-            FxSend(channelId = 8)
+            FxSend(channelNumber = 1, sceneId = sceneId),
+            FxSend(channelNumber = 2, sceneId = sceneId),
+            FxSend(channelNumber = 3, sceneId = sceneId),
+            FxSend(channelNumber = 4, sceneId = sceneId),
+            FxSend(channelNumber = 5, sceneId = sceneId),
+            FxSend(channelNumber = 6, sceneId = sceneId),
+            FxSend(channelNumber = 7, sceneId = sceneId),
+            FxSend(channelNumber = 8, sceneId = sceneId)
         )
 
         masterChannel.value =
