@@ -11,5 +11,4 @@ data class Preset(
     @PrimaryKey var presetId: String = UUID.randomUUID().toString(),
     var presetName: String,
     @Embedded var sampleRate: SampleRate
-
 )

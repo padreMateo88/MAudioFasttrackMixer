@@ -67,7 +67,7 @@ class MainViewModel : ViewModel() {
 
         sampleRate.value = SampleRate.SR_96
 
-        currentScene.value = Scene("default scene's name", fxSettings)
+        currentScene.value = Scene("default scene's name",fxSettings = fxSettings)
     }
 
     fun onSceneSelected(sceneIndex :Int) {
