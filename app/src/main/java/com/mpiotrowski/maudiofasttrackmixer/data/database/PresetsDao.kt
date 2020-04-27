@@ -1,9 +1,10 @@
 package com.mpiotrowski.maudiofasttrackmixer.data.database
 
-import android.transition.Scene
+import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.Preset
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.PresetWithScenes
+import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.Scene
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.scene_components.AudioChannel
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.scene_components.FxSend
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.scene_components.MasterChannel
@@ -14,24 +15,53 @@ interface PresetsDao {
 //region select
     @Transaction
     @Query("SELECT * FROM Preset")
-    fun getPresetsWithScenes(): List<PresetWithScenes>
+    fun getPresetsWithScenes(): LiveData<List<PresetWithScenes>>
 //endregion select
 
 //region insert
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertPreset(preset: Preset)
+    suspend fun insertPreset(preset: Preset)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertScene(scene: Scene): Long
+    suspend fun insertScene(scene: Scene): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertMasterChannel(masterChannel: MasterChannel): Long
+    suspend fun insertMasterChannel(vararg masterChannel: MasterChannel)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertAudioChannel(audioChannel: AudioChannel): Long
+    suspend fun insertAudioChannel(vararg audioChannel: AudioChannel)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertFxSend(fxSend: FxSend): Long
+    suspend fun insertFxSend(vararg fxSend: FxSend)
+
+    @Transaction
+    suspend fun insertPresetWithScenes(presetWithScenes: PresetWithScenes) {
+        insertPreset(presetWithScenes.preset)
+        for(sceneWithComponents in presetWithScenes.scenes) {
+            val sceneId = insertScene(sceneWithComponents.scene)
+            insertMasterChannelWithSceneId(*sceneWithComponents.masterChannels.toTypedArray(), sceneId = sceneId)
+            insertAudioChannelWithSceneId(*sceneWithComponents.audioChannels.toTypedArray(), sceneId = sceneId)
+            insertFxSendWithSceneId(*sceneWithComponents.fxSends.toTypedArray(), sceneId = sceneId)
+        }
+    }
+
+    suspend fun insertMasterChannelWithSceneId(vararg masterChannels: MasterChannel, sceneId: Long) {
+        for(masterChannel in masterChannels)
+            masterChannel.sceneId = sceneId
+        insertMasterChannel(*masterChannels)
+    }
+
+    suspend fun insertAudioChannelWithSceneId(vararg audioChannels: AudioChannel, sceneId: Long) {
+        for(audioChannel in audioChannels)
+            audioChannel.sceneId = sceneId
+        insertAudioChannel(*audioChannels)
+    }
+
+    suspend fun insertFxSendWithSceneId(vararg fxSends: FxSend, sceneId: Long) {
+        for(fxSend in fxSends)
+            fxSend.sceneId = sceneId
+        insertFxSend(*fxSends)
+    }
 //endregion insert
 
 //region update

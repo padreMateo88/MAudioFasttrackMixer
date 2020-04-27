@@ -1,23 +1,14 @@
 package com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.scene_components
 
-import androidx.lifecycle.MutableLiveData
-import androidx.room.Embedded
 import androidx.room.Entity
-import androidx.room.TypeConverter
 
 @Entity
 data class FxSettings(
-    @Embedded var fxType: MutableLiveData<FxType> = MutableLiveData(),
-    var duration: MutableLiveData<Int> = MutableLiveData(),
-    var feedback: MutableLiveData<Int> = MutableLiveData(),
-    var volume: MutableLiveData<Int> = MutableLiveData()
+    var fxType: FxType = FxType.ROOM1,
+    var duration: Int = 0,
+    var feedback: Int = 0,
+    var volume: Int = 0
 ) {
-    init {
-        fxType.value = FxType.ROOM1
-        duration.value = 0
-        feedback.value = 0
-        volume.value = 0
-    }
 
     enum class FxType(var apiCode: Int,var fxName: String) {
 

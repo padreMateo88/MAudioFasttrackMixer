@@ -11,11 +11,12 @@ import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.
         childColumns = arrayOf("presetId"),
         onDelete = ForeignKey.CASCADE
     )],
-    indices = [Index(value = ["sceneId"]), Index(value = ["fxSendId"], unique = true)]
+    indices = [Index(value = ["presetId"]), Index(value = ["sceneId"], unique = true)]
 )
 data class Scene(
-    var sceneName : String = "",
-    var presetId : String = "",
-    @Embedded var fxSettings: FxSettings,
-    @PrimaryKey(autoGenerate = true) var sceneId: Long = 0
+    @PrimaryKey(autoGenerate = true) var sceneId: Long = 0,
+    var sceneName: String,
+    var sceneOrder: Int,
+    var presetId: String = "",
+    @Embedded var fxSettings: FxSettings = FxSettings()
 )

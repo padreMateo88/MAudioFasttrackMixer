@@ -16,8 +16,8 @@ import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.
     indices = [Index(value = ["sceneId"]), Index(value = ["fxSendId"], unique = true)]
 )
 data class FxSend(
-    @PrimaryKey var fxSendId: Long = 0,
-    var sceneId: Long,
-    var channelNumber : Int = 0,
+    @PrimaryKey(autoGenerate = true) var fxSendId: Long = 0,
+    var sceneId: Long = 0,
+    var channelNumber : Int,
     var volume : Int = 0
 )

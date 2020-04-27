@@ -95,6 +95,7 @@
             </LinearLayout>
 
             <ToggleButton
+                android:id="@+id/toggleButtonFine"
                 android:layout_marginTop="@dimen/dimen_4dp"
                 android:layout_marginBottom="@dimen/dimen_4dp"
                 android:layout_width="match_parent"

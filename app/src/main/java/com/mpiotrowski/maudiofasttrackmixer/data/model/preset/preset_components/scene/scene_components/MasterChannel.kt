@@ -18,7 +18,7 @@ import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.
 data class MasterChannel (
     @PrimaryKey(autoGenerate = true) var masterId: Long = 0,
     var sceneId: Long = 0,
-    var outputNumber: Int = 0,
+    var outputNumber: Int,
     var volume : Int = 75,
     var fxReturn : Int = 0,
     var panorama: Int = 0,

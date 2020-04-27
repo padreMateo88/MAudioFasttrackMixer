@@ -13,13 +13,13 @@ import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.
         childColumns = arrayOf("sceneId"),
         onDelete = ForeignKey.CASCADE
     )],
-    indices = [Index(value = ["sceneId"]), Index(value = ["channelId"], unique = true)]
+    indices = [Index(value = ["sceneId"]), Index(value = ["audioChannelId"], unique = true)]
 )
 data class AudioChannel(
     @PrimaryKey(autoGenerate = true) var audioChannelId: Long = 0,
     var sceneId: Long = 0,
-    var outputNumber: Int = 0,
-    var channelNumber : Int = 0,
+    var outputNumber: Int,
+    var inputNumber : Int,
     var volume : Int = 75,
     var panorama: Int = 0,
     var mute: Boolean = false,
