@@ -1,10 +1,9 @@
 package com.mpiotrowski.maudiofasttrackmixer.ui.mixer
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
-import android.view.View.OnTouchListener
 import android.view.ViewGroup
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import androidx.appcompat.app.AppCompatActivity
@@ -14,6 +13,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mpiotrowski.maudiofasttrackmixer.databinding.FragmentMixerBinding
 import com.mpiotrowski.maudiofasttrackmixer.ui.MainViewModel
+import kotlinx.android.synthetic.main.fragment_mixer.*
 
 
 class MixerFragment : Fragment() {
@@ -34,6 +34,18 @@ class MixerFragment : Fragment() {
         viewDataBinding.viewmodel = viewModel
         prepareChannelMixer()
         prepareSceneSelector()
+        toggleButtonFine.setOnClickListener {
+            viewModel.insertDefaultPreset()
+        }
+
+        buttonDecreaseOutput.setOnClickListener {
+            viewModel.deleteDefaultPreset()
+        }
+
+        buttonIncreaseOutput.setOnClickListener{
+            viewModel.updateDefaultPreset()
+        }
+
     }
 
     private fun prepareChannelMixer() {

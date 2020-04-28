@@ -1,17 +1,21 @@
 package com.mpiotrowski.maudiofasttrackmixer.ui
 
+import android.app.Application
 import android.util.Log
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import com.mpiotrowski.maudiofasttrackmixer.model.preset.preset_components.scene.scene_components.mixer.mixer_components.MasterChannel
-import com.mpiotrowski.maudiofasttrackmixer.model.preset.preset_components.scene.scene_components.mixer.mixer_components.AudioChannel
-import com.mpiotrowski.maudiofasttrackmixer.model.preset.preset_components.SampleRate
-import com.mpiotrowski.maudiofasttrackmixer.model.preset.preset_components.scene.Scene
-import com.mpiotrowski.maudiofasttrackmixer.model.preset.preset_components.scene.scene_components.FxSend
-import com.mpiotrowski.maudiofasttrackmixer.model.preset.preset_components.scene.scene_components.FxSettings
+import androidx.lifecycle.viewModelScope
+import com.mpiotrowski.maudiofasttrackmixer.data.Repository
+import com.mpiotrowski.maudiofasttrackmixer.data.database.PresetsDatabase
+import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.PresetWithScenes
+import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.SampleRate
+import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.Scene
+import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.scene_components.*
 import com.mpiotrowski.maudiofasttrackmixer.util.mutation
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
-class MainViewModel : ViewModel() {
+class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     var audioChannels: MutableLiveData<MutableList<AudioChannel>> = MutableLiveData()
     var masterChannel: MutableLiveData<MasterChannel> = MutableLiveData()
@@ -22,67 +26,68 @@ class MainViewModel : ViewModel() {
 
     var currentScene: MutableLiveData<Scene> = MutableLiveData()
 
+    private val database = PresetsDatabase.getDatabase(getApplication(),viewModelScope)
+    private val repository = Repository(database.presetsDao())
+
+    lateinit var presetWithScenes: PresetWithScenes
+
     init {
         audioChannels.value = mutableListOf(
-            AudioChannel(
-                channelNumber = 1
-            ),
-            AudioChannel(
-                channelNumber = 2
-            ),
-            AudioChannel(
-                channelNumber = 3
-            ),
-            AudioChannel(
-                channelNumber = 4
-            ),
-            AudioChannel(
-                channelNumber = 5
-            ),
-            AudioChannel(
-                channelNumber = 6
-            ),
-            AudioChannel(
-                channelNumber = 7
-            ),
-            AudioChannel(
-                channelNumber = 8
-            )
+            AudioChannel(inputIndex = 1, outputIndex = 1, sceneId = 0),
+            AudioChannel(inputIndex = 2, outputIndex = 1, sceneId = 0),
+            AudioChannel(inputIndex = 3, outputIndex = 1, sceneId = 0),
+            AudioChannel(inputIndex = 4, outputIndex = 1, sceneId = 0),
+            AudioChannel(inputIndex = 5, outputIndex = 1, sceneId = 0),
+            AudioChannel(inputIndex = 6, outputIndex = 1, sceneId = 0),
+            AudioChannel(inputIndex = 7, outputIndex = 1, sceneId = 0),
+            AudioChannel(inputIndex = 8, outputIndex = 1, sceneId = 0)
         )
 
+        val sceneId = currentScene.value?.sceneId ?: -1
         fxSends.value = mutableListOf(
-            FxSend(
-                channelId = 1
-            ),
-            FxSend(
-                channelId = 2
-            ),
-            FxSend(
-                channelId = 3
-            ),
-            FxSend(
-                channelId = 4
-            ),
-            FxSend(
-                channelId = 5
-            ),
-            FxSend(
-                channelId = 6
-            ),
-            FxSend(
-                channelId = 7
-            ),
-            FxSend(
-                channelId = 8
-            )
+            FxSend(inputIndex = 1, sceneId = sceneId),
+            FxSend(inputIndex = 2, sceneId = sceneId),
+            FxSend(inputIndex = 3, sceneId = sceneId),
+            FxSend(inputIndex = 4, sceneId = sceneId),
+            FxSend(inputIndex = 5, sceneId = sceneId),
+            FxSend(inputIndex = 6, sceneId = sceneId),
+            FxSend(inputIndex = 7, sceneId = sceneId),
+            FxSend(inputIndex = 8, sceneId = sceneId)
         )
 
         masterChannel.value =
-            MasterChannel()
+            MasterChannel(sceneId = 0, outputIndex = 1)
 
         sampleRate.value = SampleRate.SR_96
 
-        currentScene.value = Scene("default scene's name", fxSettings)
+        currentScene.value = Scene(sceneName = "default scene's name",fxSettings = fxSettings, presetId = "",sceneOrder = 0)
+
+        repository.presetsWitScenes.observeForever {
+            if(it.isNotEmpty()) {
+                Log.d("MPdebug", "presets fetched ${it[0].preset.presetName}")
+                presetWithScenes = it[0]
+            }
+        }
+    }
+
+    fun insertDefaultPreset() {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.addPreset("defaultPreset")
+        }
+    }
+
+    fun deleteDefaultPreset() {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.deletePreset(presetWithScenes.preset)
+        }
+    }
+
+    fun updateDefaultPreset() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val scene = presetWithScenes.scenes[1]
+            scene.scene.sceneName = "name changed"
+            repository.saveScene(scene.scene)
+        }
     }
 
     fun onSceneSelected(sceneIndex :Int) {
@@ -90,7 +95,7 @@ class MainViewModel : ViewModel() {
     }
 
     fun onChannelChanged(audioChannel: AudioChannel) {
-        Log.d("MPdebug", "channel ${audioChannel.channelNumber} volume ${audioChannel.volume} panorama ${audioChannel.panorama} mute ${audioChannel.mute} solo ${audioChannel.solo}")
+        Log.d("MPdebug", "channel ${audioChannel.inputIndex} volume ${audioChannel.volume} panorama ${audioChannel.panorama} mute ${audioChannel.mute} solo ${audioChannel.solo}")
     }
 
     fun onSoloChanged(audioChannel: AudioChannel) {
