@@ -36,14 +36,14 @@ class Repository(private val presetsDao: PresetsDao) {
         val fxSends = mutableListOf<FxSend>()
 
         for (outputIndex in 1 .. MIXER_STEREO_OUTPUTS_NUMBER) {
-            masterChannels.add(MasterChannel(outputNumber = outputIndex))
+            masterChannels.add(MasterChannel(outputIndex = outputIndex))
             for (inputIndex in 1 .. MIXER_INPUTS_NUMBER) {
-                audioChannels.add(AudioChannel(outputNumber = outputIndex, inputNumber = inputIndex))
+                audioChannels.add(AudioChannel(outputIndex = outputIndex, inputIndex = inputIndex))
             }
         }
 
         for (inputIndex in 1 .. MIXER_INPUTS_NUMBER) {
-            fxSends.add(FxSend(channelNumber = inputIndex))
+            fxSends.add(FxSend(inputIndex = inputIndex))
         }
 
         return SceneWithComponents(
@@ -76,12 +76,12 @@ class Repository(private val presetsDao: PresetsDao) {
         presetsDao.updateFxSend(*fxSend)
     }
 
-    suspend fun saveSceneWithComponents(sceneWithComponents: SceneWithComponents) {
-        presetsDao.updateSceneWithComponents(sceneWithComponents)
+    suspend fun saveSceneWithComponents(sceneWithComponents: SceneWithComponents, saveAll: Boolean) {
+        presetsDao.updateSceneWithComponents(sceneWithComponents, updateAll = saveAll)
     }
 
-    suspend fun savePresetWithScenes(presetWithScenes: PresetWithScenes) {
-        presetsDao.updatePresetWithScenes(presetWithScenes)
+    suspend fun savePresetWithScenes(presetWithScenes: PresetWithScenes, saveAll: Boolean) {
+        presetsDao.updatePresetWithScenes(presetWithScenes, saveAll)
     }
 //endregion save
 

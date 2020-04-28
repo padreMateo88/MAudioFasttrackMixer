@@ -1,6 +1,7 @@
 package com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.scene_components
 
 import androidx.room.Entity
+import androidx.room.Ignore
 
 @Entity
 data class FxSettings(
@@ -9,6 +10,8 @@ data class FxSettings(
     var feedback: Int = 0,
     var volume: Int = 0
 ) {
+    @Ignore
+    var isDirty = false
 
     enum class FxType(var apiCode: Int,var fxName: String) {
 

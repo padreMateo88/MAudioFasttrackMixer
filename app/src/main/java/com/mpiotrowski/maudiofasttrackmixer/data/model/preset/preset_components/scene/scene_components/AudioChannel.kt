@@ -1,9 +1,6 @@
 package com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.scene_components
 
-import androidx.room.Entity
-import androidx.room.ForeignKey
-import androidx.room.Index
-import androidx.room.PrimaryKey
+import androidx.room.*
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.Scene
 
 @Entity(
@@ -18,10 +15,13 @@ import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.
 data class AudioChannel(
     @PrimaryKey(autoGenerate = true) var audioChannelId: Long = 0,
     var sceneId: Long = 0,
-    var outputNumber: Int,
-    var inputNumber : Int,
+    var outputIndex: Int,
+    var inputIndex : Int,
     var volume : Int = 75,
     var panorama: Int = 0,
     var mute: Boolean = false,
     var solo: Boolean = false
-)
+) {
+    @Ignore
+    var isDirty = false
+}

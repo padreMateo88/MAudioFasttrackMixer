@@ -82,18 +82,50 @@ interface PresetsDao {
     fun updateFxSend(vararg fxSend: FxSend)
 
     @Transaction
-    suspend fun updatePresetWithScenes(presetWithScenes: PresetWithScenes) {
+    suspend fun updatePresetWithScenes(presetWithScenes: PresetWithScenes, updateAll: Boolean) {
         updatePreset(presetWithScenes.preset)
-        updateSceneWithComponents(*presetWithScenes.scenes.toTypedArray())
+        updateSceneWithComponents(*presetWithScenes.scenes.toTypedArray(), updateAll = updateAll)
     }
 
     @Transaction
-    suspend fun updateSceneWithComponentsAnTransaction(vararg sceneWithComponents: SceneWithComponents) {
-        updateSceneWithComponents(*sceneWithComponents)
+    suspend fun updateSceneWithComponentsInTransaction(vararg sceneWithComponents: SceneWithComponents, updateAll: Boolean) {
+        updateSceneWithComponents(*sceneWithComponents, updateAll = updateAll)
     }
 
-    suspend fun updateSceneWithComponents(vararg sceneWithComponents: SceneWithComponents) {
-        //TODO
+    suspend fun updateSceneWithComponents(vararg scenesWithComponents: SceneWithComponents, updateAll: Boolean) {
+        for(sceneWithComponents in scenesWithComponents) {
+            updateScene(sceneWithComponents.scene)
+            updateMasterChannels(sceneWithComponents, updateAll)
+            updateAudioChannels(sceneWithComponents, updateAll)
+            updateFxSends(sceneWithComponents, updateAll)
+        }
+    }
+
+    fun updateMasterChannels(
+        sceneWithComponents: SceneWithComponents,
+        updateAll: Boolean
+    ) {
+        for (masterChannel in sceneWithComponents.masterChannels)
+            if (masterChannel.isDirty || updateAll)
+                updateMasterChannel(masterChannel)
+    }
+
+    fun updateAudioChannels(
+        sceneWithComponents: SceneWithComponents,
+        updateAll: Boolean
+    ) {
+        for (audioChannel in sceneWithComponents.audioChannels)
+            if (audioChannel.isDirty || updateAll)
+                updateAudioChannel(audioChannel)
+    }
+
+    fun updateFxSends(
+        sceneWithComponents: SceneWithComponents,
+        updateAll: Boolean
+    ) {
+        for (fxSend in sceneWithComponents.fxSends)
+            if (fxSend.isDirty || updateAll)
+                updateFxSend(fxSend)
     }
 //endregion update
 

@@ -4,11 +4,9 @@ import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mpiotrowski.maudiofasttrackmixer.data.Repository
 import com.mpiotrowski.maudiofasttrackmixer.data.database.PresetsDatabase
-import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.Preset
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.PresetWithScenes
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.SampleRate
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.Scene
@@ -35,30 +33,30 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     init {
         audioChannels.value = mutableListOf(
-            AudioChannel(inputNumber = 1, outputNumber = 1, sceneId = 0),
-            AudioChannel(inputNumber = 2, outputNumber = 1, sceneId = 0),
-            AudioChannel(inputNumber = 3, outputNumber = 1, sceneId = 0),
-            AudioChannel(inputNumber = 4, outputNumber = 1, sceneId = 0),
-            AudioChannel(inputNumber = 5, outputNumber = 1, sceneId = 0),
-            AudioChannel(inputNumber = 6, outputNumber = 1, sceneId = 0),
-            AudioChannel(inputNumber = 7, outputNumber = 1, sceneId = 0),
-            AudioChannel(inputNumber = 8, outputNumber = 1, sceneId = 0)
+            AudioChannel(inputIndex = 1, outputIndex = 1, sceneId = 0),
+            AudioChannel(inputIndex = 2, outputIndex = 1, sceneId = 0),
+            AudioChannel(inputIndex = 3, outputIndex = 1, sceneId = 0),
+            AudioChannel(inputIndex = 4, outputIndex = 1, sceneId = 0),
+            AudioChannel(inputIndex = 5, outputIndex = 1, sceneId = 0),
+            AudioChannel(inputIndex = 6, outputIndex = 1, sceneId = 0),
+            AudioChannel(inputIndex = 7, outputIndex = 1, sceneId = 0),
+            AudioChannel(inputIndex = 8, outputIndex = 1, sceneId = 0)
         )
 
         val sceneId = currentScene.value?.sceneId ?: -1
         fxSends.value = mutableListOf(
-            FxSend(channelNumber = 1, sceneId = sceneId),
-            FxSend(channelNumber = 2, sceneId = sceneId),
-            FxSend(channelNumber = 3, sceneId = sceneId),
-            FxSend(channelNumber = 4, sceneId = sceneId),
-            FxSend(channelNumber = 5, sceneId = sceneId),
-            FxSend(channelNumber = 6, sceneId = sceneId),
-            FxSend(channelNumber = 7, sceneId = sceneId),
-            FxSend(channelNumber = 8, sceneId = sceneId)
+            FxSend(inputIndex = 1, sceneId = sceneId),
+            FxSend(inputIndex = 2, sceneId = sceneId),
+            FxSend(inputIndex = 3, sceneId = sceneId),
+            FxSend(inputIndex = 4, sceneId = sceneId),
+            FxSend(inputIndex = 5, sceneId = sceneId),
+            FxSend(inputIndex = 6, sceneId = sceneId),
+            FxSend(inputIndex = 7, sceneId = sceneId),
+            FxSend(inputIndex = 8, sceneId = sceneId)
         )
 
         masterChannel.value =
-            MasterChannel(sceneId = 0, outputNumber = 1)
+            MasterChannel(sceneId = 0, outputIndex = 1)
 
         sampleRate.value = SampleRate.SR_96
 
@@ -97,7 +95,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun onChannelChanged(audioChannel: AudioChannel) {
-        Log.d("MPdebug", "channel ${audioChannel.inputNumber} volume ${audioChannel.volume} panorama ${audioChannel.panorama} mute ${audioChannel.mute} solo ${audioChannel.solo}")
+        Log.d("MPdebug", "channel ${audioChannel.inputIndex} volume ${audioChannel.volume} panorama ${audioChannel.panorama} mute ${audioChannel.mute} solo ${audioChannel.solo}")
     }
 
     fun onSoloChanged(audioChannel: AudioChannel) {

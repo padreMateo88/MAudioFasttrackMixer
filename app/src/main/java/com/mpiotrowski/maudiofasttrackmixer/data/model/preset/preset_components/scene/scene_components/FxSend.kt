@@ -1,9 +1,6 @@
 package com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.scene_components
 
-import androidx.room.Entity
-import androidx.room.ForeignKey
-import androidx.room.Index
-import androidx.room.PrimaryKey
+import androidx.room.*
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.Scene
 
 @Entity(
@@ -18,6 +15,9 @@ import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.
 data class FxSend(
     @PrimaryKey(autoGenerate = true) var fxSendId: Long = 0,
     var sceneId: Long = 0,
-    var channelNumber : Int,
+    var inputIndex : Int,
     var volume : Int = 0
-)
+) {
+    @Ignore
+    var isDirty = false
+}
