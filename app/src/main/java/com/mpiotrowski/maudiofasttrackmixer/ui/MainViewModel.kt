@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.mpiotrowski.maudiofasttrackmixer.data.Repository
 import com.mpiotrowski.maudiofasttrackmixer.data.database.PresetsDatabase
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.Preset
+import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.PresetWithScenes
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.SampleRate
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.Scene
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.scene_components.*
@@ -29,6 +30,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     private val database = PresetsDatabase.getDatabase(getApplication(),viewModelScope)
     private val repository = Repository(database.presetsDao())
+
+    lateinit var presetWithScenes: PresetWithScenes
 
     init {
         audioChannels.value = mutableListOf(
@@ -62,13 +65,30 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         currentScene.value = Scene(sceneName = "default scene's name",fxSettings = fxSettings, presetId = "",sceneOrder = 0)
 
         repository.presetsWitScenes.observeForever {
-            Log.d("MPdebug", "presets fetched")
+            if(it.isNotEmpty()) {
+                Log.d("MPdebug", "presets fetched ${it[0].preset.presetName}")
+                presetWithScenes = it[0]
+            }
         }
     }
 
     fun insertDefaultPreset() {
         viewModelScope.launch(Dispatchers.IO) {
             repository.addPreset("defaultPreset")
+        }
+    }
+
+    fun deleteDefaultPreset() {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.deletePreset(presetWithScenes.preset)
+        }
+    }
+
+    fun updateDefaultPreset() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val scene = presetWithScenes.scenes[1]
+            scene.scene.sceneName = "name changed"
+            repository.saveScene(scene.scene)
         }
     }
 

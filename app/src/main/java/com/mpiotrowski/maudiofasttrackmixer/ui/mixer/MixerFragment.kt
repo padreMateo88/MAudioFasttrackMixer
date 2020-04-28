@@ -37,6 +37,15 @@ class MixerFragment : Fragment() {
         toggleButtonFine.setOnClickListener {
             viewModel.insertDefaultPreset()
         }
+
+        buttonDecreaseOutput.setOnClickListener {
+            viewModel.deleteDefaultPreset()
+        }
+
+        buttonIncreaseOutput.setOnClickListener{
+            viewModel.updateDefaultPreset()
+        }
+
     }
 
     private fun prepareChannelMixer() {

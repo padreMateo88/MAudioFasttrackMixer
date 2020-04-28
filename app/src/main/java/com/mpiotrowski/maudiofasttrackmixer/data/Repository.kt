@@ -24,12 +24,12 @@ class Repository(private val presetsDao: PresetsDao) {
         val preset = Preset(presetName = presetName, sampleRate = SampleRate.SR_48)
         val scenes = mutableListOf<SceneWithComponents>()
         for(index in 1 .. SCENES_IN_PRESET_NUMBER) {
-            scenes.add(getSceneWithComponents("Scene $index", preset.presetId, index))
+            scenes.add(createSceneWithComponents("Scene $index", preset.presetId, index))
         }
         presetsDao.insertPresetWithScenes(PresetWithScenes(preset,scenes))
     }
 
-    private fun getSceneWithComponents(sceneName: String, presetId: String, sceneOrder: Int): SceneWithComponents{
+    private fun createSceneWithComponents(sceneName: String, presetId: String, sceneOrder: Int): SceneWithComponents{
         val scene = Scene(sceneName = sceneName, presetId = presetId, sceneOrder = sceneOrder)
         val masterChannels = mutableListOf<MasterChannel>()
         val audioChannels = mutableListOf<AudioChannel>()
@@ -56,25 +56,43 @@ class Repository(private val presetsDao: PresetsDao) {
 //endregion add
 
 //endregion save
-    suspend fun saveExistingPreset(preset: Preset) {}
+    suspend fun savePreset(preset: Preset) {
+        presetsDao.updatePreset(preset)
+    }
 
-    suspend fun overExistingPresetWith(preset: Preset) {}
+    suspend fun saveScene(scene: Scene) {
+        presetsDao.updateScene(scene)
+    }
 
-    suspend fun saveScene() {}
+    suspend fun saveMasterChannel(vararg masterChannel: MasterChannel) {
+        presetsDao.updateMasterChannel(*masterChannel)
+    }
 
-    suspend fun overExistingSceneWith() {}
+    suspend fun saveAudioChannel(vararg audioChannel: AudioChannel) {
+        presetsDao.updateAudioChannel(*audioChannel)
+    }
 
-    suspend fun saveMasterChannel() {}
+    suspend fun saveFxSend(vararg fxSend: FxSend) {
+        presetsDao.updateFxSend(*fxSend)
+    }
 
-    suspend fun saveAudioChannel() {}
+    suspend fun saveSceneWithComponents(sceneWithComponents: SceneWithComponents) {
+        presetsDao.updateSceneWithComponents(sceneWithComponents)
+    }
 
-    suspend fun saveFxSend() {}
-
-    suspend fun saveFxSettings() {}
+    suspend fun savePresetWithScenes(presetWithScenes: PresetWithScenes) {
+        presetsDao.updatePresetWithScenes(presetWithScenes)
+    }
 //endregion save
 
 //endregion remove
-    suspend fun deletePreset() {}
+    suspend fun deletePreset(preset: Preset) {
+        presetsDao.deletePreset(preset)
+    }
+
+    suspend fun deleteScene(scene: Scene) {
+        presetsDao.deleteScene(scene)
+    }
 //endregion remove
 
 }

@@ -5,6 +5,7 @@ import androidx.room.*
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.Preset
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.PresetWithScenes
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.Scene
+import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.SceneWithComponents
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.scene_components.AudioChannel
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.scene_components.FxSend
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.scene_components.MasterChannel
@@ -72,13 +73,28 @@ interface PresetsDao {
     fun updateScene(vararg scene: Scene)
 
     @Update
-    fun updateMasterChannel( masterChannel: MasterChannel)
+    fun updateMasterChannel(vararg masterChannel: MasterChannel)
 
     @Update
     fun updateAudioChannel(vararg audioChannel: AudioChannel)
 
     @Update
-    fun updateFxSend(vararg  fxSend: FxSend)
+    fun updateFxSend(vararg fxSend: FxSend)
+
+    @Transaction
+    suspend fun updatePresetWithScenes(presetWithScenes: PresetWithScenes) {
+        updatePreset(presetWithScenes.preset)
+        updateSceneWithComponents(*presetWithScenes.scenes.toTypedArray())
+    }
+
+    @Transaction
+    suspend fun updateSceneWithComponentsAnTransaction(vararg sceneWithComponents: SceneWithComponents) {
+        updateSceneWithComponents(*sceneWithComponents)
+    }
+
+    suspend fun updateSceneWithComponents(vararg sceneWithComponents: SceneWithComponents) {
+        //TODO
+    }
 //endregion update
 
 //region delete

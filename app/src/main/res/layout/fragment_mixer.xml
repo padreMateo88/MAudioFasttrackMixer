@@ -74,6 +74,7 @@
                     android:layout_width="match_parent">
 
                     <Button
+                        android:id="@+id/buttonDecreaseOutput"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -87,6 +88,7 @@
                         android:layout_height="wrap_content"
                         android:text="1-2" />
                     <Button
+                        android:id="@+id/buttonIncreaseOutput"
                         android:text="&gt;"
                         android:layout_weight="1"
                         android:layout_width="0dp"
