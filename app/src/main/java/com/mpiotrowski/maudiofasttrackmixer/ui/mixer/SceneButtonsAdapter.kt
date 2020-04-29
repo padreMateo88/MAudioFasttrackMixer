@@ -24,10 +24,15 @@ class SceneButtonsAdapter(var viewModel: MainViewModel): RecyclerView.Adapter<Sc
 
     override fun onBindViewHolder(holder: SceneButtonViewHolder, position: Int) {
         holder.layout.button.text = (position + 1).toString()
+        if(viewModel.currentScene?.scene?.sceneOrder == position + 1) {
+            holder.layout.button.isEnabled = false
+            lastChecked = holder.layout.button
+        }
+
         holder.layout.button.setOnClickListener {
             val button: Button = it as Button
             if(lastChecked != button) {
-                viewModel.onSceneSelected(position)
+                viewModel.onSceneSelected(position + 1)
                 lastChecked?.isEnabled = true
                 button.isEnabled = false
                 lastChecked = button

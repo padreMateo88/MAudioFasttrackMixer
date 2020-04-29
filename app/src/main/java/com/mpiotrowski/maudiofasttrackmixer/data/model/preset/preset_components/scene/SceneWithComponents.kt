@@ -7,8 +7,8 @@ import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.scene_components.FxSend
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.scene_components.MasterChannel
 
-const val MIXER_STEREO_OUTPUTS_NUMBER = 4
-const val MIXER_INPUTS_NUMBER = 8
+const val MIXER_STEREO_OUTPUTS_COUNT = 4
+const val MIXER_INPUTS_COUNT = 8
 data class SceneWithComponents (
     @Embedded var scene: Scene,
 
@@ -36,7 +36,7 @@ data class SceneWithComponents (
     @Ignore
     val fxSendsMap = fxSends.map{it.inputIndex to it}.toMap()
     @Ignore
-    val mastersMap = masterChannels.map{it.outputIndex to it}.toMap()
+    val mastersByOutputsMap = masterChannels.map{it.outputIndex to it}.toMap()
     @Ignore
     val channelsByOutputsMap = audioChannels.groupBy{it.outputIndex}.toMap()
 
@@ -59,7 +59,7 @@ data class SceneWithComponents (
     }
 
     private fun copyMasterChannelsValues(copyFrom: SceneWithComponents) {
-        for (outputIndex in this.mastersMap.keys) {
+        for (outputIndex in this.mastersByOutputsMap.keys) {
             this.masterChannels[outputIndex].fxReturn = copyFrom.masterChannels[outputIndex].fxReturn
             this.masterChannels[outputIndex].mute = copyFrom.masterChannels[outputIndex].mute
             this.masterChannels[outputIndex].panorama = copyFrom.masterChannels[outputIndex].panorama

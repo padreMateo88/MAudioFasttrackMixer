@@ -81,6 +81,7 @@
                         android:text="&lt;" />
 
                     <TextView
+                        android:id="@+id/textViewOutput"
                         android:layout_marginRight="@dimen/dimen_4dp"
                         android:layout_marginLeft="@dimen/dimen_4dp"
                         android:layout_gravity="center_vertical"

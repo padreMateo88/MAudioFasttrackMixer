@@ -1,7 +1,6 @@
 package com.mpiotrowski.maudiofasttrackmixer.ui.mixer
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,15 +10,16 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.MIXER_STEREO_OUTPUTS_COUNT
 import com.mpiotrowski.maudiofasttrackmixer.databinding.FragmentMixerBinding
 import com.mpiotrowski.maudiofasttrackmixer.ui.MainViewModel
 import kotlinx.android.synthetic.main.fragment_mixer.*
 
 
 class MixerFragment : Fragment() {
-
     lateinit var viewModel: MainViewModel
     private lateinit var viewDataBinding: FragmentMixerBinding
+    var outputIndex = 1
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                             savedInstanceState: Bundle?): View? {
@@ -35,17 +35,24 @@ class MixerFragment : Fragment() {
         prepareChannelMixer()
         prepareSceneSelector()
         toggleButtonFine.setOnClickListener {
-            viewModel.insertDefaultPreset()
+
         }
 
-        buttonDecreaseOutput.setOnClickListener {
-            viewModel.deleteDefaultPreset()
-        }
+        buttonDecreaseOutput.setOnClickListener (View.OnClickListener {
+            if(outputIndex == 1)
+                return@OnClickListener
+            outputIndex --
+            textViewOutput.text = "${outputIndex*2-1}-${outputIndex*2}"
+            viewModel.onOutputSelected(outputIndex)
+        })
 
-        buttonIncreaseOutput.setOnClickListener{
-            viewModel.updateDefaultPreset()
-        }
-
+        buttonIncreaseOutput.setOnClickListener (View.OnClickListener {
+            if(outputIndex == MIXER_STEREO_OUTPUTS_COUNT)
+                return@OnClickListener
+            outputIndex ++
+            textViewOutput.text = "${outputIndex*2-1}-${outputIndex*2}"
+            viewModel.onOutputSelected(outputIndex)
+        })
     }
 
     private fun prepareChannelMixer() {

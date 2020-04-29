@@ -4,6 +4,9 @@ import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.Preset
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.PresetWithScenes
+import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.SCENES_IN_PRESET_NUMBER
+import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.MIXER_INPUTS_COUNT
+import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.MIXER_STEREO_OUTPUTS_COUNT
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.Scene
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.SceneWithComponents
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.scene_components.AudioChannel
@@ -15,8 +18,13 @@ interface PresetsDao {
 
 //region select
     @Transaction
-    @Query("SELECT * FROM Preset")
-    fun getPresetsWithScenes(): LiveData<List<PresetWithScenes>>
+    @Query("SELECT * FROM Preset WHERE presetId != :defaultPresetId")
+    fun getPresetsWithScenes(defaultPresetId: String): LiveData<List<PresetWithScenes>>
+
+    @Transaction
+    @Query("SELECT * FROM Preset WHERE presetId = :defaultPresetId")
+    fun getDefaultPreset(defaultPresetId: String): List<PresetWithScenes>
+
 //endregion select
 
 //region insert
@@ -63,6 +71,41 @@ interface PresetsDao {
             fxSend.sceneId = sceneId
         insertFxSend(*fxSends)
     }
+
+    suspend fun addPreset(preset: Preset): PresetWithScenes {
+        val scenes = mutableListOf<SceneWithComponents>()
+        for(index in 1 .. SCENES_IN_PRESET_NUMBER) {
+            scenes.add(createSceneWithComponents("Scene $index", preset.presetId, index))
+        }
+        val presetWithScenes = PresetWithScenes(preset,scenes)
+        insertPresetWithScenes(presetWithScenes)
+        return presetWithScenes
+    }
+
+    private fun createSceneWithComponents(sceneName: String, presetId: String, sceneOrder: Int): SceneWithComponents {
+        val scene = Scene(sceneName = sceneName, presetId = presetId, sceneOrder = sceneOrder)
+        val masterChannels = mutableListOf<MasterChannel>()
+        val audioChannels = mutableListOf<AudioChannel>()
+        val fxSends = mutableListOf<FxSend>()
+
+        for (outputIndex in 1 .. MIXER_STEREO_OUTPUTS_COUNT) {
+            masterChannels.add(MasterChannel(outputIndex = outputIndex))
+            for (inputIndex in 1 .. MIXER_INPUTS_COUNT) {
+                audioChannels.add(AudioChannel(outputIndex = outputIndex, inputIndex = inputIndex))
+            }
+        }
+
+        for (inputIndex in 1 .. MIXER_INPUTS_COUNT) {
+            fxSends.add(FxSend(inputIndex = inputIndex))
+        }
+
+        return SceneWithComponents(
+            scene = scene,
+            masterChannels = masterChannels,
+            audioChannels = audioChannels,
+            fxSends = fxSends
+        )
+    }
 //endregion insert
 
 //region update
@@ -92,7 +135,7 @@ interface PresetsDao {
         updateSceneWithComponents(*sceneWithComponents, updateAll = updateAll)
     }
 
-    suspend fun updateSceneWithComponents(vararg scenesWithComponents: SceneWithComponents, updateAll: Boolean) {
+    fun updateSceneWithComponents(vararg scenesWithComponents: SceneWithComponents, updateAll: Boolean) {
         for(sceneWithComponents in scenesWithComponents) {
             updateScene(sceneWithComponents.scene)
             updateMasterChannels(sceneWithComponents, updateAll)

@@ -32,5 +32,5 @@ class ChannelsAdapter(
         holder.customView.channelIndex = position
     }
 
-    override fun getItemCount() = mainViewModel.audioChannels.value!!.size
+    override fun getItemCount() = mainViewModel.audioChannels.value?.size ?: 0
 }

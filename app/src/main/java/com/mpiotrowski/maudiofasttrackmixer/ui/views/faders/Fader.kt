@@ -12,7 +12,7 @@ import android.view.View
 
 abstract class Fader @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
-) : View(context, attrs, defStyleAttr){
+) : View(context, attrs, defStyleAttr) {
 
     private val progressParameter = "PROGRESS_PARAMETER"
     private val superStateParameter = "SUPER_STATE_PARAMETER"
