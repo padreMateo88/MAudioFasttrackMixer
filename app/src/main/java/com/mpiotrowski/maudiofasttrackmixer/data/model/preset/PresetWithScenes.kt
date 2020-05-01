@@ -6,7 +6,7 @@ import androidx.room.Relation
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.Scene
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.SceneWithComponents
 
-const val SCENES_IN_PRESET_NUMBER = 8
+const val SCENES_IN_PRESET_COUNT = 9
 data class PresetWithScenes (
     @Embedded val preset: Preset,
     @Relation(

@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -37,14 +36,13 @@ class MixerFragment : Fragment() {
         prepareChannelMixer()
         prepareSceneSelector()
         toggleButtonFine.setOnClickListener {
-
         }
 
         buttonDecreaseOutput.setOnClickListener (View.OnClickListener {
             if(outputIndex == 1)
                 return@OnClickListener
             outputIndex --
-            textViewOutput.text = "${outputIndex*2-1}-${outputIndex*2}"
+            textViewOutputIndex.text = "Output:\n${outputIndex*2-1}-${outputIndex*2}"
             viewModel.onOutputSelected(outputIndex)
         })
 
@@ -52,7 +50,7 @@ class MixerFragment : Fragment() {
             if(outputIndex == MIXER_STEREO_OUTPUTS_COUNT)
                 return@OnClickListener
             outputIndex ++
-            textViewOutput.text = "${outputIndex*2-1}-${outputIndex*2}"
+            textViewOutputIndex.text = "Output:\n${outputIndex*2-1}-${outputIndex*2}"
             viewModel.onOutputSelected(outputIndex)
         })
     }
@@ -79,7 +77,7 @@ class MixerFragment : Fragment() {
     private fun prepareSceneSelector() {
         val recyclerViewSceneButtons = viewDataBinding.recyclerViewSceneButtons
         recyclerViewSceneButtons.isNestedScrollingEnabled = false
-        recyclerViewSceneButtons.layoutManager = GridLayoutManager(context, 2)
+        recyclerViewSceneButtons.layoutManager = GridLayoutManager(context, 3)
         recyclerViewSceneButtons.adapter = SceneButtonsAdapter(viewModel)
     }
 

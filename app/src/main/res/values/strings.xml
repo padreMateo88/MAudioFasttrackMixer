@@ -20,4 +20,5 @@
     <string name="button_solo">S</string>
     <string name="label_output">Output</string>
     <string name="button_fine">Fine</string>
+    <string name="default_output">Output:\n1-2</string>
 </resources>

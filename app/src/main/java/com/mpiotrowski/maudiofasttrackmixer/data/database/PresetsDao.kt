@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.Preset
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.PresetWithScenes
-import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.SCENES_IN_PRESET_NUMBER
+import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.SCENES_IN_PRESET_COUNT
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.MIXER_INPUTS_COUNT
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.MIXER_STEREO_OUTPUTS_COUNT
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.Scene
@@ -74,7 +74,7 @@ interface PresetsDao {
 
     suspend fun addPreset(preset: Preset): PresetWithScenes {
         val scenes = mutableListOf<SceneWithComponents>()
-        for(index in 1 .. SCENES_IN_PRESET_NUMBER) {
+        for(index in 1 .. SCENES_IN_PRESET_COUNT) {
             scenes.add(createSceneWithComponents("Scene $index", preset.presetId, index))
         }
         val presetWithScenes = PresetWithScenes(preset,scenes)

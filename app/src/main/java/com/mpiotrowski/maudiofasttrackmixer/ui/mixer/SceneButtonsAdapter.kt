@@ -2,12 +2,13 @@ package com.mpiotrowski.maudiofasttrackmixer.ui.mixer
 
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.LinearLayout
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.mpiotrowski.maudiofasttrackmixer.R
+import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.SCENES_IN_PRESET_COUNT
 import com.mpiotrowski.maudiofasttrackmixer.ui.MainViewModel
 import kotlinx.android.synthetic.main.scene_buttom_item.view.*
 
@@ -27,16 +28,20 @@ class SceneButtonsAdapter(var viewModel: MainViewModel): RecyclerView.Adapter<Sc
     override fun onBindViewHolder(holder: SceneButtonViewHolder, position: Int) {
         holder.layout.button.text = (position + 1).toString()
         if(viewModel.currentScene?.scene?.sceneOrder == position + 1) {
-            holder.layout.button.isEnabled = false
-            lastChecked = holder.layout.button
+            val button = holder.layout.button
+            button.background = ContextCompat.getDrawable(button.context,R.drawable.gray_button_selected)
+            button.setTextColor(ContextCompat.getColor(button.context, android.R.color.black))
+            lastChecked = button
         }
 
         holder.layout.button.setOnClickListener {
             val button: Button = it as Button
             if(lastChecked != button) {
                 viewModel.onSceneSelected(position + 1)
-                lastChecked?.isEnabled = true
-                button.isEnabled = false
+                lastChecked?.background = ContextCompat.getDrawable(button.context,R.drawable.button_unselected)
+                lastChecked?.setTextColor(ContextCompat.getColor(button.context, R.color.lighterGray))
+                button.background = ContextCompat.getDrawable(button.context,R.drawable.gray_button_selected)
+                button.setTextColor(ContextCompat.getColor(button.context, android.R.color.black))
                 lastChecked = button
             }
         }
@@ -46,5 +51,5 @@ class SceneButtonsAdapter(var viewModel: MainViewModel): RecyclerView.Adapter<Sc
             true
         }
     }
-    override fun getItemCount() = 8
+    override fun getItemCount() = SCENES_IN_PRESET_COUNT
 }

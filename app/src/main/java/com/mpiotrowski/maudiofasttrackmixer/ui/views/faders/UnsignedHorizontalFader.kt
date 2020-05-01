@@ -30,8 +30,9 @@ class UnsignedHorizontalFader @JvmOverloads constructor(
         paint.strokeWidth = 3f
         paint.style = Paint.Style.FILL
 
-        for (i in 4 .. 26 step 4)
-            canvas?.drawLine(width*(32-i)/32f-4,height*(i/4f)/20f,width*(32-i)/32f-4,height*(20-i/4f)/20f,paint)
+        val halfKnobWidth = (scaledBitmap?.width ?: 0)/2f
+        for (i in 4 .. 30 step 4)
+            canvas?.drawLine(width*(36-i)/32f - halfKnobWidth,height*(i/4f)/20f,width*(36-i)/32f - halfKnobWidth,height*(20-i/4f)/20f,paint)
 
         paint.strokeWidth = 3f
         paint.color = Color.BLACK

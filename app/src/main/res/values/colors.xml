@@ -13,5 +13,7 @@
     <color name="redStart">#FF0000</color>
     <color name="redCenter">#FF1500</color>
     <color name="redEnd">#FF6600</color>
-
+    <color name="grayStart">#6A696B</color>
+    <color name="grayCenter">#7C7B7E</color>
+    <color name="grayEnd">#99999A</color>
 </resources>

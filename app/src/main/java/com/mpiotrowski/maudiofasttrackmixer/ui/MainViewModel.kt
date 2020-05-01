@@ -34,7 +34,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     var currentPreset: PresetWithScenes? = null
     var currentScene: SceneWithComponents? = null
 
+    var currentSceneName: MutableLiveData<String> = MutableLiveData()
+
     init {
+       currentSceneName.value = "Default scene"
        viewModelScope.launch(Dispatchers.IO) {
            currentPreset = repository.getCurrentPreset()
            currentScene = currentPreset?.scenesByOrder?.get(currentOutput)
@@ -56,8 +59,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         currentScene?.channelsByOutputsMap?.get(currentOutput).let{audioChannels.value = it}
         currentScene?.mastersByOutputsMap?.get(currentOutput).let{masterChannel.value = it}
         currentScene?.fxSends?.let{fxSends.value = it}
-
         fxSettings.value =  currentScene?.scene?.fxSettings
+        currentSceneName.value = currentScene?.scene?.sceneName
     }
 
     fun onOutputSelected(outputIndex: Int) {
