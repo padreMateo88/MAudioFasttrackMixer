@@ -5,4 +5,13 @@
     <color name="colorAccent">#FFD53B</color>
     <color name="yellow">#FFD53B</color>
     <color name="lightGray">#C9C9C9</color>
+    <color name="darkGray">#6A696B</color>
+    <color name="lighterGray">#C1C1C1</color>
+    <color name="yellowStart">#FF9800</color>
+    <color name="yellowCenter">#FFC107</color>
+    <color name="yellowEnd">#FFEB3B</color>
+    <color name="redStart">#FF0000</color>
+    <color name="redCenter">#FF1500</color>
+    <color name="redEnd">#FF6600</color>
+
 </resources>

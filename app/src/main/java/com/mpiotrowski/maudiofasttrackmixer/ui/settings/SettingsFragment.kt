@@ -1,6 +1,5 @@
 package com.mpiotrowski.maudiofasttrackmixer.ui.settings
 
-import android.R
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -28,17 +27,16 @@ class SettingsFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        val effectTypeAdapter = ArrayAdapter(requireContext(), R.layout.simple_spinner_item, FxSettings.FxType.values())
-        effectTypeAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item)
+        val effectTypeAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, FxSettings.FxType.values())
+        effectTypeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.spinnerEffectType.adapter = effectTypeAdapter
 
-        val sampleRateAdapter = ArrayAdapter(requireContext(), R.layout.simple_spinner_item, SampleRate.values())
-        effectTypeAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item)
+        val sampleRateAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, SampleRate.values())
+        effectTypeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.spinnerSampleRate.adapter = sampleRateAdapter
     }
 
     companion object {
-        fun newInstance() =
-            SettingsFragment()
+        fun newInstance() = SettingsFragment()
     }
 }

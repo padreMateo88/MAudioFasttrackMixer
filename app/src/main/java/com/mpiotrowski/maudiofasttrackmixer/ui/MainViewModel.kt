@@ -25,26 +25,19 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     var audioChannels: MutableLiveData<List<AudioChannel>> = MutableLiveData()
     var masterChannel: MutableLiveData<MasterChannel> = MutableLiveData()
     var fxSends: MutableLiveData<List<FxSend>> = MutableLiveData()
-
-
     //fx parameters
-    var fxType: MutableLiveData<FxSettings.FxType> = MutableLiveData()
-    var duration: MutableLiveData<Int> = MutableLiveData()
-    var feedback: MutableLiveData<Int> = MutableLiveData()
-    var volume: MutableLiveData<Int> = MutableLiveData()
-
-
+    var fxSettings: MutableLiveData<FxSettings> = MutableLiveData()
      //device parameters
     var sampleRate: MutableLiveData<SampleRate> = MutableLiveData()
 
     val allPresets = repository.presetsWithScenes
-    private lateinit var currentPreset: PresetWithScenes
+    var currentPreset: PresetWithScenes? = null
     var currentScene: SceneWithComponents? = null
 
     init {
        viewModelScope.launch(Dispatchers.IO) {
            currentPreset = repository.getCurrentPreset()
-           currentScene = currentPreset.scenesByOrder[currentOutput]
+           currentScene = currentPreset?.scenesByOrder?.get(currentOutput)
 
            viewModelScope.launch(Dispatchers.Main) {
                onPresetLoaded()
@@ -53,24 +46,18 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 //region scene/preset/output changed
     private fun onPresetLoaded() {
-        sampleRate.value = currentPreset.preset.sampleRate
+        sampleRate.value = currentPreset?.preset?.sampleRate
         onSceneSelected(1)
     }
 
     fun onSceneSelected(sceneIndex :Int) {
         Log.d("MPdebug", "scene $sceneIndex")
-        currentScene = currentPreset.scenesByOrder[sceneIndex]
-
+        currentScene = currentPreset?.scenesByOrder?.get(sceneIndex)
         currentScene?.channelsByOutputsMap?.get(currentOutput).let{audioChannels.value = it}
         currentScene?.mastersByOutputsMap?.get(currentOutput).let{masterChannel.value = it}
         currentScene?.fxSends?.let{fxSends.value = it}
 
-        currentScene?.scene?.fxSettings?.let {
-            fxType.value = it.fxType
-            duration.value = it.duration
-            feedback.value = it.feedback
-            volume.value = it.volume
-        }
+        fxSettings.value =  currentScene?.scene?.fxSettings
     }
 
     fun onOutputSelected(outputIndex: Int) {

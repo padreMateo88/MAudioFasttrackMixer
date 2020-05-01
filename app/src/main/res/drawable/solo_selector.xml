@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:drawable="@color/yellow"
+    <item android:drawable="@drawable/solo_button_selected"
         android:state_checked="true" />
-    <item android:drawable="@android:color/darker_gray"
+    <item android:drawable="@drawable/button_unselected"
         android:state_checked="false" />
 </selector>

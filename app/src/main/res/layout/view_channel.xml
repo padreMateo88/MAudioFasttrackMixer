@@ -4,11 +4,22 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
-    <com.mpiotrowski.maudiofasttrackmixer.ui.views.faders.SignedHorizontalFader
-        android:id="@+id/panoramaFader"
+    <TextView
+        android:id="@+id/textViewChannelId"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"/>
+        android:layout_weight="1"
+        android:paddingRight="@dimen/dimen_2dp"
+        android:paddingLeft="@dimen/dimen_2dp">
+        <com.mpiotrowski.maudiofasttrackmixer.ui.views.faders.SignedHorizontalFader
+            android:id="@+id/panoramaFader"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+    </FrameLayout>
     <FrameLayout
         android:layout_weight="5"
         android:layout_height="0dp"
@@ -29,7 +40,6 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"/>
-
     <ToggleButton
         android:id="@+id/toggleButtonSolo"
         android:layout_margin="@dimen/dimen_2dp"
@@ -42,6 +52,9 @@
         android:textOff="@string/button_solo" />
     <FrameLayout
         android:layout_width="match_parent"
+        android:paddingRight="@dimen/dimen_2dp"
+        android:paddingLeft="@dimen/dimen_2dp"
+        android:paddingBottom="@dimen/dimen_2dp"
         android:layout_height="0dp"
         android:layout_weight="1">
         <com.mpiotrowski.maudiofasttrackmixer.ui.views.faders.UnsignedHorizontalFader
@@ -49,11 +62,4 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
     </FrameLayout>
-    <TextView
-        android:id="@+id/textViewChannelId"
-        android:layout_marginTop="@dimen/dimen_8dp"
-        android:layout_marginBottom="@dimen/dimen_8dp"
-        android:gravity="center"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
 </LinearLayout>

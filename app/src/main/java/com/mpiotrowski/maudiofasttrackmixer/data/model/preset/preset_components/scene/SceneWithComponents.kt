@@ -7,6 +7,7 @@ import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.scene_components.FxSend
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.scene_components.MasterChannel
 
+val MIXER_OUTPUTS_WITH_FX = arrayListOf(1,2)
 const val MIXER_STEREO_OUTPUTS_COUNT = 4
 const val MIXER_INPUTS_COUNT = 8
 data class SceneWithComponents (

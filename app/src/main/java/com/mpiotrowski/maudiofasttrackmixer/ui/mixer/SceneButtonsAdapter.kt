@@ -1,6 +1,8 @@
 package com.mpiotrowski.maudiofasttrackmixer.ui.mixer
 
+import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.LinearLayout
@@ -37,6 +39,11 @@ class SceneButtonsAdapter(var viewModel: MainViewModel): RecyclerView.Adapter<Sc
                 button.isEnabled = false
                 lastChecked = button
             }
+        }
+
+        holder.layout.button.setOnLongClickListener {
+            Log.d("MPdebug", "${viewModel.currentPreset?.scenesByOrder?.get(position+1)?.scene?.sceneName}")
+            true
         }
     }
     override fun getItemCount() = 8

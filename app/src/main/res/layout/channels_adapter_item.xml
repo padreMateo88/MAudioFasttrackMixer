@@ -14,7 +14,8 @@
     </data>
     <FrameLayout
         android:layout_width="wrap_content"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        tools:ignore="RtlHardcoded">
         <com.mpiotrowski.maudiofasttrackmixer.ui.views.audio_channel.AudioChannelView
             android:layout_gravity="center_horizontal"
             android:layout_width="match_parent"
@@ -28,6 +29,7 @@
             app:onSoloChanged="@{() -> viewmodel.onSoloChanged(viewmodel.audioChannels.get(channelIndex))}"
             app:onVolumeChanged="@{() -> viewmodel.onChannelChanged(viewmodel.audioChannels.get(channelIndex))}"
             app:onFxVolumeChanged="@{() -> viewmodel.onFxSendChanged(viewmodel.fxSends.get(channelIndex))}"
+            app:outputIndex="@{viewmodel.audioChannels.get(channelIndex).outputIndex}"
             />
     </FrameLayout>
 </layout>

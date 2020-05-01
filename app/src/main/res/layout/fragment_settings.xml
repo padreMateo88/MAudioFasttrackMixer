@@ -111,8 +111,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/dimen_16dp"
-                app:selectedItem="@={viewmodel.fxType}"
-                app:onSelectedItemChanged="@{() -> viewmodel.onFxTypeChanged(viewmodel.fxType)}"
+                app:selectedItem="@={viewmodel.fxSettings.fxType}"
+                app:onSelectedItemChanged="@{() -> viewmodel.onFxTypeChanged(viewmodel.fxSettings.fxType)}"
                 app:layout_constraintBottom_toBottomOf="@+id/textViewEffectType"
                 app:layout_constraintLeft_toRightOf="@id/barrierPresetsButtons"
                 app:layout_constraintTop_toTopOf="@+id/textViewEffectType" />
@@ -123,8 +123,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/dimen_16dp"
                 android:paddingRight="@dimen/dimen_16dp"
-                android:progress="@={viewmodel.duration}"
-                android:onProgressChanged="@{() -> viewmodel.onFxDurationChanged(viewmodel.duration)}"
+                android:progress="@={viewmodel.fxSettings.duration}"
+                android:onProgressChanged="@{() -> viewmodel.onFxDurationChanged(viewmodel.fxSettings.duration)}"
                 app:layout_constraintBottom_toBottomOf="@+id/textViewDuration"
                 app:layout_constraintLeft_toRightOf="@id/barrierPresetsButtons"
                 app:layout_constraintTop_toTopOf="@+id/textViewDuration" />
@@ -134,8 +134,8 @@
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/dimen_16dp"
-                android:progress="@={viewmodel.feedback}"
-                android:onProgressChanged="@{() -> viewmodel.onFxFeedbackChanged(viewmodel.feedback)}"
+                android:progress="@={viewmodel.fxSettings.feedback}"
+                android:onProgressChanged="@{() -> viewmodel.onFxFeedbackChanged(viewmodel.fxSettings.feedback)}"
                 app:layout_constraintBottom_toBottomOf="@+id/textViewFeedback"
                 app:layout_constraintLeft_toRightOf="@id/barrierPresetsButtons"
                 app:layout_constraintTop_toTopOf="@+id/textViewFeedback"/>
@@ -145,8 +145,8 @@
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/dimen_16dp"
-                android:progress="@={viewmodel.volume}"
-                android:onProgressChanged="@{() -> viewmodel.onFxVolumeChanged(viewmodel.volume)}"
+                android:progress="@={viewmodel.fxSettings.volume}"
+                android:onProgressChanged="@{() -> viewmodel.onFxVolumeChanged(viewmodel.fxSettings.volume)}"
                 app:layout_constraintBottom_toBottomOf="@+id/textViewVolume"
                 app:layout_constraintLeft_toRightOf="@id/barrierPresetsButtons"
                 app:layout_constraintTop_toTopOf="@+id/textViewVolume" />
