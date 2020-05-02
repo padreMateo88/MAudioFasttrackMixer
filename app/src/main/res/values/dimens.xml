@@ -7,4 +7,6 @@
     <dimen name="dimen_2dp">2dp</dimen>
     <dimen name="dimen_1dp">1dp</dimen>
     <dimen name="dimen_40dp">40dp</dimen>
+    <dimen name="dimen_100dp">100dp</dimen>
+    <dimen name="dimen_30dp">30dp</dimen>
 </resources>
