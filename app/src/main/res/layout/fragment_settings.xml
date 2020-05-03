@@ -123,6 +123,8 @@
                 android:layout_height="@dimen/dimen_30dp"
                 android:layout_marginLeft="@dimen/dimen_16dp"
                 android:paddingRight="@dimen/dimen_16dp"
+                app:faderValue="@={viewmodel.fxSettings.duration}"
+                app:onFaderValueChanged="@{() -> viewmodel.onFxDurationChanged(viewmodel.fxSettings.duration)}"
                 app:layout_constraintBottom_toBottomOf="@+id/textViewDuration"
                 app:layout_constraintLeft_toRightOf="@id/barrierPresetsButtons"
                 app:layout_constraintTop_toTopOf="@+id/textViewDuration" />
@@ -132,6 +134,8 @@
                 android:layout_width="@dimen/dimen_100dp"
                 android:layout_height="@dimen/dimen_30dp"
                 android:layout_marginLeft="@dimen/dimen_16dp"
+                app:faderValue="@={viewmodel.fxSettings.feedback}"
+                app:onFaderValueChanged="@{() -> viewmodel.onFxFeedbackChanged(viewmodel.fxSettings.feedback)}"
                 app:layout_constraintBottom_toBottomOf="@+id/textViewFeedback"
                 app:layout_constraintLeft_toRightOf="@id/barrierPresetsButtons"
                 app:layout_constraintTop_toTopOf="@+id/textViewFeedback"/>
@@ -141,6 +145,8 @@
                 android:layout_width="@dimen/dimen_100dp"
                 android:layout_height="@dimen/dimen_30dp"
                 android:layout_marginLeft="@dimen/dimen_16dp"
+                app:faderValue="@={viewmodel.fxSettings.volume}"
+                app:onFaderValueChanged="@{() -> viewmodel.onFxVolumeChanged(viewmodel.fxSettings.volume)}"
                 app:layout_constraintBottom_toBottomOf="@+id/textViewVolume"
                 app:layout_constraintLeft_toRightOf="@id/barrierPresetsButtons"
                 app:layout_constraintTop_toTopOf="@+id/textViewVolume" />

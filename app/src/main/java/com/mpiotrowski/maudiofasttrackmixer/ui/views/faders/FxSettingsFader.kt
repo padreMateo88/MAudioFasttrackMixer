@@ -10,6 +10,13 @@ class FxSettingsFader @JvmOverloads constructor(
         context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     ) : UnsignedHorizontalFader(context, attrs, defStyleAttr) {
 
+
+    var faderValueChangedListener: FaderValueChangedListener ?= null
+
+    interface FaderValueChangedListener {
+        fun onValueChanged()
+    }
+
     override fun drawBackground(canvas: Canvas?) {
         paint.color = Color.GRAY
         paint.strokeWidth = 3f
