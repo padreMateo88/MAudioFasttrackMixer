@@ -107,6 +107,7 @@
 
                 <ToggleButton
                     android:id="@+id/toggleButtonFine"
+                    android:checked="@={viewmodel.fine}"
                     android:layout_marginTop="@dimen/dimen_4dp"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/dimen_40dp"

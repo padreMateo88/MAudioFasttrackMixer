@@ -35,17 +35,18 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     var currentScene: SceneWithComponents? = null
 
     var currentSceneName: MutableLiveData<String> = MutableLiveData()
+    var fine: MutableLiveData<Boolean> = MutableLiveData()
 
     init {
-       currentSceneName.value = "Default scene"
-       viewModelScope.launch(Dispatchers.IO) {
-           currentPreset = repository.getCurrentPreset()
-           currentScene = currentPreset?.scenesByOrder?.get(currentOutput)
+           currentSceneName.value = "Default scene"
+           viewModelScope.launch(Dispatchers.IO) {
+               currentPreset = repository.getCurrentPreset()
+               currentScene = currentPreset?.scenesByOrder?.get(currentOutput)
 
-           viewModelScope.launch(Dispatchers.Main) {
-               onPresetLoaded()
+               viewModelScope.launch(Dispatchers.Main) {
+                   onPresetLoaded()
+               }
            }
-       }
     }
 //region scene/preset/output changed
     private fun onPresetLoaded() {

@@ -27,8 +27,8 @@ class VerticalFader @JvmOverloads constructor(
             return field
         }
 
-    override var speedMultiplier: Int = 1
-
+    override val speedMultiplier: Int
+        get() = if(fine) 8 else 1
     override fun calculateInitialPosition(event: MotionEvent): Float {
         return (height - event.y) - progress*speedMultiplier
     }

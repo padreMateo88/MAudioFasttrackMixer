@@ -163,11 +163,22 @@ object AudioChannelBindingAdapters {
 //region fx volume visibility
     @BindingAdapter("outputIndex")
     @JvmStatic fun setOutputIndex(audioChannelView: AudioChannelView, outputIndex: Int) {
-    Log.d("MPdebug", "setOutputIndex $outputIndex")
     val visibility = if(outputIndex in MIXER_OUTPUTS_WITH_FX) View.VISIBLE else View.INVISIBLE
         if (audioChannelView.fxVolumeFader.visibility != visibility) {
             audioChannelView.fxVolumeFader.visibility = visibility
         }
     }
 //endregion fx volume visibility
+
+//region fine
+    @BindingAdapter("fine")
+    @JvmStatic fun setFxVolume(audioChannelView: AudioChannelView, fine: Boolean) {
+        if (audioChannelView.fine != fine) {
+            audioChannelView.fine = fine
+            audioChannelView.fxVolumeFader.fine = fine
+            audioChannelView.volumeFader.fine = fine
+            audioChannelView.panoramaFader.fine = fine
+        }
+    }
+//region fine
 }

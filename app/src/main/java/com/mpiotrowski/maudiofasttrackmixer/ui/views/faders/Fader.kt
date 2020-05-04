@@ -14,13 +14,14 @@ abstract class Fader @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
 
+    var fine = false
     private val progressParameter = "PROGRESS_PARAMETER"
     private val superStateParameter = "SUPER_STATE_PARAMETER"
     protected val paint = Paint()
 
     lateinit var valueChangedListener: ValueChangedListener
     abstract var faderValue: Int
-    abstract var speedMultiplier: Int
+    abstract val speedMultiplier: Int
     protected var scaledBitmap: Bitmap? = null
     protected var initialPosition: Float = 0f
     protected var currentPosition: Float = 0f
