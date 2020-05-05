@@ -11,9 +11,10 @@ import androidx.lifecycle.ViewModelProviders
 import com.mpiotrowski.maudiofasttrackmixer.databinding.FragmentSettingsBinding
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.SampleRate
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.scene_components.FxSettings
+import com.mpiotrowski.maudiofasttrackmixer.ui.MainFragment
 import com.mpiotrowski.maudiofasttrackmixer.ui.MainViewModel
 
-class SettingsFragment : Fragment() {
+class SettingsFragment : MainFragment() {
 
     lateinit var viewModel: MainViewModel
     private lateinit var binding: FragmentSettingsBinding

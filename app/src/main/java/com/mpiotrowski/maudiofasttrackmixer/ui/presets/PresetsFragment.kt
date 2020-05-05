@@ -8,9 +8,10 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import com.mpiotrowski.maudiofasttrackmixer.databinding.FragmentPresetsBinding
+import com.mpiotrowski.maudiofasttrackmixer.ui.MainFragment
 import com.mpiotrowski.maudiofasttrackmixer.ui.MainViewModel
 
-class PresetsFragment : Fragment() {
+class PresetsFragment : MainFragment() {
 
     private lateinit var viewDataBinding: FragmentPresetsBinding
 

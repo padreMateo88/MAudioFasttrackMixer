@@ -1,7 +1,6 @@
 package com.mpiotrowski.maudiofasttrackmixer.ui.mixer
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,11 +11,12 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mpiotrowski.maudiofasttrackmixer.databinding.FragmentMixerBinding
+import com.mpiotrowski.maudiofasttrackmixer.ui.MainFragment
 import com.mpiotrowski.maudiofasttrackmixer.ui.MainViewModel
 import kotlinx.android.synthetic.main.fragment_mixer.*
 
 
-class MixerFragment : Fragment() {
+class MixerFragment : MainFragment() {
 
     lateinit var viewModel: MainViewModel
     private lateinit var viewDataBinding: FragmentMixerBinding
@@ -75,4 +75,5 @@ class MixerFragment : Fragment() {
     companion object {
         fun newInstance() = MixerFragment()
     }
+
 }
