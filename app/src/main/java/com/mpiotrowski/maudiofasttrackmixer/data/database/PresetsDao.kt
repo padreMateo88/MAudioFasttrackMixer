@@ -73,38 +73,9 @@ interface PresetsDao {
     }
 
     suspend fun addPreset(preset: Preset): PresetWithScenes {
-        val scenes = mutableListOf<SceneWithComponents>()
-        for(index in 1 .. SCENES_IN_PRESET_COUNT) {
-            scenes.add(createSceneWithComponents("Scene $index", preset.presetId, index))
-        }
-        val presetWithScenes = PresetWithScenes(preset,scenes)
+        val presetWithScenes = PresetWithScenes.newInstance(preset)
         insertPresetWithScenes(presetWithScenes)
         return presetWithScenes
-    }
-
-    private fun createSceneWithComponents(sceneName: String, presetId: String, sceneOrder: Int): SceneWithComponents {
-        val scene = Scene(sceneName = sceneName, presetId = presetId, sceneOrder = sceneOrder)
-        val masterChannels = mutableListOf<MasterChannel>()
-        val audioChannels = mutableListOf<AudioChannel>()
-        val fxSends = mutableListOf<FxSend>()
-
-        for (outputIndex in 1 .. MIXER_STEREO_OUTPUTS_COUNT) {
-            masterChannels.add(MasterChannel(outputIndex = outputIndex))
-            for (inputIndex in 1 .. MIXER_INPUTS_COUNT) {
-                audioChannels.add(AudioChannel(outputIndex = outputIndex, inputIndex = inputIndex))
-            }
-        }
-
-        for (inputIndex in 1 .. MIXER_INPUTS_COUNT) {
-            fxSends.add(FxSend(inputIndex = inputIndex))
-        }
-
-        return SceneWithComponents(
-            scene = scene,
-            masterChannels = masterChannels,
-            audioChannels = audioChannels,
-            fxSends = fxSends
-        )
     }
 //endregion insert
 

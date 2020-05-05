@@ -7,6 +7,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.mpiotrowski.maudiofasttrackmixer.data.Repository
 import com.mpiotrowski.maudiofasttrackmixer.data.database.PresetsDatabase
+import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.CURRENT_PRESET_ID
+import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.CURRENT_PRESET_NAME
+import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.Preset
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.PresetWithScenes
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.SampleRate
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.SceneWithComponents
@@ -31,8 +34,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     var sampleRate: MutableLiveData<SampleRate> = MutableLiveData()
 
     val allPresets = repository.presetsWithScenes
-    var currentPreset: PresetWithScenes? = null
-    var currentScene: SceneWithComponents? = null
+    var currentPreset: PresetWithScenes = PresetWithScenes.newInstance(Preset(CURRENT_PRESET_ID, CURRENT_PRESET_NAME))
+    var currentScene: SceneWithComponents = currentPreset.scenes.sortedBy{ it.scene.sceneOrder }[0]
 
     var currentSceneName: MutableLiveData<String> = MutableLiveData()
     var fine: MutableLiveData<Boolean> = MutableLiveData()
@@ -41,34 +44,46 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
            currentSceneName.value = "Default scene"
            viewModelScope.launch(Dispatchers.IO) {
                currentPreset = repository.getCurrentPreset()
-               currentScene = currentPreset?.scenesByOrder?.get(currentOutput)
-
+               currentPreset.scenesByOrder[currentOutput]?.let { currentScene = it}
                viewModelScope.launch(Dispatchers.Main) {
                    onPresetLoaded()
                }
            }
     }
+
+// region save/load preset
+    fun saveSceneAs(copyFrom: SceneWithComponents, copyTo: SceneWithComponents, newName: String) {
+        if(copyFrom.scene.sceneId != copyTo.scene.sceneId)
+            copyTo.copyValues(copyFrom,newName)
+        else
+            copyTo.scene.sceneName = newName
+        if(copyTo.scene.sceneId == currentScene.scene.sceneId)
+            currentSceneName.value = newName
+        //TODO save to database
+    }
+// endregion save/load preset
+
 //region scene/preset/output changed
     private fun onPresetLoaded() {
-        sampleRate.value = currentPreset?.preset?.sampleRate
+        sampleRate.value = currentPreset.preset.sampleRate
         onSceneSelected(1)
     }
 
     fun onSceneSelected(sceneIndex :Int) {
         Log.d("MPdebug", "scene $sceneIndex")
-        currentScene = currentPreset?.scenesByOrder?.get(sceneIndex)
-        currentScene?.channelsByOutputsMap?.get(currentOutput).let{audioChannels.value = it}
-        currentScene?.mastersByOutputsMap?.get(currentOutput).let{masterChannel.value = it}
-        currentScene?.fxSends?.let{fxSends.value = it}
-        fxSettings.value =  currentScene?.scene?.fxSettings
-        currentSceneName.value = currentScene?.scene?.sceneName
+        currentPreset.scenesByOrder[sceneIndex]?.let { currentScene = it }
+        currentScene.channelsByOutputsMap[currentOutput].let{audioChannels.value = it}
+        currentScene.mastersByOutputsMap[currentOutput].let{masterChannel.value = it}
+        fxSends.value = currentScene.fxSends
+        fxSettings.value = currentScene.scene.fxSettings
+        currentSceneName.value = currentScene.scene.sceneName
     }
 
     fun onOutputSelected(outputIndex: Int) {
         Log.d("MPdebug", "output $outputIndex")
         currentOutput = outputIndex
-        currentScene?.channelsByOutputsMap?.get(currentOutput).let{audioChannels.value = it}
-        currentScene?.mastersByOutputsMap?.get(currentOutput).let{masterChannel.value = it}
+        currentScene.channelsByOutputsMap[currentOutput].let{audioChannels.value = it}
+        currentScene.mastersByOutputsMap[currentOutput].let{masterChannel.value = it}
     }
 //endregion controls
 

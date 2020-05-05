@@ -41,8 +41,7 @@ data class SceneWithComponents (
     @Ignore
     val channelsByOutputsMap = audioChannels.groupBy{it.outputIndex}.toMap()
 
-    fun copyValues(copyFrom: SceneWithComponents, sceneOrder: Int, sceneName: String) {
-        this.scene.sceneOrder = sceneOrder
+    fun copyValues(copyFrom: SceneWithComponents, sceneName: String) {
         this.scene.sceneName = sceneName
         this.scene.fxSettings = copyFrom.scene.fxSettings.copy()
         copyFxSendsValues(copyFrom)
@@ -61,11 +60,13 @@ data class SceneWithComponents (
 
     private fun copyMasterChannelsValues(copyFrom: SceneWithComponents) {
         for (outputIndex in this.mastersByOutputsMap.keys) {
-            this.masterChannels[outputIndex].fxReturn = copyFrom.masterChannels[outputIndex].fxReturn
-            this.masterChannels[outputIndex].mute = copyFrom.masterChannels[outputIndex].mute
-            this.masterChannels[outputIndex].panorama = copyFrom.masterChannels[outputIndex].panorama
-            this.masterChannels[outputIndex].volume = copyFrom.masterChannels[outputIndex].volume
-            this.masterChannels[outputIndex].isDirty = copyFrom.masterChannels[outputIndex].isDirty
+            copyFrom.mastersByOutputsMap[outputIndex]?.let {
+            this.mastersByOutputsMap[outputIndex]?.fxReturn = it.fxReturn
+            this.mastersByOutputsMap[outputIndex]?.mute = it.mute
+            this.mastersByOutputsMap[outputIndex]?.panorama = it.panorama
+            this.mastersByOutputsMap[outputIndex]?.volume = it.volume
+            this.mastersByOutputsMap[outputIndex]?.isDirty = it.isDirty
+            }
         }
     }
 
@@ -84,6 +85,33 @@ data class SceneWithComponents (
                     }
                 }
             }
+        }
+    }
+
+    companion object {
+        fun newInstance(sceneName: String, presetId: String, sceneOrder: Int): SceneWithComponents {
+            val scene = Scene(sceneName = sceneName, presetId = presetId, sceneOrder = sceneOrder)
+            val masterChannels = mutableListOf<MasterChannel>()
+            val audioChannels = mutableListOf<AudioChannel>()
+            val fxSends = mutableListOf<FxSend>()
+
+            for (outputIndex in 1 .. MIXER_STEREO_OUTPUTS_COUNT) {
+                masterChannels.add(MasterChannel(outputIndex = outputIndex))
+                for (inputIndex in 1 .. MIXER_INPUTS_COUNT) {
+                    audioChannels.add(AudioChannel(outputIndex = outputIndex, inputIndex = inputIndex))
+                }
+            }
+
+            for (inputIndex in 1 .. MIXER_INPUTS_COUNT) {
+                fxSends.add(FxSend(inputIndex = inputIndex))
+            }
+
+            return SceneWithComponents(
+                scene = scene,
+                masterChannels = masterChannels,
+                audioChannels = audioChannels,
+                fxSends = fxSends
+            )
         }
     }
 }

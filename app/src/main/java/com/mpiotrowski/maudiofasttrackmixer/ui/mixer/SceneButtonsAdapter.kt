@@ -1,6 +1,5 @@
 package com.mpiotrowski.maudiofasttrackmixer.ui.mixer
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Button
@@ -27,7 +26,7 @@ class SceneButtonsAdapter(var viewModel: MainViewModel): RecyclerView.Adapter<Sc
 
     override fun onBindViewHolder(holder: SceneButtonViewHolder, position: Int) {
         holder.layout.button.text = (position + 1).toString()
-        if(viewModel.currentScene?.scene?.sceneOrder == position + 1) {
+        if(viewModel.currentScene.scene.sceneOrder == position + 1) {
             val button = holder.layout.button
             button.background = ContextCompat.getDrawable(button.context,R.drawable.gray_button_selected)
             button.setTextColor(ContextCompat.getColor(button.context, android.R.color.black))
@@ -47,7 +46,10 @@ class SceneButtonsAdapter(var viewModel: MainViewModel): RecyclerView.Adapter<Sc
         }
 
         holder.layout.button.setOnLongClickListener {
-            Log.d("MPdebug", "${viewModel.currentPreset?.scenesByOrder?.get(position+1)?.scene?.sceneName}")
+            viewModel.currentPreset.scenesByOrder[position + 1]?.let { it1 ->
+                SaveSceneDialog(holder.layout.button.context,
+                    it1,viewModel.currentPreset,viewModel).show()
+            }
             true
         }
     }

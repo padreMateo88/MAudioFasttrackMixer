@@ -35,8 +35,6 @@ class MixerFragment : Fragment() {
         viewDataBinding.viewmodel = viewModel
         prepareChannelMixer()
         prepareSceneSelector()
-        toggleButtonFine.setOnClickListener {
-        }
 
         buttonDecreaseOutput.setOnClickListener (View.OnClickListener {
             if(outputIndex == 1)
