@@ -9,6 +9,9 @@
             type="com.mpiotrowski.maudiofasttrackmixer.ui.MainViewModel"/>
     </data>
 
+    <com.mpiotrowski.maudiofasttrackmixer.ui.views.MyFrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
     <LinearLayout
         android:id="@+id/layoutMain"
         tools:ignore="RtlHardcoded"
@@ -192,4 +195,5 @@
                 app:constraint_referenced_ids="buttonSaveSceneAs,buttonNewScene,buttonDeleteScene" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </LinearLayout>
+    </com.mpiotrowski.maudiofasttrackmixer.ui.views.MyFrameLayout>
 </layout>

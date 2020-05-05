@@ -11,12 +11,11 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mpiotrowski.maudiofasttrackmixer.databinding.FragmentMixerBinding
-import com.mpiotrowski.maudiofasttrackmixer.ui.MainFragment
 import com.mpiotrowski.maudiofasttrackmixer.ui.MainViewModel
 import kotlinx.android.synthetic.main.fragment_mixer.*
 
 
-class MixerFragment : MainFragment() {
+class MixerFragment : Fragment() {
 
     lateinit var viewModel: MainViewModel
     private lateinit var viewDataBinding: FragmentMixerBinding
