@@ -61,6 +61,16 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             currentSceneName.value = newName
         //TODO save to database
     }
+
+    fun swapPresetOrder(presetWithScenes: PresetWithScenes, fromOrder: Int, toOrder: Int) {
+        val sceneFrom = presetWithScenes.scenesByOrder[fromOrder]
+        val sceneTo = presetWithScenes.scenesByOrder[toOrder]
+
+        sceneFrom?.scene?.sceneOrder = toOrder
+        sceneTo?.scene?.sceneOrder = fromOrder
+        sceneFrom?.let{presetWithScenes.scenesByOrder.put(toOrder, it)}
+        sceneTo?.let{presetWithScenes.scenesByOrder.put(fromOrder, it)}
+    }
 // endregion save/load preset
 
 //region scene/preset/output changed

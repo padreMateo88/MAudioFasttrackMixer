@@ -17,7 +17,7 @@ data class PresetWithScenes (
     val scenes: List<SceneWithComponents>
 ) {
     @Ignore
-    val scenesByOrder = scenes.map {it.scene.sceneOrder to it}.toMap()
+    val scenesByOrder = scenes.map {it.scene.sceneOrder to it}.toMap().toMutableMap()
 
     fun copyValues(copyFrom: PresetWithScenes, presetName: String) {
         this.preset.presetName = presetName
