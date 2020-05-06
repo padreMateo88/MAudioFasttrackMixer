@@ -52,6 +52,17 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
 // region save/load preset
+
+    fun loadPreset(presetWithScenes: PresetWithScenes) {
+        Log.d("MPdebug", "loadPreset ${presetWithScenes.preset.presetName}")
+        //TODO
+    }
+
+    fun removePreset(presetWithScenes: PresetWithScenes) {
+        Log.d("MPdebug", "removePreset ${presetWithScenes.preset.presetName}")
+        //TODO
+    }
+
     fun saveSceneAs(copyFrom: SceneWithComponents, copyTo: SceneWithComponents, newName: String) {
         if(copyFrom.scene.sceneId != copyTo.scene.sceneId)
             copyTo.copyValues(copyFrom,newName)

@@ -1,7 +1,6 @@
 package com.mpiotrowski.maudiofasttrackmixer.ui.presets
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -70,22 +69,8 @@ class PresetsFragment : Fragment() {
             LinearLayoutManager.VERTICAL,
             false
         )
-
         viewDataBinding.recyclerViewPresets.adapter = PresetsAdapter(requireActivity() as AppCompatActivity, viewModel)
-
-        val callback = object :
-            ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT.or(ItemTouchHelper.LEFT)) {
-            override fun onMove(
-                recyclerView: RecyclerView,
-                viewHolder: RecyclerView.ViewHolder,
-                target: RecyclerView.ViewHolder
-            ): Boolean = false
-
-            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                Log.d("MPdebug", "swipe $direction")
-            }
-        }
-
+        val callback = PresetSwipeCallback(0, ItemTouchHelper.RIGHT.or(ItemTouchHelper.LEFT), viewDataBinding.recyclerViewPresets.adapter as PresetsAdapter)
         val itemTouchHelper = ItemTouchHelper(callback)
         itemTouchHelper.attachToRecyclerView(viewDataBinding.recyclerViewPresets)
     }

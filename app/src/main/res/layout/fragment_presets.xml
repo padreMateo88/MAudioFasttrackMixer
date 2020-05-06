@@ -20,7 +20,7 @@
         <LinearLayout
             android:layout_width="0dp"
             android:layout_weight="1"
-            android:gravity="center_horizontal"
+            android:gravity="center"
             android:layout_height="match_parent"
             android:background="@drawable/panel_background"
             android:padding="@dimen/dimen_8dp"
@@ -50,14 +50,6 @@
                 android:layout_marginTop="@dimen/dimen_16dp"
                 android:background="@drawable/button_unselected"
                 android:text="@string/button_save"/>
-
-            <Button
-                android:id="@+id/buttonSavePresetAs"
-                android:layout_marginTop="@dimen/dimen_8dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/button_unselected"
-                android:text="@string/button_save_as"/>
         </LinearLayout>
 
         <LinearLayout

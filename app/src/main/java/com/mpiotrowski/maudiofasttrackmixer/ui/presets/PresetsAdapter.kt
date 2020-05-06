@@ -12,7 +12,7 @@ class PresetsAdapter(
     private val appCompatActivity: AppCompatActivity,
     private val mainViewModel: MainViewModel
 ) :
-    RecyclerView.Adapter<PresetsAdapter.PresetsViewHolder>() {
+    RecyclerView.Adapter<PresetsAdapter.PresetsViewHolder>(), PresetSwipeCallback.SwipeListener {
     private lateinit var viewGroup : ViewGroup
 
     override fun onCreateViewHolder(parent: ViewGroup,
@@ -22,11 +22,6 @@ class PresetsAdapter(
         viewGroup = parent
         binding.lifecycleOwner = appCompatActivity
         return PresetsViewHolder(binding)
-    }
-
-    fun onItemMoved(fromPosition: Int, toPosition: Int) {
-        mainViewModel.swapPresetOrder(mainViewModel.currentPreset, fromPosition + 1, toPosition + 1)
-        super.notifyItemMoved(fromPosition, toPosition)
     }
 
     class PresetsViewHolder(var customView : ItemPresetBinding) : RecyclerView.ViewHolder(customView.root)
@@ -39,5 +34,13 @@ class PresetsAdapter(
 
     override fun getItemCount(): Int {
         return mainViewModel.currentPreset.scenes.size
+    }
+
+    override fun swipeRight(adapterPosition: Int) {
+        mainViewModel.removePreset(mainViewModel.currentPreset)
+    }
+
+    override fun swipeLeft(adapterPosition: Int) {
+        mainViewModel.loadPreset(mainViewModel.currentPreset)
     }
 }

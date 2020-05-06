@@ -16,4 +16,6 @@
     <color name="grayStart">#6A696B</color>
     <color name="grayCenter">#7C7B7E</color>
     <color name="grayEnd">#99999A</color>
+    <color name="darkRed">#9E1313</color>
+    <color name="darkGreen">#0F710F</color>
 </resources>
