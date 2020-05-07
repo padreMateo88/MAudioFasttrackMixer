@@ -1,5 +1,6 @@
 package com.mpiotrowski.maudiofasttrackmixer.ui.views
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.util.AttributeSet
 import android.util.Log
@@ -11,6 +12,7 @@ import com.mpiotrowski.maudiofasttrackmixer.util.SlideDirection
 import com.mpiotrowski.maudiofasttrackmixer.util.SlideType
 import com.mpiotrowski.maudiofasttrackmixer.util.slideAnimation
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlin.math.sqrt
 
 class MyLinearLayout: LinearLayout {
     private var ctx: Context? = null
@@ -27,28 +29,29 @@ class MyLinearLayout: LinearLayout {
     private val mTouchSlop: Int = android.view.ViewConfiguration.get(context).scaledTouchSlop
     private var mIsScrolling: Boolean = false
     private var bottomBarVisibility: Boolean = true
+    private var previousActionDown: Boolean = false
 
     private fun getDistance(ev: MotionEvent): Int {
-        var x = ev.getX()
-        var y = ev.getY()
+        var x = ev.x
+        var y = ev.y
         var distanceSum: Double = 0.0
-        val historySize: Int = ev.getHistorySize()
+        val historySize: Int = ev.historySize
         for (h in 0 until historySize step 1) {
             // historical point
-            var hx: Float = ev.getHistoricalX(0, h)
-            var hy: Float = ev.getHistoricalY(0, h)
+            val hx: Float = ev.getHistoricalX(0, h)
+            val hy: Float = ev.getHistoricalY(0, h)
             // distance between startX,startY and historical point
-            var dx: Float = (hx - x)
-            var dy: Float = (hy - y)
-            distanceSum += Math.sqrt((dx * dx + dy * dy).toDouble())
+            val dx: Float = (hx - x)
+            val dy: Float = (hy - y)
+            distanceSum += sqrt((dx * dx + dy * dy).toDouble())
             // make historical point the start point for next loop iteration
             x = hx;
             y = hy;
         }
         // add distance from last historical point to event's point
-        var dx: Float = (ev.getX(0) - x)
-        var dy: Float = (ev.getY(0) - y)
-        distanceSum += Math.sqrt((dx * dx + dy * dy).toDouble())
+        val dx: Float = (ev.getX(0) - x)
+        val dy: Float = (ev.getY(0) - y)
+        distanceSum += sqrt((dx * dx + dy * dy).toDouble())
         return distanceSum.toInt()
     }
 
@@ -58,19 +61,22 @@ class MyLinearLayout: LinearLayout {
         MotionEvent.ACTION_CANCEL, MotionEvent.ACTION_UP -> {
             // Release the scroll.
             mIsScrolling = false
+            previousActionDown = false
             false // Do not intercept touch event, let the child handle it
         }
         MotionEvent.ACTION_DOWN -> {
-            bottomBarVisibility = !bottomBarVisibility && mIsScrolling
+            if (!previousActionDown) {
+                bottomBarVisibility = !bottomBarVisibility
+                previousActionDown = true
+            }
             false
         }
         MotionEvent.ACTION_MOVE -> {
+            previousActionDown = false
             if (mIsScrolling) {
-                Log.d("----------------->", "SCROLL")
                 // We're currently scrolling, so yes, intercept the touch event!
                 true
             } else {
-                Log.d("----------------->", "NOT_SCROLL")
                 // If the user has dragged her finger horizontally more than the touch slop, start the scroll left as an exercise for the reader
                 val xDiff: Int = getDistance(ev)
                 // Touch slop should be calculated using ViewConfiguration constants.
@@ -88,11 +94,12 @@ class MyLinearLayout: LinearLayout {
         }
     }
 }
+    @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {
         // Here we actually handle the touch event (e.g. if the action is ACTION_MOVE, scroll this container).
         // This method will only be called if the touch event was intercepted in onInterceptTouchEvent
         super.onTouchEvent(event);
-        when (event.getAction()) {
+        when (event.action) {
             MotionEvent.ACTION_MOVE -> {
                 val activity: MainActivity = ctx as MainActivity
                 val bottomNavBar: BottomNavigationView = activity.bottom_nav
