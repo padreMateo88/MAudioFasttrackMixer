@@ -4,7 +4,7 @@ import android.content.Context
 import android.util.AttributeSet
 import android.util.Log
 import android.view.MotionEvent
-import android.widget.FrameLayout
+import android.widget.LinearLayout
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.mpiotrowski.maudiofasttrackmixer.ui.MainActivity
 import com.mpiotrowski.maudiofasttrackmixer.util.SlideDirection
@@ -12,7 +12,7 @@ import com.mpiotrowski.maudiofasttrackmixer.util.SlideType
 import com.mpiotrowski.maudiofasttrackmixer.util.slideAnimation
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MyFrameLayout: FrameLayout {
+class MyLinearLayout: LinearLayout {
     private var ctx: Context? = null
     constructor(context: Context) : super(context) {
         ctx = context
@@ -95,7 +95,7 @@ class MyFrameLayout: FrameLayout {
         when (event.getAction()) {
             MotionEvent.ACTION_MOVE -> {
                 val activity: MainActivity = ctx as MainActivity
-                val bottomNavBar: BottomNavigationView = activity?.bottom_nav
+                val bottomNavBar: BottomNavigationView = activity.bottom_nav
                 setBottomBarAnimation(bottomNavBar)
                 return true
             }

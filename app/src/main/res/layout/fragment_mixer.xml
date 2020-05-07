@@ -9,11 +9,7 @@
             name="viewmodel"
             type="com.mpiotrowski.maudiofasttrackmixer.ui.MainViewModel"/>
     </data>
-
-    <com.mpiotrowski.maudiofasttrackmixer.ui.views.MyFrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-    <LinearLayout
+    <com.mpiotrowski.maudiofasttrackmixer.ui.views.MyLinearLayout
         android:id="@+id/layoutMain"
         android:orientation="horizontal"
         android:gravity="center"
@@ -119,6 +115,5 @@
                 android:orientation="horizontal"
                 android:gravity="center"/>
         </LinearLayout>
-    </LinearLayout>
-    </com.mpiotrowski.maudiofasttrackmixer.ui.views.MyFrameLayout>
+    </com.mpiotrowski.maudiofasttrackmixer.ui.views.MyLinearLayout>
 </layout>
