@@ -5,8 +5,11 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.widget.LinearLayout
+import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.mpiotrowski.maudiofasttrackmixer.ui.MainActivity
+import com.mpiotrowski.maudiofasttrackmixer.ui.mixer.MixerFragment
+import com.mpiotrowski.maudiofasttrackmixer.util.OnSwipeTouchListener
 import com.mpiotrowski.maudiofasttrackmixer.util.SlideDirection
 import com.mpiotrowski.maudiofasttrackmixer.util.SlideType
 import com.mpiotrowski.maudiofasttrackmixer.util.slideAnimation
@@ -30,8 +33,20 @@ class MyLinearLayout: LinearLayout {
         ctx = context
     }
 
+    private fun setOnSwipeTouchLister() {
+        setOnTouchListener(object : OnSwipeTouchListener() {
+            override fun onSwipeBottom() {
+                gestureDirection = GestureDirection.DOWN
+                animateBottomBar()
+            }
+            override fun onSwipeTop() {
+                gestureDirection = GestureDirection.UP
+                animateBottomBar()
+            }
+        })
+    }
+
     private val mTouchSlop: Int = android.view.ViewConfiguration.get(context).scaledTouchSlop
-    private var previousActionDown: Boolean = false
     private var gestureDirection: GestureDirection = GestureDirection.UP
     private var previousGestureDirection: GestureDirection = GestureDirection.UP
 
@@ -61,36 +76,47 @@ class MyLinearLayout: LinearLayout {
     }
 
     override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
-    return when (ev.actionMasked) {
-        MotionEvent.ACTION_DOWN -> {
-            if (!previousActionDown) {
-                previousActionDown = true
+        val activity: MainActivity = ctx as MainActivity
+        val navHostFragment: Fragment = activity.nav_host_fragment
+        val fragment: Fragment = navHostFragment.childFragmentManager.fragments[0]
+        return when (ev.actionMasked) {
+            MotionEvent.ACTION_DOWN -> {
+                if (fragment !is MixerFragment) {
+                    setOnSwipeTouchLister()
+                }
+                false
             }
-            false
-        }
-        MotionEvent.ACTION_MOVE -> {
-            previousActionDown = false
-            val xDiff: Int = getDistance(ev)
-            xDiff > mTouchSlop
-        } else -> {
-            false
+            MotionEvent.ACTION_MOVE -> {
+                if (fragment is MixerFragment) {
+                    val xDiff: Int = getDistance(ev)
+                    xDiff > mTouchSlop
+                } else {
+                    false
+                }
+            } else -> {
+                false
+            }
         }
     }
-}
+
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {
         // Here we actually handle the touch event (e.g. if the action is ACTION_MOVE, scroll this container).
         // This method will only be called if the touch event was intercepted in onInterceptTouchEvent
-        super.onTouchEvent(event);
+        super.onTouchEvent(event)
         when (event.action) {
             MotionEvent.ACTION_MOVE -> {
-                val activity: MainActivity = ctx as MainActivity
-                val bottomNavBar: BottomNavigationView = activity.bottom_nav
-                setBottomBarAnimation(bottomNavBar)
+                animateBottomBar()
                 return true
             }
         }
         return false;
+    }
+
+    private fun animateBottomBar() {
+        val activity: MainActivity = ctx as MainActivity
+        val bottomNavBar: BottomNavigationView = activity.bottom_nav
+        setBottomBarAnimation(bottomNavBar)
     }
 
     private fun setBottomBarAnimation(bottomNavBar: BottomNavigationView) {

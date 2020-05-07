@@ -76,7 +76,7 @@ fun View.slideAnimation(direction: SlideDirection, type: SlideType, duration: Lo
 
         override fun onAnimationEnd(animation: Animation?) {
             if(type == SlideType.HIDE){
-                visibility = View.INVISIBLE
+                visibility = View.GONE
             }
         }
 
