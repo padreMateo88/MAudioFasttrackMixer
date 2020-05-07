@@ -12,8 +12,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.mpiotrowski.maudiofasttrackmixer.databinding.FragmentPresetsBinding
 import com.mpiotrowski.maudiofasttrackmixer.ui.MainViewModel
+import kotlinx.android.synthetic.main.fragment_presets.*
 
-class PresetsFragment : Fragment(), SavePresetDialog.SavePresetListener, OverwritePresetDialog.OverwritePresetListener {
+class PresetsFragment : Fragment(),
+    SavePresetDialog.SavePresetListener,
+    OverwritePresetDialog.OverwritePresetListener,
+    AddPresetDialog.AddPresetListener {
 
     lateinit var viewModel: MainViewModel
     private lateinit var viewDataBinding: FragmentPresetsBinding
@@ -31,6 +35,18 @@ class PresetsFragment : Fragment(), SavePresetDialog.SavePresetListener, Overwri
         prepareScenesRecyclerView()
         preparePresetsRecyclerView()
         setSavePresetButtonClickListener()
+        prepareAddPresetFab()
+    }
+
+    private fun prepareAddPresetFab() {
+        val presetNames = viewModel.allPresets.value?.map { it.preset.presetName } ?: emptyList()
+        fabCreatePreset.setOnClickListener {
+            AddPresetDialog(
+                requireContext(),
+                presetNames,
+                this@PresetsFragment
+            ).show()
+        }
     }
 
     private fun setSavePresetButtonClickListener() {
@@ -95,5 +111,9 @@ class PresetsFragment : Fragment(), SavePresetDialog.SavePresetListener, Overwri
 
     companion object {
         fun newInstance() = PresetsFragment()
+    }
+
+    override fun onCreatePreset(presetName: String) {
+        viewModel.createPreset(presetName)
     }
 }

@@ -75,6 +75,13 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         //TODO save to database
     }
 
+    fun createPreset(presetName: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            currentPreset.preset.presetName = presetName
+            repository.addPreset(Preset(presetName = presetName))
+        }
+    }
+
     fun saveCurrentPresetAs(presetName: String): Boolean {
         return if(allPresets.value?.map { it.preset.presetName}?.contains(presetName) == true)
             false

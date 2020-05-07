@@ -4,15 +4,13 @@ import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
 import android.view.Window
-import androidx.core.content.ContextCompat
 import com.mpiotrowski.maudiofasttrackmixer.R
 import kotlinx.android.synthetic.main.layout_overwrite_preset.*
-import kotlinx.android.synthetic.main.layout_save_preset.*
-import kotlinx.android.synthetic.main.layout_save_scene.buttonSaveScene
 
-class OverwritePresetDialog(private var dialogContext: Context,
-                            var presetName: String,
-                            var listener: OverwritePresetListener
+class OverwritePresetDialog(
+    dialogContext: Context,
+    private val presetName: String,
+    private val listener: OverwritePresetListener
 ) : Dialog(dialogContext) {
 
     interface OverwritePresetListener {

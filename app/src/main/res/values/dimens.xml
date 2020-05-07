@@ -10,4 +10,5 @@
     <dimen name="dimen_100dp">100dp</dimen>
     <dimen name="dimen_30dp">30dp</dimen>
     <dimen name="text_16sp">16sp</dimen>
+    <dimen name="text_14sp">14sp</dimen>
 </resources>

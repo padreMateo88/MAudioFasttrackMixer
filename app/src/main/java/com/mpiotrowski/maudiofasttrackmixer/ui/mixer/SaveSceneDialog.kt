@@ -40,7 +40,7 @@ class SaveSceneDialog(private var dialogContext: Context,
 
     private fun prepareSaveSceneButton() {
         val scenesByOrder = presetWithScenes.scenesByOrder
-        buttonSaveScene.setOnClickListener {
+        buttonAddPreset.setOnClickListener {
             scenesByOrder[spinnerScenes.selectedItemPosition + 1]?.let {
                 viewModel.saveSceneAs(copyFrom, it, editTextSceneName.text.toString())
             }

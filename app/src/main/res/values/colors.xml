@@ -12,6 +12,7 @@
     <color name="yellow">#FFD53B</color>
     <color name="yellowEnd">#FFEB3B</color>
     <color name="yellowCenter">#FFC107</color>
+    <color name="yellowLight">#C8BC0F</color>
     <color name="colorAccent">#B68A06</color>
     <color name="yellowStart">#FF9800</color>
     <color name="redEnd">#FF6600</color>

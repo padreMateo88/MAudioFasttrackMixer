@@ -17,13 +17,13 @@
         android:columnCount="2"
         android:rowCount="3"
         android:useDefaultMargins="true"
-        app:layout_constraintBottom_toTopOf="@+id/buttonSaveScene"
+        app:layout_constraintBottom_toTopOf="@+id/buttonAddPreset"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
-            android:id="@+id/textViewSaveSceneLabel"
+            android:id="@+id/textViewSavePresetLabel"
             android:layout_gravity="right"
             android:textSize="@dimen/text_16sp"
             android:textColor="?android:attr/editTextColor"
@@ -68,7 +68,8 @@
     </GridLayout>
 
     <Button
-        android:id="@+id/buttonSaveScene"
+        android:id="@+id/buttonAddPreset"
+        android:textAllCaps="false"
         android:background="@drawable/button_unselected"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

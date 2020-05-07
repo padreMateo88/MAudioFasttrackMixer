@@ -6,11 +6,11 @@ import android.os.Bundle
 import android.view.Window
 import com.mpiotrowski.maudiofasttrackmixer.R
 import kotlinx.android.synthetic.main.layout_save_preset.*
-import kotlinx.android.synthetic.main.layout_save_scene.buttonSaveScene
+import kotlinx.android.synthetic.main.layout_save_scene.buttonAddPreset
 
-class SavePresetDialog(private var dialogContext: Context,
-                       var presetName: String,
-                       var listener: SavePresetListener
+class SavePresetDialog(private val dialogContext: Context,
+                       private val presetName: String,
+                       private val listener: SavePresetListener
 ) : Dialog(dialogContext) {
 
     interface SavePresetListener {
@@ -24,7 +24,7 @@ class SavePresetDialog(private var dialogContext: Context,
         editTextPresetName.setText(presetName)
         editTextPresetName.setSelection(presetName.length)
 
-        buttonSaveScene.setOnClickListener {
+        buttonSavePreset.setOnClickListener {
             listener.onPresetSaved(editTextPresetName.text.toString())
             this@SavePresetDialog.dismiss()
         }
