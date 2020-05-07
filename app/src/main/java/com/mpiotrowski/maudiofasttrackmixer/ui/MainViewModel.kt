@@ -38,10 +38,12 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     var currentScene: SceneWithComponents = currentPreset.scenes.sortedBy{ it.scene.sceneOrder }[0]
 
     var currentSceneName: MutableLiveData<String> = MutableLiveData()
+    var currentPresetName: MutableLiveData<String> = MutableLiveData()
     var fine: MutableLiveData<Boolean> = MutableLiveData()
 
     init {
            currentSceneName.value = "Default scene"
+           currentPresetName.value = "Default preset"
            viewModelScope.launch(Dispatchers.IO) {
                currentPreset = repository.getCurrentPreset()
                currentPreset.scenesByOrder[currentOutput]?.let { currentScene = it}
@@ -73,7 +75,31 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         //TODO save to database
     }
 
-    fun swapPresetOrder(presetWithScenes: PresetWithScenes, fromOrder: Int, toOrder: Int) {
+    fun saveCurrentPresetAs(presetName: String): Boolean {
+        return if(allPresets.value?.map { it.preset.presetName}?.contains(presetName) == true)
+            false
+        else {
+            viewModelScope.launch(Dispatchers.IO) {
+                currentPreset.preset.presetName = presetName
+                repository.savePresetWithScenes(currentPreset, false)
+            }
+            true
+        }
+    }
+
+    fun saveCurrentPresetAsExistingPreset(presetName: String) {
+        val presetToRemove = allPresets.value?.map { it.preset.presetName to it }?.toMap()?.get(presetName)?.preset
+        presetToRemove?.let {
+            viewModelScope.launch(Dispatchers.IO) {
+                repository.deletePreset(it)
+                currentPreset.preset.presetName = presetName
+                repository.savePresetWithScenes(currentPreset,false)
+            }
+
+        }
+    }
+
+    fun swapScenesInPreset(presetWithScenes: PresetWithScenes, fromOrder: Int, toOrder: Int) {
         val sceneFrom = presetWithScenes.scenesByOrder[fromOrder]
         val sceneTo = presetWithScenes.scenesByOrder[toOrder]
 

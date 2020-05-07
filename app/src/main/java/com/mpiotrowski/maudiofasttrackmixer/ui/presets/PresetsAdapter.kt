@@ -3,7 +3,9 @@ package com.mpiotrowski.maudiofasttrackmixer.ui.presets
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.mpiotrowski.maudiofasttrackmixer.R
 import com.mpiotrowski.maudiofasttrackmixer.databinding.ItemPresetBinding
 import com.mpiotrowski.maudiofasttrackmixer.ui.MainViewModel
 
@@ -11,9 +13,14 @@ import com.mpiotrowski.maudiofasttrackmixer.ui.MainViewModel
 class PresetsAdapter(
     private val appCompatActivity: AppCompatActivity,
     private val mainViewModel: MainViewModel
-) :
-    RecyclerView.Adapter<PresetsAdapter.PresetsViewHolder>(), PresetSwipeCallback.SwipeListener {
+) : RecyclerView.Adapter<PresetsAdapter.PresetsViewHolder>(), PresetSwipeCallback.SwipeListener {
+
+    private var selectedItemId = -1
     private lateinit var viewGroup : ViewGroup
+
+    override fun getItemId(position: Int): Long {
+        return  mainViewModel.currentPreset.scenesByOrder[position]?.scene?.sceneId ?: -1
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup,
                                     viewType: Int): PresetsViewHolder {
@@ -29,6 +36,15 @@ class PresetsAdapter(
     override fun onBindViewHolder(holder: PresetsViewHolder, position: Int) {
         mainViewModel.currentPreset.scenesByOrder[position+1]?.let {
             holder.customView.scene = it.scene
+        }
+
+        val colorResource = if(selectedItemId == holder.adapterPosition) R.color.colorPrimaryDark else R.color.darkerGray
+        holder.customView.cardViewPresetItemBackground.setCardBackgroundColor(
+            ContextCompat.getColor(holder.customView.root.context,colorResource)
+        )
+        holder.customView.root.setOnClickListener {
+            selectedItemId = holder.adapterPosition
+            this@PresetsAdapter.notifyDataSetChanged()
         }
     }
 

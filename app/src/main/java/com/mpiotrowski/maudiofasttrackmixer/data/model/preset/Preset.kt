@@ -6,7 +6,7 @@ import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.
 import java.util.*
 
 const val CURRENT_PRESET_ID = "CURRENT_PRESET"
-const val CURRENT_PRESET_NAME = "Current preset"
+const val CURRENT_PRESET_NAME = "Default preset"
 
 @Entity
 data class Preset(

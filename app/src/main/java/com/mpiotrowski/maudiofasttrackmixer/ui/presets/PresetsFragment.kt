@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.mpiotrowski.maudiofasttrackmixer.databinding.FragmentPresetsBinding
 import com.mpiotrowski.maudiofasttrackmixer.ui.MainViewModel
 
-class PresetsFragment : Fragment() {
+class PresetsFragment : Fragment(), SavePresetDialog.SavePresetListener, OverwritePresetDialog.OverwritePresetListener {
 
     lateinit var viewModel: MainViewModel
     private lateinit var viewDataBinding: FragmentPresetsBinding
@@ -30,6 +30,22 @@ class PresetsFragment : Fragment() {
         viewModel = ViewModelProviders.of(requireActivity()).get(MainViewModel::class.java)
         prepareScenesRecyclerView()
         preparePresetsRecyclerView()
+        setSavePresetButtonClickListener()
+    }
+
+    private fun setSavePresetButtonClickListener() {
+        viewDataBinding.buttonSavePreset.setOnClickListener {
+            SavePresetDialog(requireContext(), viewModel.currentPreset.preset.presetName, this@PresetsFragment).show()
+        }
+    }
+
+    override fun onPresetSaved(presetName: String) {
+        if(!viewModel.saveCurrentPresetAs(presetName))
+            OverwritePresetDialog(requireContext(), presetName, this@PresetsFragment).show()
+    }
+
+    override fun onPresetOverwriteConfirmed(presetName: String) {
+        viewModel.saveCurrentPresetAsExistingPreset(presetName)
     }
 
     private fun prepareScenesRecyclerView() {
@@ -69,7 +85,9 @@ class PresetsFragment : Fragment() {
             LinearLayoutManager.VERTICAL,
             false
         )
-        viewDataBinding.recyclerViewPresets.adapter = PresetsAdapter(requireActivity() as AppCompatActivity, viewModel)
+        val presetsAdapter = PresetsAdapter(requireActivity() as AppCompatActivity, viewModel)
+        presetsAdapter.setHasStableIds(true)
+        viewDataBinding.recyclerViewPresets.adapter = presetsAdapter
         val callback = PresetSwipeCallback(0, ItemTouchHelper.RIGHT.or(ItemTouchHelper.LEFT), viewDataBinding.recyclerViewPresets.adapter as PresetsAdapter)
         val itemTouchHelper = ItemTouchHelper(callback)
         itemTouchHelper.attachToRecyclerView(viewDataBinding.recyclerViewPresets)

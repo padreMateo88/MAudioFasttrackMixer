@@ -11,8 +11,7 @@ import com.mpiotrowski.maudiofasttrackmixer.ui.MainViewModel
 class ScenesAdapter(
     private val appCompatActivity: AppCompatActivity,
     private val mainViewModel: MainViewModel
-) :
-    RecyclerView.Adapter<ScenesAdapter.ScenesViewHolder>() {
+) : RecyclerView.Adapter<ScenesAdapter.ScenesViewHolder>() {
     private lateinit var viewGroup : ViewGroup
 
     override fun onCreateViewHolder(parent: ViewGroup,
@@ -25,7 +24,7 @@ class ScenesAdapter(
     }
 
     fun onItemMoved(fromPosition: Int, toPosition: Int) {
-        mainViewModel.swapPresetOrder(mainViewModel.currentPreset, fromPosition + 1, toPosition + 1)
+        mainViewModel.swapScenesInPreset(mainViewModel.currentPreset, fromPosition + 1, toPosition + 1)
         super.notifyItemMoved(fromPosition, toPosition)
     }
 

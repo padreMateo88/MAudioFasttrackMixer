@@ -2,7 +2,6 @@ package com.mpiotrowski.maudiofasttrackmixer.ui.presets
 
 import android.annotation.SuppressLint
 import android.graphics.*
-import android.util.Log
 import android.view.MotionEvent
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -93,8 +92,8 @@ class PresetSwipeCallback(dragDirs: Int, swipeDirs: Int) : ItemTouchHelper.Simpl
         )
         val scaledBitmapDelete = Bitmap.createScaledBitmap(
             bitmap,
-            (viewHolder.itemView.height * 0.8 * bitmap.width / bitmap.height).toInt(),
-            (viewHolder.itemView.height * 0.8).toInt(),
+            (viewHolder.itemView.height * 0.7 * bitmap.width / bitmap.height).toInt(),
+            (viewHolder.itemView.height * 0.7).toInt(),
             false
         )
         val leftMargin = viewHolder.itemView.resources.getDimension(R.dimen.dimen_8dp)
@@ -105,7 +104,7 @@ class PresetSwipeCallback(dragDirs: Int, swipeDirs: Int) : ItemTouchHelper.Simpl
         canvas.drawBitmap(
             scaledBitmapDelete,
             left,
-            viewHolder.itemView.top + viewHolder.itemView.height * 0.1f,
+            viewHolder.itemView.top + viewHolder.itemView.height * 0.15f,
             Paint()
         )
     }

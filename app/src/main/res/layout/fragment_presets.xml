@@ -41,7 +41,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/dimen_16dp"
-                tools:text="preset name"/>
+                android:text="test test"/>
 
             <Button
                 android:id="@+id/buttonSavePreset"
@@ -52,42 +52,49 @@
                 android:text="@string/button_save"/>
         </LinearLayout>
 
-        <LinearLayout
+        <RelativeLayout
             android:background="@drawable/panel_background"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:gravity="center_horizontal"
             android:layout_marginTop="@dimen/dimen_4dp"
             android:layout_marginRight="@dimen/dimen_4dp"
-            android:layout_marginBottom="@dimen/dimen_4dp"
-            android:orientation="vertical">
-            <TextView
-                android:id="@+id/textViewPresetsLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/dimen_8dp"
-                android:layout_marginLeft="@dimen/dimen_8dp"
-                android:text="@string/label_presets"/>
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerViewPresets"
+            android:layout_marginBottom="@dimen/dimen_4dp">
+            <LinearLayout
+                android:gravity="center_horizontal"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:layout_marginLeft="@dimen/dimen_8dp"
-                android:layout_marginTop="@dimen/dimen_8dp"
-                android:layout_marginRight="@dimen/dimen_8dp"
-                android:layout_marginBottom="@dimen/dimen_8dp"/>
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+                <TextView
+                    android:id="@+id/textViewPresetsLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dimen_8dp"
+                    android:layout_marginLeft="@dimen/dimen_8dp"
+                    android:text="@string/label_presets"/>
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerViewPresets"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:layout_marginLeft="@dimen/dimen_8dp"
+                    android:layout_marginTop="@dimen/dimen_8dp"
+                    android:layout_marginRight="@dimen/dimen_8dp"
+                    android:layout_marginBottom="@dimen/dimen_8dp"/>
+            </LinearLayout>
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/floatingActionButton"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="right"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginBottom="@dimen/dimen_16dp"
+                android:layout_marginRight="@dimen/dimen_16dp"
                 android:clickable="true"
                 android:focusable="true"
-                tools:srcCompat="@tools:sample/backgrounds/scenic" />
-        </LinearLayout>
+                android:src="@drawable/plus"/>
+        </RelativeLayout>
 
         <LinearLayout
             android:layout_width="0dp"

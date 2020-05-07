@@ -15,7 +15,7 @@ import kotlinx.android.synthetic.main.layout_save_scene.*
 
 class SaveSceneDialog(private var dialogContext: Context,
                       var copyFrom: SceneWithComponents,
-                      var presetWIthScenes: PresetWithScenes,
+                      var presetWithScenes: PresetWithScenes,
                       var viewModel: MainViewModel
 ) : Dialog(dialogContext) {
 
@@ -27,16 +27,37 @@ class SaveSceneDialog(private var dialogContext: Context,
         super.onCreate(savedInstanceState)
         requestWindowFeature(Window.FEATURE_NO_TITLE)
         setContentView(R.layout.layout_save_scene)
+        prepareScenesSpinner()
+        setSceneName()
+        prepareSaveSceneButton()
+    }
 
-        val scenesByOrder = presetWIthScenes.scenesByOrder
-        val scenes = presetWIthScenes.scenes.sortedBy {it.scene.sceneOrder}
-        val sceneNames = scenes.map {it.scene.sceneName}
+    private fun setSceneName() {
+        textViewSaveSceneName.text = copyFrom.scene.sceneName
+        editTextSceneName.setText(copyFrom.scene.sceneName)
+        editTextSceneName.setSelection(copyFrom.scene.sceneName.length)
+    }
+
+    private fun prepareSaveSceneButton() {
+        val scenesByOrder = presetWithScenes.scenesByOrder
+        buttonSaveScene.setOnClickListener {
+            scenesByOrder[spinnerScenes.selectedItemPosition + 1]?.let {
+                viewModel.saveSceneAs(copyFrom, it, editTextSceneName.text.toString())
+            }
+            this@SaveSceneDialog.dismiss()
+        }
+    }
+
+    private fun prepareScenesSpinner() {
+        val scenesByOrder = presetWithScenes.scenesByOrder
+        val scenes = presetWithScenes.scenes.sortedBy { it.scene.sceneOrder }
+        val sceneNames = scenes.map { it.scene.sceneName }
 
         val scenesAdapter = ArrayAdapter(context, android.R.layout.simple_spinner_item, sceneNames)
         scenesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinnerScenes.adapter = scenesAdapter
         spinnerScenes.setSelection(copyFrom.scene.sceneOrder - 1)
-        spinnerScenes.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
+        spinnerScenes.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(parent: AdapterView<*>?) {
             }
 
@@ -46,19 +67,11 @@ class SaveSceneDialog(private var dialogContext: Context,
                 position: Int,
                 id: Long
             ) {
-                scenesByOrder[position+1]?.let {
+                scenesByOrder[position + 1]?.let {
                     editTextSceneName.setText(it.scene.sceneName)
+                    editTextSceneName.setSelection(copyFrom.scene.sceneName.length)
                 }
             }
-        }
-        textViewSaveSceneName.text = copyFrom.scene.sceneName
-        editTextSceneName.setText(copyFrom.scene.sceneName)
-
-        buttonSaveScene.setOnClickListener {
-            scenesByOrder[spinnerScenes.selectedItemPosition + 1]?.let{
-                viewModel.saveSceneAs(copyFrom, it, editTextSceneName.text.toString())
-            }
-            this@SaveSceneDialog.dismiss()
         }
     }
 }

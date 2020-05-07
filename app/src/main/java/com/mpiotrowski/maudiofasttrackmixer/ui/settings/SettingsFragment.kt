@@ -11,10 +11,11 @@ import com.mpiotrowski.maudiofasttrackmixer.databinding.FragmentSettingsBinding
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.SampleRate
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.scene_components.FxSettings
 import com.mpiotrowski.maudiofasttrackmixer.ui.MainViewModel
+import kotlinx.android.synthetic.main.layout_save_preset.*
 
 class SettingsFragment : Fragment() {
 
-    lateinit var viewModel: MainViewModel
+    private lateinit var viewModel: MainViewModel
     private lateinit var binding: FragmentSettingsBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,

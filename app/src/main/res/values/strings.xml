@@ -25,5 +25,10 @@
     <string name="label_scene_name">scene name</string>
     <string name="label_as">as</string>
     <string name="title_save_scene">Save</string>
+    <string name="title_preset_name">Preset name</string>
     <string name="scene_name_value">Scene 1</string>
+    <string name="preset_name_value">Preset 1</string>
+    <string name="button_cancel">Cancel</string>
+    <string name="button_overwrite">Overwrite</string>
+    <string name="label_overwrite_preset">\"%1$s\" already exists. Overwrite?</string>
 </resources>

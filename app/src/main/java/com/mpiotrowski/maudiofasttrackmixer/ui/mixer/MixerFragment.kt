@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -62,11 +61,13 @@ class MixerFragment : Fragment() {
                     LinearLayoutManager.HORIZONTAL,
                     false
                 )
-                viewDataBinding.recyclerViewChannels.adapter = ChannelsAdapter(requireActivity() as AppCompatActivity, viewModel)
+                val channelsAdapter = ChannelsAdapter(requireActivity() as androidx.appcompat.app.AppCompatActivity, viewModel)
+                channelsAdapter.setHasStableIds(true)
+                viewDataBinding.recyclerViewChannels.adapter = channelsAdapter
                 viewDataBinding.recyclerViewChannels.requestDisallowInterceptTouchEvent(true)
 
                 viewModel.audioChannels.observe(requireActivity(), Observer {
-                    (viewDataBinding.recyclerViewChannels.adapter as ChannelsAdapter).notifyDataSetChanged()
+                    //(viewDataBinding.recyclerViewChannels.adapter as ChannelsAdapter).notifyDataSetChanged()
                 })
             }
         })

@@ -69,5 +69,4 @@ class Repository(private val presetsDao: PresetsDao) {
         presetsDao.deleteScene(scene)
     }
 //endregion remove
-
 }
