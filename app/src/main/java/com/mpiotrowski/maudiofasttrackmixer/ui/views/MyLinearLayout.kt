@@ -3,7 +3,6 @@ package com.mpiotrowski.maudiofasttrackmixer.ui.views
 import android.annotation.SuppressLint
 import android.content.Context
 import android.util.AttributeSet
-import android.util.Log
 import android.view.MotionEvent
 import android.widget.LinearLayout
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -13,6 +12,11 @@ import com.mpiotrowski.maudiofasttrackmixer.util.SlideType
 import com.mpiotrowski.maudiofasttrackmixer.util.slideAnimation
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlin.math.sqrt
+
+private enum class GestureDirection {
+    UP,
+    DOWN
+}
 
 class MyLinearLayout: LinearLayout {
     private var ctx: Context? = null
@@ -27,9 +31,9 @@ class MyLinearLayout: LinearLayout {
     }
 
     private val mTouchSlop: Int = android.view.ViewConfiguration.get(context).scaledTouchSlop
-    private var mIsScrolling: Boolean = false
-    private var bottomBarVisibility: Boolean = true
     private var previousActionDown: Boolean = false
+    private var gestureDirection: GestureDirection = GestureDirection.UP
+    private var previousGestureDirection: GestureDirection = GestureDirection.UP
 
     private fun getDistance(ev: MotionEvent): Int {
         var x = ev.x
@@ -51,45 +55,24 @@ class MyLinearLayout: LinearLayout {
         // add distance from last historical point to event's point
         val dx: Float = (ev.getX(0) - x)
         val dy: Float = (ev.getY(0) - y)
+        gestureDirection = if(dy > 0) GestureDirection.DOWN else GestureDirection.UP
         distanceSum += sqrt((dx * dx + dy * dy).toDouble())
         return distanceSum.toInt()
     }
 
     override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
     return when (ev.actionMasked) {
-        // Always handle the case of the touch gesture being complete.
-        MotionEvent.ACTION_CANCEL, MotionEvent.ACTION_UP -> {
-            // Release the scroll.
-            mIsScrolling = false
-            previousActionDown = false
-            false // Do not intercept touch event, let the child handle it
-        }
         MotionEvent.ACTION_DOWN -> {
             if (!previousActionDown) {
-                bottomBarVisibility = !bottomBarVisibility
                 previousActionDown = true
             }
             false
         }
         MotionEvent.ACTION_MOVE -> {
             previousActionDown = false
-            if (mIsScrolling) {
-                // We're currently scrolling, so yes, intercept the touch event!
-                true
-            } else {
-                // If the user has dragged her finger horizontally more than the touch slop, start the scroll left as an exercise for the reader
-                val xDiff: Int = getDistance(ev)
-                // Touch slop should be calculated using ViewConfiguration constants.
-                if (xDiff > mTouchSlop) {
-                    // Start scrolling!
-                    mIsScrolling = true
-                    true
-                } else {
-                    false
-                }
-            }
-        }
-        else -> {
+            val xDiff: Int = getDistance(ev)
+            xDiff > mTouchSlop
+        } else -> {
             false
         }
     }
@@ -111,10 +94,13 @@ class MyLinearLayout: LinearLayout {
     }
 
     private fun setBottomBarAnimation(bottomNavBar: BottomNavigationView) {
-        if (bottomBarVisibility) {
-            bottomNavBar.slideAnimation(SlideDirection.UP, SlideType.SHOW)
-        } else {
-            bottomNavBar.slideAnimation(SlideDirection.DOWN, SlideType.HIDE)
+        if (previousGestureDirection != gestureDirection) {
+            if (gestureDirection == GestureDirection.UP) {
+                bottomNavBar.slideAnimation(SlideDirection.UP, SlideType.SHOW)
+            } else if (gestureDirection == GestureDirection.DOWN) {
+                bottomNavBar.slideAnimation(SlideDirection.DOWN, SlideType.HIDE)
+            }
+            previousGestureDirection = gestureDirection
         }
     }
 }
