@@ -16,10 +16,10 @@ open class OnSwipeTouchListener(context: Context) : View.OnTouchListener {
 
     private inner class GestureListener : GestureDetector.SimpleOnGestureListener() {
 
-        private val SWIPE_THRESHOLD_X = 100
-        private val SWIPE_VELOCITY_THRESHOLD_X = 100
-        private val SWIPE_THRESHOLD_Y = 20
-        private val SWIPE_VELOCITY_THRESHOLD_Y = 20
+        private val _swipeThresholdX = 100
+        private val _swipeVelocityThresholdX = 100
+        private val _swipeThresholdY = 20
+        private val _swipeVelocityThresholdY = 20
 
         override fun onDown(e: MotionEvent): Boolean {
             return true
@@ -38,7 +38,7 @@ open class OnSwipeTouchListener(context: Context) : View.OnTouchListener {
                 val diffX = e2.x - e1.x
 
                 if (abs(diffX) > abs(diffY)) {
-                    if (abs(diffX) > SWIPE_THRESHOLD_X && abs(velocityX) > SWIPE_VELOCITY_THRESHOLD_X) {
+                    if (abs(diffX) > _swipeThresholdX && abs(velocityX) > _swipeVelocityThresholdX) {
                         if (diffX > 0) {
                             onSwipeRight()
                         } else {
@@ -46,7 +46,7 @@ open class OnSwipeTouchListener(context: Context) : View.OnTouchListener {
                         }
                     }
                 } else {
-                    if (abs(diffY) > SWIPE_THRESHOLD_Y && abs(velocityY) > SWIPE_VELOCITY_THRESHOLD_Y) {
+                    if (abs(diffY) > _swipeThresholdY && abs(velocityY) > _swipeVelocityThresholdY) {
                         if (diffY > 0) {
                             onSwipeBottom()
                         } else {
