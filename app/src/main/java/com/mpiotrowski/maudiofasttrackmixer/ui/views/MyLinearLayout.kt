@@ -92,7 +92,9 @@ class MyLinearLayout(context: Context, attrs: AttributeSet?) : LinearLayout(cont
         val bottomNavigationView: BottomNavigationView = getBottomBar()
         return when (ev.actionMasked) {
             MotionEvent.ACTION_DOWN -> {
-                setOnSwipeTouchLister(bottomNavigationView)
+                if (fragment !is MixerFragment) {
+                    setOnSwipeTouchLister(bottomNavigationView)
+                }
                 false
             }
             MotionEvent.ACTION_MOVE -> {
