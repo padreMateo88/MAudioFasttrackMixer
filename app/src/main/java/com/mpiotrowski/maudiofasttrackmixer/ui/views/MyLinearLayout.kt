@@ -23,6 +23,17 @@ private enum class GestureDirection {
 }
 private const val TIME_TO_HIDE: Long = 2500
 
+object MyRunnable : Runnable {
+    private var bottomNavBar: BottomNavigationView? = null
+
+    fun setBnb(bnb: BottomNavigationView) {
+        bottomNavBar = bnb
+    }
+    override fun run() {
+        bottomNavBar?.slideAnimation(SlideDirection.DOWN, SlideType.HIDE)
+    }
+}
+
 class MyLinearLayout(context: Context, attrs: AttributeSet?) : LinearLayout(context, attrs) {
     private val mTouchSlop: Int = android.view.ViewConfiguration.get(context).scaledTouchSlop
     private var gestureDirection: GestureDirection = GestureDirection.UP
@@ -31,7 +42,7 @@ class MyLinearLayout(context: Context, attrs: AttributeSet?) : LinearLayout(cont
     init {
         val bottomNavigationView: BottomNavigationView = getBottomBar()
         val handler: Handler? = bottomNavigationView.handler
-        handler?.removeCallbacksAndMessages(null)
+        handler?.removeCallbacks(MyRunnable)
         selfHide(bottomNavigationView)
     }
 
@@ -132,10 +143,10 @@ class MyLinearLayout(context: Context, attrs: AttributeSet?) : LinearLayout(cont
     }
 
     private fun selfHide(bottomNavBar: BottomNavigationView) {
-        bottomNavBar.postDelayed({
-            gestureDirection = GestureDirection.DOWN
-            bottomNavBar.slideAnimation(SlideDirection.DOWN, SlideType.HIDE)
-            previousGestureDirection = gestureDirection
-        }, TIME_TO_HIDE)
+        val myRunnable = MyRunnable
+        MyRunnable.setBnb(bottomNavBar)
+        gestureDirection = GestureDirection.DOWN
+        bottomNavBar.postDelayed(myRunnable, TIME_TO_HIDE)
+        previousGestureDirection = gestureDirection
     }
 }
