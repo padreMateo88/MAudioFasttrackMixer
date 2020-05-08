@@ -10,7 +10,7 @@
             type="com.mpiotrowski.maudiofasttrackmixer.ui.MainViewModel" />
     </data>
 
-    <LinearLayout
+    <com.mpiotrowski.maudiofasttrackmixer.ui.views.MyLinearLayout
         android:id="@+id/layoutMain"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -170,5 +170,5 @@
                 app:constraint_referenced_ids="layoutSeparator"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-    </LinearLayout>
+    </com.mpiotrowski.maudiofasttrackmixer.ui.views.MyLinearLayout>
 </layout>

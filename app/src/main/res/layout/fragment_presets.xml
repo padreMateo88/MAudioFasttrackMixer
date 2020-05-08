@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
     <data>
         <variable
@@ -9,7 +8,7 @@
             type="com.mpiotrowski.maudiofasttrackmixer.ui.MainViewModel"/>
     </data>
 
-    <LinearLayout
+    <com.mpiotrowski.maudiofasttrackmixer.ui.views.MyLinearLayout
         android:id="@+id/layoutMain"
         tools:ignore="RtlHardcoded"
         android:orientation="horizontal"
@@ -127,5 +126,5 @@
                 android:layout_marginBottom="@dimen/dimen_4dp"
                 android:orientation="horizontal"/>
         </LinearLayout>
-    </LinearLayout>
+    </com.mpiotrowski.maudiofasttrackmixer.ui.views.MyLinearLayout>
 </layout>
