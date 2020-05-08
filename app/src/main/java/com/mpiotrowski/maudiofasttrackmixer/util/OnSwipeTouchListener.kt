@@ -1,13 +1,14 @@
 package com.mpiotrowski.maudiofasttrackmixer.util
 
+import android.content.Context
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
 import kotlin.math.abs
 
-open class OnSwipeTouchListener : View.OnTouchListener {
+open class OnSwipeTouchListener(context: Context) : View.OnTouchListener {
 
-    private val gestureDetector = GestureDetector(GestureListener())
+    private val gestureDetector = GestureDetector(context, GestureListener())
 
     fun onTouch(event: MotionEvent): Boolean {
         return gestureDetector.onTouchEvent(event)

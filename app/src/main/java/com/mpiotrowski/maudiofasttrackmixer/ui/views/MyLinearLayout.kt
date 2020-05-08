@@ -34,16 +34,19 @@ class MyLinearLayout: LinearLayout {
     }
 
     private fun setOnSwipeTouchLister() {
-        setOnTouchListener(object : OnSwipeTouchListener() {
-            override fun onSwipeBottom() {
-                gestureDirection = GestureDirection.DOWN
-                animateBottomBar()
-            }
-            override fun onSwipeTop() {
-                gestureDirection = GestureDirection.UP
-                animateBottomBar()
-            }
-        })
+        if (ctx != null) {
+            setOnTouchListener(object : OnSwipeTouchListener(ctx!!) {
+                override fun onSwipeBottom() {
+                    gestureDirection = GestureDirection.DOWN
+                    animateBottomBar()
+                }
+
+                override fun onSwipeTop() {
+                    gestureDirection = GestureDirection.UP
+                    animateBottomBar()
+                }
+            })
+        }
     }
 
     private val mTouchSlop: Int = android.view.ViewConfiguration.get(context).scaledTouchSlop
