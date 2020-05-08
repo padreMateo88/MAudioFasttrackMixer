@@ -4,6 +4,9 @@ import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.Preset
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.PresetWithScenes
+import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.SCENES_IN_PRESET_COUNT
+import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.MIXER_INPUTS_COUNT
+import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.MIXER_STEREO_OUTPUTS_COUNT
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.Scene
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.SceneWithComponents
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.scene_components.AudioChannel
@@ -15,8 +18,13 @@ interface PresetsDao {
 
 //region select
     @Transaction
-    @Query("SELECT * FROM Preset")
-    fun getPresetsWithScenes(): LiveData<List<PresetWithScenes>>
+    @Query("SELECT * FROM Preset WHERE presetId != :defaultPresetId")
+    fun getPresetsWithScenes(defaultPresetId: String): LiveData<List<PresetWithScenes>>
+
+    @Transaction
+    @Query("SELECT * FROM Preset WHERE presetId = :defaultPresetId")
+    fun getDefaultPreset(defaultPresetId: String): List<PresetWithScenes>
+
 //endregion select
 
 //region insert
@@ -63,6 +71,12 @@ interface PresetsDao {
             fxSend.sceneId = sceneId
         insertFxSend(*fxSends)
     }
+
+    suspend fun addPreset(preset: Preset): PresetWithScenes {
+        val presetWithScenes = PresetWithScenes.newInstance(preset)
+        insertPresetWithScenes(presetWithScenes)
+        return presetWithScenes
+    }
 //endregion insert
 
 //region update
@@ -92,7 +106,7 @@ interface PresetsDao {
         updateSceneWithComponents(*sceneWithComponents, updateAll = updateAll)
     }
 
-    suspend fun updateSceneWithComponents(vararg scenesWithComponents: SceneWithComponents, updateAll: Boolean) {
+    fun updateSceneWithComponents(vararg scenesWithComponents: SceneWithComponents, updateAll: Boolean) {
         for(sceneWithComponents in scenesWithComponents) {
             updateScene(sceneWithComponents.scene)
             updateMasterChannels(sceneWithComponents, updateAll)

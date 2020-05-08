@@ -7,9 +7,12 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.mpiotrowski.maudiofasttrackmixer.data.Repository
 import com.mpiotrowski.maudiofasttrackmixer.data.database.PresetsDatabase
+import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.CURRENT_PRESET_ID
+import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.CURRENT_PRESET_NAME
+import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.Preset
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.PresetWithScenes
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.SampleRate
-import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.Scene
+import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.SceneWithComponents
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.scene_components.*
 import com.mpiotrowski.maudiofasttrackmixer.util.mutation
 import kotlinx.coroutines.Dispatchers
@@ -17,83 +20,130 @@ import kotlinx.coroutines.launch
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
 
-    var audioChannels: MutableLiveData<MutableList<AudioChannel>> = MutableLiveData()
-    var masterChannel: MutableLiveData<MasterChannel> = MutableLiveData()
-
-    var fxSends: MutableLiveData<MutableList<FxSend>> = MutableLiveData()
-    var fxSettings: FxSettings = FxSettings()
-    var sampleRate: MutableLiveData<SampleRate> = MutableLiveData()
-
-    var currentScene: MutableLiveData<Scene> = MutableLiveData()
-
     private val database = PresetsDatabase.getDatabase(getApplication(),viewModelScope)
     private val repository = Repository(database.presetsDao())
+    private var currentOutput: Int = 1
 
-    lateinit var presetWithScenes: PresetWithScenes
+    var deviceOnline: MutableLiveData<Boolean> = MutableLiveData()
+    // mixer parameters
+    var audioChannels: MutableLiveData<List<AudioChannel>> = MutableLiveData()
+    var masterChannel: MutableLiveData<MasterChannel> = MutableLiveData()
+    var fxSends: MutableLiveData<List<FxSend>> = MutableLiveData()
+    //fx parameters
+    var fxSettings: MutableLiveData<FxSettings> = MutableLiveData()
+     //device parameters
+    var sampleRate: MutableLiveData<SampleRate> = MutableLiveData()
+
+    val allPresets = repository.presetsWithScenes
+    var currentPreset: PresetWithScenes = PresetWithScenes.newInstance(Preset(CURRENT_PRESET_ID, CURRENT_PRESET_NAME))
+    var currentScene: SceneWithComponents = currentPreset.scenes.sortedBy{ it.scene.sceneOrder }[0]
+
+    var currentSceneName: MutableLiveData<String> = MutableLiveData()
+    var currentPresetName: MutableLiveData<String> = MutableLiveData()
+    var fine: MutableLiveData<Boolean> = MutableLiveData()
 
     init {
-        audioChannels.value = mutableListOf(
-            AudioChannel(inputIndex = 1, outputIndex = 1, sceneId = 0),
-            AudioChannel(inputIndex = 2, outputIndex = 1, sceneId = 0),
-            AudioChannel(inputIndex = 3, outputIndex = 1, sceneId = 0),
-            AudioChannel(inputIndex = 4, outputIndex = 1, sceneId = 0),
-            AudioChannel(inputIndex = 5, outputIndex = 1, sceneId = 0),
-            AudioChannel(inputIndex = 6, outputIndex = 1, sceneId = 0),
-            AudioChannel(inputIndex = 7, outputIndex = 1, sceneId = 0),
-            AudioChannel(inputIndex = 8, outputIndex = 1, sceneId = 0)
-        )
+           deviceOnline.value = false
+           currentSceneName.value = "Default scene"
+           currentPresetName.value = "Default preset"
+           viewModelScope.launch(Dispatchers.IO) {
+               currentPreset = repository.getCurrentPreset()
+               currentPreset.scenesByOrder[currentOutput]?.let { currentScene = it}
+               viewModelScope.launch(Dispatchers.Main) {
+                   onPresetLoaded()
+               }
+           }
+    }
 
-        val sceneId = currentScene.value?.sceneId ?: -1
-        fxSends.value = mutableListOf(
-            FxSend(inputIndex = 1, sceneId = sceneId),
-            FxSend(inputIndex = 2, sceneId = sceneId),
-            FxSend(inputIndex = 3, sceneId = sceneId),
-            FxSend(inputIndex = 4, sceneId = sceneId),
-            FxSend(inputIndex = 5, sceneId = sceneId),
-            FxSend(inputIndex = 6, sceneId = sceneId),
-            FxSend(inputIndex = 7, sceneId = sceneId),
-            FxSend(inputIndex = 8, sceneId = sceneId)
-        )
+// region save/load preset
 
-        masterChannel.value =
-            MasterChannel(sceneId = 0, outputIndex = 1)
+    fun loadPreset(presetWithScenes: PresetWithScenes) {
+        Log.d("MPdebug", "loadPreset ${presetWithScenes.preset.presetName}")
+        //TODO
+    }
 
-        sampleRate.value = SampleRate.SR_96
+    fun removePreset(presetWithScenes: PresetWithScenes) {
+        Log.d("MPdebug", "removePreset ${presetWithScenes.preset.presetName}")
+        //TODO
+    }
 
-        currentScene.value = Scene(sceneName = "default scene's name",fxSettings = fxSettings, presetId = "",sceneOrder = 0)
+    fun saveSceneAs(copyFrom: SceneWithComponents, copyTo: SceneWithComponents, newName: String) {
+        if(copyFrom.scene.sceneId != copyTo.scene.sceneId)
+            copyTo.copyValues(copyFrom,newName)
+        else
+            copyTo.scene.sceneName = newName
+        if(copyTo.scene.sceneId == currentScene.scene.sceneId)
+            currentSceneName.value = newName
+        //TODO save to database
+    }
 
-        repository.presetsWitScenes.observeForever {
-            if(it.isNotEmpty()) {
-                Log.d("MPdebug", "presets fetched ${it[0].preset.presetName}")
-                presetWithScenes = it[0]
+    fun createPreset(presetName: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            currentPreset.preset.presetName = presetName
+            repository.addPreset(Preset(presetName = presetName))
+        }
+    }
+
+    fun saveCurrentPresetAs(presetName: String): Boolean {
+        return if(allPresets.value?.map { it.preset.presetName}?.contains(presetName) == true)
+            false
+        else {
+            viewModelScope.launch(Dispatchers.IO) {
+                currentPreset.preset.presetName = presetName
+                repository.savePresetWithScenes(currentPreset, false)
             }
+            true
         }
     }
 
-    fun insertDefaultPreset() {
-        viewModelScope.launch(Dispatchers.IO) {
-            repository.addPreset("defaultPreset")
+    fun saveCurrentPresetAsExistingPreset(presetName: String) {
+        val presetToRemove = allPresets.value?.map { it.preset.presetName to it }?.toMap()?.get(presetName)?.preset
+        presetToRemove?.let {
+            viewModelScope.launch(Dispatchers.IO) {
+                repository.deletePreset(it)
+                currentPreset.preset.presetName = presetName
+                repository.savePresetWithScenes(currentPreset,false)
+            }
+
         }
     }
 
-    fun deleteDefaultPreset() {
-        viewModelScope.launch(Dispatchers.IO) {
-            repository.deletePreset(presetWithScenes.preset)
-        }
-    }
+    fun swapScenesInPreset(presetWithScenes: PresetWithScenes, fromOrder: Int, toOrder: Int) {
+        val sceneFrom = presetWithScenes.scenesByOrder[fromOrder]
+        val sceneTo = presetWithScenes.scenesByOrder[toOrder]
 
-    fun updateDefaultPreset() {
-        viewModelScope.launch(Dispatchers.IO) {
-            val scene = presetWithScenes.scenes[1]
-            scene.scene.sceneName = "name changed"
-            repository.saveScene(scene.scene)
-        }
+        sceneFrom?.scene?.sceneOrder = toOrder
+        sceneTo?.scene?.sceneOrder = fromOrder
+        sceneFrom?.let{presetWithScenes.scenesByOrder.put(toOrder, it)}
+        sceneTo?.let{presetWithScenes.scenesByOrder.put(fromOrder, it)}
+    }
+// endregion save/load preset
+
+//region scene/preset/output changed
+    private fun onPresetLoaded() {
+        sampleRate.value = currentPreset.preset.sampleRate
+        onSceneSelected(1)
     }
 
     fun onSceneSelected(sceneIndex :Int) {
         Log.d("MPdebug", "scene $sceneIndex")
+        currentPreset.scenesByOrder[sceneIndex]?.let { currentScene = it }
+        currentScene.channelsByOutputsMap[currentOutput].let{audioChannels.value = it}
+        currentScene.mastersByOutputsMap[currentOutput].let{masterChannel.value = it}
+        fxSends.value = currentScene.fxSends
+        fxSettings.value = currentScene.scene.fxSettings
+        currentSceneName.value = currentScene.scene.sceneName
     }
 
+    fun onOutputSelected(outputIndex: Int) {
+        Log.d("MPdebug", "output $outputIndex")
+        currentOutput = outputIndex
+        currentScene.channelsByOutputsMap[currentOutput].let{audioChannels.value = it}
+        currentScene.mastersByOutputsMap[currentOutput].let{masterChannel.value = it}
+    }
+//endregion controls
+
+//region mixer listeners
     fun onChannelChanged(audioChannel: AudioChannel) {
         Log.d("MPdebug", "channel ${audioChannel.inputIndex} volume ${audioChannel.volume} panorama ${audioChannel.panorama} mute ${audioChannel.mute} solo ${audioChannel.solo}")
     }
@@ -122,7 +172,9 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     fun onMasterVolumeChanged(masterChannel: MasterChannel) {
         Log.d("MPdebug", "master volume $masterChannel")
     }
-//region Fx listeners
+//endregion mixer listeners
+
+//region FX listeners
     fun onFxVolumeChanged(fxVolume: Int) {
         Log.d("MPdebug", "fxVolume $fxVolume")
     }
@@ -142,5 +194,5 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     fun onSampleRateChanged(sampleRate: SampleRate) {
         Log.d("MPdebug", "sampleRate $sampleRate")
     }
-//endRegion FX listeners
+//endregion FX listeners
 }

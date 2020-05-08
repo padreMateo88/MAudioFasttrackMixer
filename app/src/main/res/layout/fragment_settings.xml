@@ -117,36 +117,36 @@
                 app:layout_constraintLeft_toRightOf="@id/barrierPresetsButtons"
                 app:layout_constraintTop_toTopOf="@+id/textViewEffectType" />
 
-            <SeekBar
+            <com.mpiotrowski.maudiofasttrackmixer.ui.views.faders.FxSettingsFader
                 android:id="@+id/seekBarDuration"
-                android:layout_width="100dp"
-                android:layout_height="wrap_content"
+                android:layout_width="@dimen/dimen_100dp"
+                android:layout_height="@dimen/dimen_30dp"
                 android:layout_marginLeft="@dimen/dimen_16dp"
                 android:paddingRight="@dimen/dimen_16dp"
-                android:progress="@={viewmodel.fxSettings.duration}"
-                android:onProgressChanged="@{() -> viewmodel.onFxDurationChanged(viewmodel.fxSettings.duration)}"
+                app:faderValue="@={viewmodel.fxSettings.duration}"
+                app:onFaderValueChanged="@{() -> viewmodel.onFxDurationChanged(viewmodel.fxSettings.duration)}"
                 app:layout_constraintBottom_toBottomOf="@+id/textViewDuration"
                 app:layout_constraintLeft_toRightOf="@id/barrierPresetsButtons"
                 app:layout_constraintTop_toTopOf="@+id/textViewDuration" />
 
-            <SeekBar
+            <com.mpiotrowski.maudiofasttrackmixer.ui.views.faders.FxSettingsFader
                 android:id="@+id/seekBarFeedback"
-                android:layout_width="100dp"
-                android:layout_height="wrap_content"
+                android:layout_width="@dimen/dimen_100dp"
+                android:layout_height="@dimen/dimen_30dp"
                 android:layout_marginLeft="@dimen/dimen_16dp"
-                android:progress="@={viewmodel.fxSettings.feedback}"
-                android:onProgressChanged="@{() -> viewmodel.onFxFeedbackChanged(viewmodel.fxSettings.feedback)}"
+                app:faderValue="@={viewmodel.fxSettings.feedback}"
+                app:onFaderValueChanged="@{() -> viewmodel.onFxFeedbackChanged(viewmodel.fxSettings.feedback)}"
                 app:layout_constraintBottom_toBottomOf="@+id/textViewFeedback"
                 app:layout_constraintLeft_toRightOf="@id/barrierPresetsButtons"
                 app:layout_constraintTop_toTopOf="@+id/textViewFeedback"/>
 
-            <SeekBar
+            <com.mpiotrowski.maudiofasttrackmixer.ui.views.faders.FxSettingsFader
                 android:id="@+id/seekBarVolume"
-                android:layout_width="100dp"
-                android:layout_height="wrap_content"
+                android:layout_width="@dimen/dimen_100dp"
+                android:layout_height="@dimen/dimen_30dp"
                 android:layout_marginLeft="@dimen/dimen_16dp"
-                android:progress="@={viewmodel.fxSettings.volume}"
-                android:onProgressChanged="@{() -> viewmodel.onFxVolumeChanged(viewmodel.fxSettings.volume)}"
+                app:faderValue="@={viewmodel.fxSettings.volume}"
+                app:onFaderValueChanged="@{() -> viewmodel.onFxVolumeChanged(viewmodel.fxSettings.volume)}"
                 app:layout_constraintBottom_toBottomOf="@+id/textViewVolume"
                 app:layout_constraintLeft_toRightOf="@id/barrierPresetsButtons"
                 app:layout_constraintTop_toTopOf="@+id/textViewVolume" />

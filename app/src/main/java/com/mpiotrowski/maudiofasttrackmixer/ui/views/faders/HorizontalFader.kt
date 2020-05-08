@@ -3,13 +3,15 @@ package com.mpiotrowski.maudiofasttrackmixer.ui.views.faders
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
+import android.util.Log
 import android.view.MotionEvent
 import com.mpiotrowski.maudiofasttrackmixer.R
 
 abstract class HorizontalFader(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) :
     Fader(context, attrs, defStyleAttr) {
 
-    override var speedMultiplier: Int = 3
+    override val speedMultiplier: Int
+        get() = if(fine) 15 else 3
 
     override fun calculateInitialPosition(event: MotionEvent): Float {
         return event.x - progress*speedMultiplier
@@ -21,7 +23,7 @@ abstract class HorizontalFader(context: Context, attrs: AttributeSet? = null, de
 
     override fun calculateProgress(): Int {
         scaledBitmap?.let {
-            var progress = ((currentPosition - initialPosition)/speedMultiplier).toInt()
+            var progress = ((currentPosition - initialPosition)/speedMultiplier.toFloat()).toInt()
             if(progress < 0)
                 progress = 0
             if(progress > width - it.width)

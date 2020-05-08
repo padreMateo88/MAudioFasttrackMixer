@@ -33,14 +33,15 @@ class SignedHorizontalFader @JvmOverloads constructor(
         paint.strokeWidth = 3f
         paint.style = Paint.Style.FILL
 
-        for (i in 4 .. 14 step 4) {
-            canvas?.drawLine(width*i/32f+4,height*(i/2)/20f,width*i/32f+4,height*(20-i/2)/20f,paint)
-            canvas?.drawLine(width*(32-i)/32f-4,height*(i/2)/20f,width*(32-i)/32f-4,height*(20-i/2)/20f,paint)
+        val halfKnobWidth = (scaledBitmap?.width ?: 0)/2f
+        for (i in 1 .. 13 step 4) {
+            canvas?.drawLine(halfKnobWidth + width*(i-1)/36f,height*(i/2)/20f,halfKnobWidth + width*(i-1)/36f,height*(20-i/2)/20f,paint)
+            canvas?.drawLine(width*(37 - i)/36f-halfKnobWidth,height*(i/2)/20f,width*(37 - i)/36f-halfKnobWidth,height*(20-i/2)/20f,paint)
         }
         canvas?.drawLine(width/2f,height*2/5f,width/2f,height*3/5f,paint)
 
         paint.strokeWidth = 3f
         paint.color = Color.BLACK
-        canvas?.drawLine(width*0.1f,height/2f,width*0.9f,height/2f,paint)
+        canvas?.drawLine(halfKnobWidth,height/2f,width - halfKnobWidth,height/2f,paint)
     }
 }

@@ -19,7 +19,6 @@
             android:orientation="horizontal"
             android:layout_marginLeft="@dimen/dimen_4dp"
             android:layout_marginTop="@dimen/dimen_4dp"
-            android:layout_marginBottom="@dimen/dimen_4dp"
             android:gravity="center"
             android:layout_weight="8"
             android:layout_width="0dp"
@@ -35,85 +34,134 @@
         <com.mpiotrowski.maudiofasttrackmixer.ui.views.master_channel.MasterChannelView
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_marginRight="@dimen/dimen_4dp"
             android:layout_marginTop="@dimen/dimen_4dp"
-            android:layout_marginBottom="@dimen/dimen_4dp"
             android:layout_weight="1"
             android:gravity="center"
             app:volume="@={viewmodel.masterChannel.volume}"
             app:mute="@={viewmodel.masterChannel.mute}"
+            app:panorama="@={viewmodel.masterChannel.panorama}"
             app:fxVolume="@={viewmodel.masterChannel.fxReturn}"
+            app:outputIndex="@{viewmodel.masterChannel.outputIndex}"
             app:onVolumeChanged="@{() -> viewmodel.onMasterVolumeChanged(viewmodel.masterChannel)}"
             app:onFxVolumeChanged="@{() -> viewmodel.onFxReturnChanged(viewmodel.masterChannel.fxReturn)}"
             />
 
         <LinearLayout
             android:orientation="vertical"
-            android:layout_weight="2"
+            android:layout_weight="3"
             android:layout_width="0dp"
+            android:layout_marginTop="@dimen/dimen_4dp"
             android:layout_marginRight="@dimen/dimen_4dp"
             android:layout_height="match_parent"
             tools:ignore="RtlHardcoded">
 
             <LinearLayout
-                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/dimen_4dp"
-                android:background="@drawable/panel_background"
-                android:gravity="center"
+                android:layout_width="match_parent"
                 android:orientation="vertical">
-                <TextView
-                    android:layout_marginTop="@dimen/dimen_4dp"
-                    android:layout_marginBottom="@dimen/dimen_4dp"
+
+                <LinearLayout
+                    android:id="@+id/linearLayout2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/label_output" />
-                <LinearLayout
-                    android:layout_height="wrap_content"
-                    android:layout_width="match_parent">
-
-                    <Button
-                        android:id="@+id/buttonDecreaseOutput"
-                        android:layout_width="0dp"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="&lt;" />
+                        android:orientation="vertical"
+                        android:gravity="center_horizontal">
 
-                    <TextView
-                        android:layout_marginRight="@dimen/dimen_4dp"
-                        android:layout_marginLeft="@dimen/dimen_4dp"
-                        android:layout_gravity="center_vertical"
-                        android:layout_width="wrap_content"
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/dimen_16dp"
+                            android:layout_marginBottom="@dimen/dimen_16dp"
+                            android:gravity="center">
+
+                            <ImageView
+                                android:src="@{viewmodel.deviceOnline ? @drawable/radio_online : @drawable/radio_offline}"
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:checked="true"
+                                android:enabled="false"/>
+
+                            <TextView
+                                android:layout_marginLeft="@dimen/dimen_4dp"
+                                android:textColor="@{viewmodel.deviceOnline ? @color/greenOnline : @color/lighterGray}"
+                                android:text="@{viewmodel.deviceOnline ? @string/device_online : @string/device_offline}"
+                                android:layout_height="wrap_content"
+                                android:layout_width="wrap_content"/>
+                        </LinearLayout>
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="1-2" />
-                    <Button
-                        android:id="@+id/buttonIncreaseOutput"
-                        android:text="&gt;"
-                        android:layout_weight="1"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"/>
+                        android:orientation="horizontal"
+                        android:gravity="center_horizontal">
+
+                        <Button
+                            android:id="@+id/buttonDecreaseOutput"
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/dimen_40dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/button_unselected"
+                            android:text="&lt;" />
+
+                        <TextView
+                            android:id="@+id/textViewOutputIndex"
+                            android:gravity="center_horizontal"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginLeft="@dimen/dimen_4dp"
+                            android:layout_marginRight="@dimen/dimen_4dp"
+                            android:text="@string/default_output" />
+
+                        <Button
+                            android:id="@+id/buttonIncreaseOutput"
+                            android:layout_width="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_height="@dimen/dimen_40dp"
+                            android:background="@drawable/button_unselected"
+                            android:text="&gt;" />
+                    </LinearLayout>
                 </LinearLayout>
+
+                <ToggleButton
+                    android:id="@+id/toggleButtonFine"
+                    android:checked="@={viewmodel.fine}"
+                    android:layout_marginTop="@dimen/dimen_4dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/dimen_40dp"
+                    android:background="@drawable/gray_selector"
+                    android:textColor="@color/radio_button_text_color_selector"
+                    android:textOff="@string/button_fine"
+                    android:textOn="@string/button_fine"/>
             </LinearLayout>
 
-            <ToggleButton
-                android:id="@+id/toggleButtonFine"
-                android:layout_marginTop="@dimen/dimen_4dp"
-                android:layout_marginBottom="@dimen/dimen_4dp"
-                android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/textViewSceneName"
+                android:layout_marginTop = "@dimen/dimen_16dp"
+                android:gravity="center_horizontal"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/fine_selector"
-                android:textOn="@string/button_fine"
-                android:textOff="@string/button_fine"/>
+                android:layout_gravity="center"
+                android:layout_marginLeft="@dimen/dimen_4dp"
+                android:layout_marginRight="@dimen/dimen_4dp"
+                android:text="@{viewmodel.currentSceneName}" />
 
             <androidx.recyclerview.widget.RecyclerView
+                android:layout_marginTop="@dimen/dimen_4dp"
                 android:id="@+id/recyclerViewSceneButtons"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/dimen_4dp"
-                android:overScrollMode="never"
-                android:background="@drawable/panel_background"
+                android:gravity="center"
                 android:orientation="horizontal"
-                android:gravity="center"/>
+                android:overScrollMode="never" />
         </LinearLayout>
     </com.mpiotrowski.maudiofasttrackmixer.ui.views.MyLinearLayout>
 </layout>

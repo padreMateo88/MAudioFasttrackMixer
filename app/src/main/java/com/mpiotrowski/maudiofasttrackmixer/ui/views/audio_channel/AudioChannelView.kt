@@ -12,6 +12,8 @@ open class AudioChannelView @JvmOverloads constructor(
     attrs: AttributeSet? = null
 ) : LinearLayout(context, attrs) {
 
+    var fine = false
+
     //attribute listener
     open var volumeChangedListener: VolumeChangedListener? = null
 

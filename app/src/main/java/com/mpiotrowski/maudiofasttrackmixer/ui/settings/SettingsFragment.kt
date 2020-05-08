@@ -1,6 +1,5 @@
 package com.mpiotrowski.maudiofasttrackmixer.ui.settings
 
-import android.R
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,10 +11,11 @@ import com.mpiotrowski.maudiofasttrackmixer.databinding.FragmentSettingsBinding
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.SampleRate
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.scene_components.FxSettings
 import com.mpiotrowski.maudiofasttrackmixer.ui.MainViewModel
+import kotlinx.android.synthetic.main.layout_save_preset.*
 
 class SettingsFragment : Fragment() {
 
-    lateinit var viewModel: MainViewModel
+    private lateinit var viewModel: MainViewModel
     private lateinit var binding: FragmentSettingsBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -28,17 +28,16 @@ class SettingsFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        val effectTypeAdapter = ArrayAdapter(requireContext(), R.layout.simple_spinner_item, FxSettings.FxType.values())
-        effectTypeAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item)
+        val effectTypeAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, FxSettings.FxType.values())
+        effectTypeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.spinnerEffectType.adapter = effectTypeAdapter
 
-        val sampleRateAdapter = ArrayAdapter(requireContext(), R.layout.simple_spinner_item, SampleRate.values())
-        effectTypeAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item)
+        val sampleRateAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, SampleRate.values())
+        effectTypeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.spinnerSampleRate.adapter = sampleRateAdapter
     }
 
     companion object {
-        fun newInstance() =
-            SettingsFragment()
+        fun newInstance() = SettingsFragment()
     }
 }

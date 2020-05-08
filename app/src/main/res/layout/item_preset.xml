@@ -1,24 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
         <variable
-            name="preset"
-            type="com.mpiotrowski.maudiofasttrackmixer.data.model.preset.Preset"/>
+            name="scene"
+            type="com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.Scene"/>
     </data>
 
-    <LinearLayout
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardViewPresetItemBackground"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/dimen_40dp"
         android:orientation="vertical"
-        android:layout_margin="@dimen/dimen_16dp">
+        android:clickable="true"
+        android:focusable="true"
+        android:layout_marginTop="@dimen/dimen_4dp"
+        android:layout_marginBottom="@dimen/dimen_4dp"
+        app:cardCornerRadius="@dimen/dimen_2dp">
 
         <TextView
-            android:id="@+id/textViewPresetItem"
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:text="@{preset.presetName}" />
-    </LinearLayout>
+            android:id="@+id/textViewSceneItem"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="@dimen/dimen_16dp"
+            android:text="@{scene.sceneName}" />
+    </androidx.cardview.widget.CardView>
 
 </layout>

@@ -1,9 +1,13 @@
 package com.mpiotrowski.maudiofasttrackmixer.ui.views.audio_channel
 
+import android.util.Log
+import android.view.View
 import android.widget.CompoundButton
 import androidx.databinding.BindingAdapter
 import androidx.databinding.InverseBindingAdapter
 import androidx.databinding.InverseBindingListener
+import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.MIXER_OUTPUTS_WITH_FX
+import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.MIXER_STEREO_OUTPUTS_COUNT
 import com.mpiotrowski.maudiofasttrackmixer.ui.views.faders.Fader
 import kotlinx.android.synthetic.main.view_channel.view.*
 
@@ -155,4 +159,26 @@ object AudioChannelBindingAdapters {
         audioChannelView.fxVolumeFader.valueChangedListener = audioChannelView.fxVolumeListener as Fader.ValueChangedListener
     }
 //endregion fxVolume
+
+//region fx volume visibility
+    @BindingAdapter("outputIndex")
+    @JvmStatic fun setOutputIndex(audioChannelView: AudioChannelView, outputIndex: Int) {
+    val visibility = if(outputIndex in MIXER_OUTPUTS_WITH_FX) View.VISIBLE else View.INVISIBLE
+        if (audioChannelView.fxVolumeFader.visibility != visibility) {
+            audioChannelView.fxVolumeFader.visibility = visibility
+        }
+    }
+//endregion fx volume visibility
+
+//region fine
+    @BindingAdapter("fine")
+    @JvmStatic fun setFxVolume(audioChannelView: AudioChannelView, fine: Boolean) {
+        if (audioChannelView.fine != fine) {
+            audioChannelView.fine = fine
+            audioChannelView.fxVolumeFader.fine = fine
+            audioChannelView.volumeFader.fine = fine
+            audioChannelView.panoramaFader.fine = fine
+        }
+    }
+//region fine
 }

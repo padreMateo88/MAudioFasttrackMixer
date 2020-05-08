@@ -7,8 +7,9 @@ import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.scene_components.FxSend
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.scene_components.MasterChannel
 
-const val MIXER_STEREO_OUTPUTS_NUMBER = 4
-const val MIXER_INPUTS_NUMBER = 8
+val MIXER_OUTPUTS_WITH_FX = arrayListOf(1,2)
+const val MIXER_STEREO_OUTPUTS_COUNT = 4
+const val MIXER_INPUTS_COUNT = 8
 data class SceneWithComponents (
     @Embedded var scene: Scene,
 
@@ -36,12 +37,11 @@ data class SceneWithComponents (
     @Ignore
     val fxSendsMap = fxSends.map{it.inputIndex to it}.toMap()
     @Ignore
-    val mastersMap = masterChannels.map{it.outputIndex to it}.toMap()
+    val mastersByOutputsMap = masterChannels.map{it.outputIndex to it}.toMap()
     @Ignore
     val channelsByOutputsMap = audioChannels.groupBy{it.outputIndex}.toMap()
 
-    fun copyValues(copyFrom: SceneWithComponents, sceneOrder: Int, sceneName: String) {
-        this.scene.sceneOrder = sceneOrder
+    fun copyValues(copyFrom: SceneWithComponents, sceneName: String) {
         this.scene.sceneName = sceneName
         this.scene.fxSettings = copyFrom.scene.fxSettings.copy()
         copyFxSendsValues(copyFrom)
@@ -59,12 +59,14 @@ data class SceneWithComponents (
     }
 
     private fun copyMasterChannelsValues(copyFrom: SceneWithComponents) {
-        for (outputIndex in this.mastersMap.keys) {
-            this.masterChannels[outputIndex].fxReturn = copyFrom.masterChannels[outputIndex].fxReturn
-            this.masterChannels[outputIndex].mute = copyFrom.masterChannels[outputIndex].mute
-            this.masterChannels[outputIndex].panorama = copyFrom.masterChannels[outputIndex].panorama
-            this.masterChannels[outputIndex].volume = copyFrom.masterChannels[outputIndex].volume
-            this.masterChannels[outputIndex].isDirty = copyFrom.masterChannels[outputIndex].isDirty
+        for (outputIndex in this.mastersByOutputsMap.keys) {
+            copyFrom.mastersByOutputsMap[outputIndex]?.let {
+            this.mastersByOutputsMap[outputIndex]?.fxReturn = it.fxReturn
+            this.mastersByOutputsMap[outputIndex]?.mute = it.mute
+            this.mastersByOutputsMap[outputIndex]?.panorama = it.panorama
+            this.mastersByOutputsMap[outputIndex]?.volume = it.volume
+            this.mastersByOutputsMap[outputIndex]?.isDirty = it.isDirty
+            }
         }
     }
 
@@ -83,6 +85,33 @@ data class SceneWithComponents (
                     }
                 }
             }
+        }
+    }
+
+    companion object {
+        fun newInstance(sceneName: String, presetId: String, sceneOrder: Int): SceneWithComponents {
+            val scene = Scene(sceneName = sceneName, presetId = presetId, sceneOrder = sceneOrder)
+            val masterChannels = mutableListOf<MasterChannel>()
+            val audioChannels = mutableListOf<AudioChannel>()
+            val fxSends = mutableListOf<FxSend>()
+
+            for (outputIndex in 1 .. MIXER_STEREO_OUTPUTS_COUNT) {
+                masterChannels.add(MasterChannel(outputIndex = outputIndex))
+                for (inputIndex in 1 .. MIXER_INPUTS_COUNT) {
+                    audioChannels.add(AudioChannel(outputIndex = outputIndex, inputIndex = inputIndex))
+                }
+            }
+
+            for (inputIndex in 1 .. MIXER_INPUTS_COUNT) {
+                fxSends.add(FxSend(inputIndex = inputIndex))
+            }
+
+            return SceneWithComponents(
+                scene = scene,
+                masterChannels = masterChannels,
+                audioChannels = audioChannels,
+                fxSends = fxSends
+            )
         }
     }
 }

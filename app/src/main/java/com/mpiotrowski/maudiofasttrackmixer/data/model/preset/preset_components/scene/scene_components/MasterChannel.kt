@@ -20,7 +20,7 @@ data class MasterChannel (
     var fxReturn : Int = 0,
     var panorama: Int = 0,
     var mute: Boolean = false
-){
+) {
     @Ignore
     var isDirty = false
 }
