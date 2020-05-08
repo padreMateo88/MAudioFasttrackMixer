@@ -94,13 +94,14 @@ class MyLinearLayout(context: Context, attrs: AttributeSet?) : LinearLayout(cont
             MotionEvent.ACTION_DOWN -> {
                 if (fragment !is MixerFragment) {
                     setOnSwipeTouchLister(bottomNavigationView)
+                } else {
+                    handleMotionAction(ev)
                 }
                 false
             }
             MotionEvent.ACTION_MOVE -> {
                 if (fragment is MixerFragment) {
-                    val xDiff: Int = getDistance(ev)
-                    xDiff > mTouchSlop
+                    handleMotionAction(ev)
                 } else {
                     false
                 }
@@ -108,6 +109,11 @@ class MyLinearLayout(context: Context, attrs: AttributeSet?) : LinearLayout(cont
                 false
             }
         }
+    }
+
+    private fun handleMotionAction(ev: MotionEvent): Boolean {
+        val xDiff: Int = getDistance(ev)
+        return xDiff > mTouchSlop
     }
 
     @SuppressLint("ClickableViewAccessibility")
