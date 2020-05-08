@@ -27,8 +27,8 @@ class VerticalFader @JvmOverloads constructor(
             return field
         }
 
-    override var speedMultiplier: Int = 1
-
+    override val speedMultiplier: Int
+        get() = if(fine) 8 else 1
     override fun calculateInitialPosition(event: MotionEvent): Float {
         return (height - event.y) - progress*speedMultiplier
     }
@@ -55,7 +55,7 @@ class VerticalFader @JvmOverloads constructor(
         )
         if(width <= 0 || height <= 0)
             return null
-        return Bitmap.createScaledBitmap(bitmap, (width*0.35f).toInt(), (width*bitmap.height*0.35f/bitmap.width).toInt(), false)
+        return Bitmap.createScaledBitmap(bitmap, (width*0.3f).toInt(), (width*bitmap.height*0.3f/bitmap.width).toInt(), false)
     }
 
     override fun drawBackground(canvas: Canvas?) {
@@ -83,7 +83,7 @@ class VerticalFader @JvmOverloads constructor(
                     (height - progress).toFloat()
                 else
                     (height - it.height).toFloat()
-            canvas?.drawBitmap(it,width*0.325f,faderPosition,paint)
+            canvas?.drawBitmap(it,width*0.35f,faderPosition,paint)
         }
     }
 }

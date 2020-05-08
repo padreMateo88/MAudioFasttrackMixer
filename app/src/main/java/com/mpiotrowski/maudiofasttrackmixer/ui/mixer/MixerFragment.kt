@@ -1,25 +1,25 @@
 package com.mpiotrowski.maudiofasttrackmixer.ui.mixer
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.MIXER_STEREO_OUTPUTS_COUNT
 import com.mpiotrowski.maudiofasttrackmixer.databinding.FragmentMixerBinding
 import com.mpiotrowski.maudiofasttrackmixer.ui.MainViewModel
 import kotlinx.android.synthetic.main.fragment_mixer.*
 
 
 class MixerFragment : Fragment() {
-
     lateinit var viewModel: MainViewModel
     private lateinit var viewDataBinding: FragmentMixerBinding
+    var outputIndex = 1
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                             savedInstanceState: Bundle?): View? {
@@ -34,18 +34,22 @@ class MixerFragment : Fragment() {
         viewDataBinding.viewmodel = viewModel
         prepareChannelMixer()
         prepareSceneSelector()
-        toggleButtonFine.setOnClickListener {
-            viewModel.insertDefaultPreset()
-        }
 
-        buttonDecreaseOutput.setOnClickListener {
-            viewModel.deleteDefaultPreset()
-        }
+        buttonDecreaseOutput.setOnClickListener (View.OnClickListener {
+            if(outputIndex == 1)
+                return@OnClickListener
+            outputIndex --
+            textViewOutputIndex.text = "Output:\n${outputIndex*2-1}-${outputIndex*2}"
+            viewModel.onOutputSelected(outputIndex)
+        })
 
-        buttonIncreaseOutput.setOnClickListener{
-            viewModel.updateDefaultPreset()
-        }
-
+        buttonIncreaseOutput.setOnClickListener (View.OnClickListener {
+            if(outputIndex == MIXER_STEREO_OUTPUTS_COUNT)
+                return@OnClickListener
+            outputIndex ++
+            textViewOutputIndex.text = "Output:\n${outputIndex*2-1}-${outputIndex*2}"
+            viewModel.onOutputSelected(outputIndex)
+        })
     }
 
     private fun prepareChannelMixer() {
@@ -57,10 +61,14 @@ class MixerFragment : Fragment() {
                     LinearLayoutManager.HORIZONTAL,
                     false
                 )
-                viewDataBinding.recyclerViewChannels.adapter =
-                    ChannelsAdapter(requireActivity() as AppCompatActivity, viewModel)
-
+                val channelsAdapter = ChannelsAdapter(requireActivity() as androidx.appcompat.app.AppCompatActivity, viewModel)
+                channelsAdapter.setHasStableIds(true)
+                viewDataBinding.recyclerViewChannels.adapter = channelsAdapter
                 viewDataBinding.recyclerViewChannels.requestDisallowInterceptTouchEvent(true)
+
+                viewModel.audioChannels.observe(requireActivity(), Observer {
+                    //(viewDataBinding.recyclerViewChannels.adapter as ChannelsAdapter).notifyDataSetChanged()
+                })
             }
         })
     }
@@ -68,7 +76,7 @@ class MixerFragment : Fragment() {
     private fun prepareSceneSelector() {
         val recyclerViewSceneButtons = viewDataBinding.recyclerViewSceneButtons
         recyclerViewSceneButtons.isNestedScrollingEnabled = false
-        recyclerViewSceneButtons.layoutManager = GridLayoutManager(context, 2)
+        recyclerViewSceneButtons.layoutManager = GridLayoutManager(context, 3)
         recyclerViewSceneButtons.adapter = SceneButtonsAdapter(viewModel)
     }
 

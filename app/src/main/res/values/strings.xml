@@ -1,15 +1,16 @@
 <resources>
     <string name="app_name">MAudioFasttrackMixer</string>
-    <string name="placeholder_PresetName">Preset name</string>
-    <string name="placeholder_sceneName">Scene name</string>
+    <string name="label_scenes_list">Scenes</string>
     <string name="button_save">Save</string>
     <string name="button_load">Load</string>
+    <string name="button_save_as">Save as</string>
     <string name="button_new">New</string>
     <string name="button_delete">Delete</string>
     <string name="button_saveAs">Save as</string>
     <string name="label_scenes">Scenes</string>
     <string name="label_settings">Settings</string>
     <string name="label_presets">Presets</string>
+    <string name="label_current_preset">Current preset</string>
     <string name="label_mixer">Mixer</string>
     <string name="spinner_effectType">Effect type</string>
     <string name="spinner_sampleRate">Sample rate</string>
@@ -20,4 +21,20 @@
     <string name="button_solo">S</string>
     <string name="label_output">Output</string>
     <string name="button_fine">Fine</string>
+    <string name="default_output">Output:\n1–2</string>
+    <string name="label_scene_name">scene name</string>
+    <string name="label_as">as</string>
+    <string name="title_save_scene">Save</string>
+    <string name="title_preset_name">Preset name</string>
+    <string name="scene_name_value">Scene 1</string>
+    <string name="preset_name_value">Preset 1</string>
+    <string name="button_cancel">Cancel</string>
+    <string name="button_overwrite">Overwrite</string>
+    <string name="label_overwrite_preset">\"%1$s\" already exists. Overwrite?</string>
+    <string name="button_add_preset">Add preset</string>
+    <string name="button_ok">OK</string>
+    <string name="label_not_created">Preset not created. Preset \"%1$s\" already exists.</string>
+    <string name="preset_name_in_use">preset name already in use</string>
+    <string name="device_online">DEVICE ONLINE</string>
+    <string name="device_offline">DEVICE OFFLINE</string>
 </resources>

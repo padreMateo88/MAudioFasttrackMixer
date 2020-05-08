@@ -25,6 +25,10 @@ class ChannelsAdapter(
         return ChannelViewHolder(binding)
     }
 
+    override fun getItemId(position: Int): Long {
+        return mainViewModel.audioChannels.value?.get(position)?.audioChannelId ?: -1
+    }
+
     class ChannelViewHolder(var customView : ChannelsAdapterItemBinding) : RecyclerView.ViewHolder(customView.root)
 
     override fun onBindViewHolder(holder: ChannelViewHolder, position: Int) {
@@ -32,5 +36,7 @@ class ChannelsAdapter(
         holder.customView.channelIndex = position
     }
 
-    override fun getItemCount() = mainViewModel.audioChannels.value!!.size
+    override fun getItemCount(): Int {
+        return mainViewModel.audioChannels.value?.size ?: 0
+    }
 }

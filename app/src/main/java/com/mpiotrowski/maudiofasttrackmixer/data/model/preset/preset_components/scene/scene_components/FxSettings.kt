@@ -14,7 +14,6 @@ data class FxSettings(
     var isDirty = false
 
     enum class FxType(var apiCode: Int,var fxName: String) {
-
         ROOM1(0x0000, "Room 1"),
         ROOM2(0x0100, "Room 2"),
         ROOM3(0x0200, "Room 3"),
