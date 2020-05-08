@@ -1,4 +1,4 @@
-package com.mpiotrowski.maudiofasttrackmixer.ui.presets
+package com.mpiotrowski.maudiofasttrackmixer.ui.presets.dialogs
 
 import android.app.Dialog
 import android.content.Context

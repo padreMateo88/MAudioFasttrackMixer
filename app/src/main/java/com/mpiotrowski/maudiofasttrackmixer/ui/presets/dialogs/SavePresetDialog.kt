@@ -1,4 +1,4 @@
-package com.mpiotrowski.maudiofasttrackmixer.ui.presets
+package com.mpiotrowski.maudiofasttrackmixer.ui.presets.dialogs
 
 import android.app.Dialog
 import android.content.Context
@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.view.Window
 import com.mpiotrowski.maudiofasttrackmixer.R
 import kotlinx.android.synthetic.main.layout_save_preset.*
-import kotlinx.android.synthetic.main.layout_save_scene.buttonAddPreset
 
 class SavePresetDialog(private val dialogContext: Context,
                        private val presetName: String,

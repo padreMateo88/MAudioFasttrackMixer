@@ -12,6 +12,11 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.mpiotrowski.maudiofasttrackmixer.ui.MainViewModel
+import com.mpiotrowski.maudiofasttrackmixer.ui.presets.adapters.PresetsAdapter
+import com.mpiotrowski.maudiofasttrackmixer.ui.presets.adapters.ScenesAdapter
+import com.mpiotrowski.maudiofasttrackmixer.ui.presets.dialogs.AddPresetDialog
+import com.mpiotrowski.maudiofasttrackmixer.ui.presets.dialogs.OverwritePresetDialog
+import com.mpiotrowski.maudiofasttrackmixer.ui.presets.dialogs.SavePresetDialog
 import kotlinx.android.synthetic.main.fragment_presets.*
 
 class PresetsFragment : Fragment(),
@@ -51,13 +56,21 @@ class PresetsFragment : Fragment(),
 
     private fun setSavePresetButtonClickListener() {
         viewDataBinding.buttonSavePreset.setOnClickListener {
-            SavePresetDialog(requireContext(), viewModel.currentPreset.preset.presetName, this@PresetsFragment).show()
+            SavePresetDialog(
+                requireContext(),
+                viewModel.currentPreset.preset.presetName,
+                this@PresetsFragment
+            ).show()
         }
     }
 
     override fun onPresetSaved(presetName: String) {
         if(!viewModel.saveCurrentPresetAs(presetName))
-            OverwritePresetDialog(requireContext(), presetName, this@PresetsFragment).show()
+            OverwritePresetDialog(
+                requireContext(),
+                presetName,
+                this@PresetsFragment
+            ).show()
     }
 
     override fun onPresetOverwriteConfirmed(presetName: String) {
@@ -71,7 +84,11 @@ class PresetsFragment : Fragment(),
             false
         )
 
-        viewDataBinding.recyclerViewScenes.adapter = ScenesAdapter(requireActivity() as AppCompatActivity, viewModel)
+        viewDataBinding.recyclerViewScenes.adapter =
+            ScenesAdapter(
+                requireActivity() as AppCompatActivity,
+                viewModel
+            )
 
         val callback = object :
             ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP.or(ItemTouchHelper.DOWN), 0) {
@@ -101,7 +118,11 @@ class PresetsFragment : Fragment(),
             LinearLayoutManager.VERTICAL,
             false
         )
-        val presetsAdapter = PresetsAdapter(requireActivity() as AppCompatActivity, viewModel)
+        val presetsAdapter =
+            PresetsAdapter(
+                requireActivity() as AppCompatActivity,
+                viewModel
+            )
         presetsAdapter.setHasStableIds(true)
         viewDataBinding.recyclerViewPresets.adapter = presetsAdapter
         val callback = PresetSwipeCallback(0, ItemTouchHelper.RIGHT.or(ItemTouchHelper.LEFT), viewDataBinding.recyclerViewPresets.adapter as PresetsAdapter)

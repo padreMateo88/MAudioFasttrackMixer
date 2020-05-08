@@ -1,4 +1,4 @@
-package com.mpiotrowski.maudiofasttrackmixer.ui.presets
+package com.mpiotrowski.maudiofasttrackmixer.ui.presets.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -6,14 +6,30 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.mpiotrowski.maudiofasttrackmixer.R
+import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.PresetWithScenes
 import com.mpiotrowski.maudiofasttrackmixer.databinding.ItemPresetBinding
 import com.mpiotrowski.maudiofasttrackmixer.ui.MainViewModel
+import com.mpiotrowski.maudiofasttrackmixer.ui.presets.PresetSwipeCallback
+import com.mpiotrowski.maudiofasttrackmixer.ui.presets.dialogs.LoadDeletePresetDialog
 
 
 class PresetsAdapter(
     private val appCompatActivity: AppCompatActivity,
     private val mainViewModel: MainViewModel
-) : RecyclerView.Adapter<PresetsAdapter.PresetsViewHolder>(), PresetSwipeCallback.SwipeListener {
+) : RecyclerView.Adapter<PresetsAdapter.PresetsViewHolder>(),
+    PresetSwipeCallback.SwipeListener {
+
+    private val loadListener = object: LoadDeletePresetDialog.DialogListener{
+        override fun onActionConfirmed(presetWithScenes: PresetWithScenes) {
+            mainViewModel.loadPreset(presetWithScenes)
+        }
+    }
+
+    private val removeListener = object: LoadDeletePresetDialog.DialogListener{
+        override fun onActionConfirmed(presetWithScenes: PresetWithScenes) {
+            mainViewModel.removePreset(presetWithScenes)
+        }
+    }
 
     private var selectedItemId = -1
     private lateinit var viewGroup : ViewGroup
@@ -28,7 +44,9 @@ class PresetsAdapter(
         val binding = ItemPresetBinding.inflate(inflater,parent,false)
         viewGroup = parent
         binding.lifecycleOwner = appCompatActivity
-        return PresetsViewHolder(binding)
+        return PresetsViewHolder(
+            binding
+        )
     }
 
     class PresetsViewHolder(var customView : ItemPresetBinding) : RecyclerView.ViewHolder(customView.root)
@@ -53,10 +71,20 @@ class PresetsAdapter(
     }
 
     override fun swipeRight(adapterPosition: Int) {
-        mainViewModel.removePreset(mainViewModel.currentPreset)
+        LoadDeletePresetDialog(
+            appCompatActivity,
+            mainViewModel.currentPreset,
+            removeListener,
+            R.string.delete_preset
+        ).show()
     }
 
     override fun swipeLeft(adapterPosition: Int) {
-        mainViewModel.loadPreset(mainViewModel.currentPreset)
+        LoadDeletePresetDialog(
+            appCompatActivity,
+            mainViewModel.currentPreset,
+            loadListener,
+            R.string.load_preset
+        ).show()
     }
 }

@@ -1,4 +1,4 @@
-package com.mpiotrowski.maudiofasttrackmixer.ui.presets
+package com.mpiotrowski.maudiofasttrackmixer.ui.presets.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

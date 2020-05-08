@@ -3,6 +3,7 @@ package com.mpiotrowski.maudiofasttrackmixer.ui
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.mpiotrowski.maudiofasttrackmixer.data.Repository
@@ -24,23 +25,22 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val repository = Repository(database.presetsDao())
     private var currentOutput: Int = 1
 
+    var fine: MutableLiveData<Boolean> = MutableLiveData()
     var deviceOnline: MutableLiveData<Boolean> = MutableLiveData()
-    // mixer parameters
+
     var audioChannels: MutableLiveData<List<AudioChannel>> = MutableLiveData()
     var masterChannel: MutableLiveData<MasterChannel> = MutableLiveData()
     var fxSends: MutableLiveData<List<FxSend>> = MutableLiveData()
-    //fx parameters
+    var allPresets: LiveData<List<PresetWithScenes>> = MutableLiveData()
+
     var fxSettings: MutableLiveData<FxSettings> = MutableLiveData()
-     //device parameters
     var sampleRate: MutableLiveData<SampleRate> = MutableLiveData()
 
-    val allPresets = repository.presetsWithScenes
     var currentPreset: PresetWithScenes = PresetWithScenes.newInstance(Preset(CURRENT_PRESET_ID, CURRENT_PRESET_NAME))
     var currentScene: SceneWithComponents = currentPreset.scenes.sortedBy{ it.scene.sceneOrder }[0]
 
     var currentSceneName: MutableLiveData<String> = MutableLiveData()
     var currentPresetName: MutableLiveData<String> = MutableLiveData()
-    var fine: MutableLiveData<Boolean> = MutableLiveData()
 
     init {
            deviceOnline.value = false
