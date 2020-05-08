@@ -70,7 +70,34 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:gravity="center_horizontal">
 
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/dimen_16dp"
+                            android:layout_marginBottom="@dimen/dimen_16dp"
+                            android:gravity="center">
+
+                            <ImageView
+                                android:src="@{viewmodel.deviceOnline ? @drawable/radio_online : @drawable/radio_offline}"
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:checked="true"
+                                android:enabled="false"/>
+
+                            <TextView
+                                android:layout_marginLeft="@dimen/dimen_4dp"
+                                android:textColor="@{viewmodel.deviceOnline ? @color/greenOnline : @color/lighterGray}"
+                                android:text="@{viewmodel.deviceOnline ? @string/device_online : @string/device_offline}"
+                                android:layout_height="wrap_content"
+                                android:layout_width="wrap_content"/>
+                        </LinearLayout>
+                    </LinearLayout>
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"

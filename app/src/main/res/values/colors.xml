@@ -19,5 +19,7 @@
     <color name="redStart">#FF0000</color>
     <color name="redCenter">#FF1500</color>
     <color name="darkRed">#9E1313</color>
+    <color name="darkerRed">#B31212</color>
     <color name="darkGreen">#0F710F</color>
+    <color name="greenOnline">#0e741e</color>
 </resources>

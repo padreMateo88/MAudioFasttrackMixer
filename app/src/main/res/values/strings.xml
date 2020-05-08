@@ -35,4 +35,6 @@
     <string name="button_ok">OK</string>
     <string name="label_not_created">Preset not created. Preset \"%1$s\" already exists.</string>
     <string name="preset_name_in_use">preset name already in use</string>
+    <string name="device_online">DEVICE ONLINE</string>
+    <string name="device_offline">DEVICE OFFLINE</string>
 </resources>

@@ -24,6 +24,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val repository = Repository(database.presetsDao())
     private var currentOutput: Int = 1
 
+    var deviceOnline: MutableLiveData<Boolean> = MutableLiveData()
     // mixer parameters
     var audioChannels: MutableLiveData<List<AudioChannel>> = MutableLiveData()
     var masterChannel: MutableLiveData<MasterChannel> = MutableLiveData()
@@ -42,6 +43,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     var fine: MutableLiveData<Boolean> = MutableLiveData()
 
     init {
+           deviceOnline.value = false
            currentSceneName.value = "Default scene"
            currentPresetName.value = "Default preset"
            viewModelScope.launch(Dispatchers.IO) {
