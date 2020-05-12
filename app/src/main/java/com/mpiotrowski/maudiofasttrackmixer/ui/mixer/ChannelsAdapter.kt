@@ -1,5 +1,6 @@
 package com.mpiotrowski.maudiofasttrackmixer.ui.mixer
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
@@ -26,7 +27,7 @@ class ChannelsAdapter(
     }
 
     override fun getItemId(position: Int): Long {
-        return mainViewModel.audioChannels.value?.get(position)?.audioChannelId ?: -1
+        return position.toLong()
     }
 
     class ChannelViewHolder(var customView : ChannelsAdapterItemBinding) : RecyclerView.ViewHolder(customView.root)

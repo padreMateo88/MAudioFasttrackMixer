@@ -6,9 +6,7 @@ import androidx.room.Room.databaseBuilder
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.sqlite.db.SupportSQLiteDatabase
-import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.CURRENT_PRESET_ID
-import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.CURRENT_PRESET_NAME
-import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.Preset
+import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.*
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.Scene
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.scene_components.AudioChannel
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.scene_components.FxSend
@@ -23,7 +21,8 @@ import kotlinx.coroutines.launch
         Scene::class,
         MasterChannel::class,
         AudioChannel::class,
-        FxSend::class
+        FxSend::class,
+        CurrentPreset::class
     ],
     version = 1
 )
@@ -69,9 +68,19 @@ abstract class PresetsDatabase : RoomDatabase() {
         }
 
         suspend fun populateDatabase(presetsDao: PresetsDao) {
-            val defaultPreset = presetsDao.getDefaultPreset(CURRENT_PRESET_ID)
+            val defaultPreset = presetsDao.getPreset(DEFAULT_PRESET_ID)
             if(defaultPreset.isEmpty()) {
-                presetsDao.addPreset(Preset(presetId = CURRENT_PRESET_ID, presetName = CURRENT_PRESET_NAME))
+                presetsDao.addPreset(Preset(presetId = DEFAULT_PRESET_ID, presetName = DEFAULT_PRESET_NAME))
+            }
+
+            val currentState = presetsDao.getPreset(LAST_PERSISTED_STATE_ID)
+            if(currentState.isEmpty()) {
+                presetsDao.addPreset(Preset(presetId = LAST_PERSISTED_STATE_ID, presetName = LAST_PERSISTED_STATE_NAME))
+            }
+
+            val currentPreset = presetsDao.getCurrentPresetId()
+            if(currentPreset.isEmpty()) {
+                presetsDao.insertCurrentPreset(CurrentPreset(presetId = DEFAULT_PRESET_ID))
             }
         }
     }

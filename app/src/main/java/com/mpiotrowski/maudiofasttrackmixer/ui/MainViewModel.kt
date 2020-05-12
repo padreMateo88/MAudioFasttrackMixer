@@ -2,19 +2,15 @@ package com.mpiotrowski.maudiofasttrackmixer.ui
 
 import android.app.Application
 import android.util.Log
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.mpiotrowski.maudiofasttrackmixer.data.Repository
 import com.mpiotrowski.maudiofasttrackmixer.data.database.PresetsDatabase
-import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.CURRENT_PRESET_ID
-import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.CURRENT_PRESET_NAME
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.Preset
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.PresetWithScenes
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.SampleRate
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.SceneWithComponents
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.scene_components.*
+import com.mpiotrowski.maudiofasttrackmixer.util.Event
 import com.mpiotrowski.maudiofasttrackmixer.util.mutation
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -23,36 +19,61 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     private val database = PresetsDatabase.getDatabase(getApplication(),viewModelScope)
     private val repository = Repository(database.presetsDao())
-    private var currentOutput: Int = 1
 
-    var fine: MutableLiveData<Boolean> = MutableLiveData()
-    var deviceOnline: MutableLiveData<Boolean> = MutableLiveData()
+    private val sceneLoadedEvent = MutableLiveData<Event<Int>>()
+    private val currentOutput: MutableLiveData<Int> = MutableLiveData()
 
-    var audioChannels: MutableLiveData<List<AudioChannel>> = MutableLiveData()
-    var masterChannel: MutableLiveData<MasterChannel> = MutableLiveData()
-    var fxSends: MutableLiveData<List<FxSend>> = MutableLiveData()
-    var allPresets: LiveData<List<PresetWithScenes>> = MutableLiveData()
+    var fine:  MutableLiveData<Boolean> = MutableLiveData()
+    var deviceOnline:  MutableLiveData<Boolean> = MutableLiveData()
 
-    var fxSettings: MutableLiveData<FxSettings> = MutableLiveData()
-    var sampleRate: MutableLiveData<SampleRate> = MutableLiveData()
+    var allPresets: LiveData<List<PresetWithScenes>> = repository.presetsWithScenes
+    var currentPreset = repository.currentPreset
 
-    var currentPreset: PresetWithScenes = PresetWithScenes.newInstance(Preset(CURRENT_PRESET_ID, CURRENT_PRESET_NAME))
-    var currentScene: SceneWithComponents = currentPreset.scenes.sortedBy{ it.scene.sceneOrder }[0]
+    var currentState = repository.currentState
+    var currentScene = MediatorLiveData<SceneWithComponents>()
 
-    var currentSceneName: MutableLiveData<String> = MutableLiveData()
-    var currentPresetName: MutableLiveData<String> = MutableLiveData()
+    var audioChannels = MediatorLiveData<List<AudioChannel>>()
+    var masterChannel = MediatorLiveData<MasterChannel>()
+    var fxSends = MediatorLiveData<List<FxSend>>()
+
+    var fxSettings = MutableLiveData<FxSettings>()
+    var sampleRate = MutableLiveData<SampleRate>()
 
     init {
-           deviceOnline.value = false
-           currentSceneName.value = "Default scene"
-           currentPresetName.value = "Default preset"
-           viewModelScope.launch(Dispatchers.IO) {
-               currentPreset = repository.getCurrentPreset()
-               currentPreset.scenesByOrder[currentOutput]?.let { currentScene = it}
-               viewModelScope.launch(Dispatchers.Main) {
-                   onPresetLoaded()
-               }
-           }
+        audioChannels.addSource(currentOutput) { outputIndex ->
+            Log.d("MPdebug", "audioChannels set ${currentOutput.value}")
+            audioChannels.value = currentScene.value?.channelsByOutputsMap?.get(outputIndex)
+        }
+
+        audioChannels.addSource(currentScene) { sceneWithComponents ->
+            Log.d("MPdebug", "audioChannels set ${currentScene.value}")
+            audioChannels.value = sceneWithComponents.channelsByOutputsMap[currentOutput.value]
+        }
+
+        masterChannel.addSource(currentOutput) { outputIndex ->
+            masterChannel.value = currentScene.value?.mastersByOutputsMap?.get(outputIndex)
+        }
+
+        masterChannel.addSource(currentScene) { sceneWithComponents ->
+            masterChannel.value = sceneWithComponents.mastersByOutputsMap[currentOutput.value]
+        }
+
+        fxSends.addSource(currentScene) { sceneWithComponents ->
+            fxSends.value = sceneWithComponents.fxSends
+        }
+
+        currentScene.addSource(currentState) { value ->
+            currentScene.value = value?.scenes?.get(1)
+        }
+
+        currentScene.addSource(sceneLoadedEvent) { sceneSelectedEvent ->
+            sceneSelectedEvent.getContentIfNotHandled()?.let {
+                sceneIndex -> currentScene.value = currentState.value?.scenesByOrder?.get(sceneIndex)
+            }
+        }
+
+        deviceOnline.value = false
+        currentOutput.value = 1
     }
 
 // region save/load preset
@@ -71,15 +92,14 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         if(copyFrom.scene.sceneId != copyTo.scene.sceneId)
             copyTo.copyValues(copyFrom,newName)
         else
-            copyTo.scene.sceneName = newName
-        if(copyTo.scene.sceneId == currentScene.scene.sceneId)
-            currentSceneName.value = newName
+            currentScene.mutation {
+                it.value?.scene?.sceneName = newName
+            }
         //TODO save to database
     }
 
     fun createPreset(presetName: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            currentPreset.preset.presetName = presetName
             repository.addPreset(Preset(presetName = presetName))
         }
     }
@@ -89,8 +109,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             false
         else {
             viewModelScope.launch(Dispatchers.IO) {
-                currentPreset.preset.presetName = presetName
-                repository.savePresetWithScenes(currentPreset, false)
+                currentState.value?.preset?.presetName = presetName
+                currentState.value?.let {currentPreset -> repository.savePresetWithScenes(currentPreset, false)}
             }
             true
         }
@@ -101,10 +121,12 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         presetToRemove?.let {
             viewModelScope.launch(Dispatchers.IO) {
                 repository.deletePreset(it)
-                currentPreset.preset.presetName = presetName
-                repository.savePresetWithScenes(currentPreset,false)
+                currentState.value?.let{
+                    currentPreset ->
+                        currentPreset.preset.presetName = presetName
+                        repository.savePresetWithScenes(currentPreset, false)
+                }
             }
-
         }
     }
 
@@ -120,26 +142,14 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 // endregion save/load preset
 
 //region scene/preset/output changed
-    private fun onPresetLoaded() {
-        sampleRate.value = currentPreset.preset.sampleRate
-        onSceneSelected(1)
-    }
-
     fun onSceneSelected(sceneIndex :Int) {
         Log.d("MPdebug", "scene $sceneIndex")
-        currentPreset.scenesByOrder[sceneIndex]?.let { currentScene = it }
-        currentScene.channelsByOutputsMap[currentOutput].let{audioChannels.value = it}
-        currentScene.mastersByOutputsMap[currentOutput].let{masterChannel.value = it}
-        fxSends.value = currentScene.fxSends
-        fxSettings.value = currentScene.scene.fxSettings
-        currentSceneName.value = currentScene.scene.sceneName
+        sceneLoadedEvent.value = Event(sceneIndex)
     }
 
     fun onOutputSelected(outputIndex: Int) {
         Log.d("MPdebug", "output $outputIndex")
-        currentOutput = outputIndex
-        currentScene.channelsByOutputsMap[currentOutput].let{audioChannels.value = it}
-        currentScene.mastersByOutputsMap[currentOutput].let{masterChannel.value = it}
+        currentOutput.value = outputIndex
     }
 //endregion controls
 

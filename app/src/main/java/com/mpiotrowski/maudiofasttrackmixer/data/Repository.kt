@@ -1,6 +1,9 @@
 package com.mpiotrowski.maudiofasttrackmixer.data
 
 import androidx.annotation.WorkerThread
+import androidx.lifecycle.LiveData
+import androidx.room.Query
+import androidx.room.Transaction
 import com.mpiotrowski.maudiofasttrackmixer.data.database.PresetsDao
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.*
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.*
@@ -10,16 +13,13 @@ import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.
 
 class Repository(private val presetsDao: PresetsDao) {
 
-//region get
-    val presetsWithScenes = presetsDao.getPresetsWithScenes(CURRENT_PRESET_ID)
 
-    suspend fun getCurrentPreset(): PresetWithScenes {
-        val currentPresetList = presetsDao.getDefaultPreset(CURRENT_PRESET_ID)
-        return if(currentPresetList.isNotEmpty())
-            currentPresetList[0]
-        else
-            presetsDao.addPreset(Preset(CURRENT_PRESET_ID,CURRENT_PRESET_NAME))
-    }
+    val presetsWithScenes = presetsDao.getPresetsWithScenes()
+
+    val currentPreset = presetsDao.getCurrentPreset()
+
+    val currentState = presetsDao.getPersistedState()
+
 //endregion get
 
 //region add

@@ -152,7 +152,7 @@
                 android:layout_gravity="center"
                 android:layout_marginLeft="@dimen/dimen_4dp"
                 android:layout_marginRight="@dimen/dimen_4dp"
-                android:text="@{viewmodel.currentSceneName}" />
+                android:text="@{viewmodel.currentScene.scene.sceneName}" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:layout_marginTop="@dimen/dimen_4dp"

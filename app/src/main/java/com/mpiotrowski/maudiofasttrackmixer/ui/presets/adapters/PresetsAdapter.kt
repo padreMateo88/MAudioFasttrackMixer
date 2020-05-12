@@ -35,7 +35,7 @@ class PresetsAdapter(
     private lateinit var viewGroup : ViewGroup
 
     override fun getItemId(position: Int): Long {
-        return  mainViewModel.currentPreset.scenesByOrder[position]?.scene?.sceneId ?: -1
+        return  mainViewModel.currentState.value?.scenesByOrder?.get(position)?.scene?.sceneId ?: -1
     }
 
     override fun onCreateViewHolder(parent: ViewGroup,
@@ -52,7 +52,7 @@ class PresetsAdapter(
     class PresetsViewHolder(var customView : ItemPresetBinding) : RecyclerView.ViewHolder(customView.root)
 
     override fun onBindViewHolder(holder: PresetsViewHolder, position: Int) {
-        mainViewModel.currentPreset.scenesByOrder[position+1]?.let {
+        mainViewModel.currentState.value?.scenesByOrder?.get(position+1)?.let {
             holder.customView.scene = it.scene
         }
 
@@ -67,24 +67,28 @@ class PresetsAdapter(
     }
 
     override fun getItemCount(): Int {
-        return mainViewModel.currentPreset.scenes.size
+        return mainViewModel.currentState.value?.scenes?.size ?: 0
     }
 
     override fun swipeRight(adapterPosition: Int) {
-        LoadDeletePresetDialog(
-            appCompatActivity,
-            mainViewModel.currentPreset,
-            removeListener,
-            R.string.delete_preset
-        ).show()
+        mainViewModel.currentState.value?.let {
+            LoadDeletePresetDialog(
+                appCompatActivity,
+                it,
+                removeListener,
+                R.string.delete_preset
+            ).show()
+        }
     }
 
     override fun swipeLeft(adapterPosition: Int) {
-        LoadDeletePresetDialog(
-            appCompatActivity,
-            mainViewModel.currentPreset,
-            loadListener,
-            R.string.load_preset
-        ).show()
+        mainViewModel.currentState.value?.let {
+            LoadDeletePresetDialog(
+                appCompatActivity,
+                it,
+                loadListener,
+                R.string.load_preset
+            ).show()
+        }
     }
 }

@@ -5,8 +5,11 @@ import androidx.room.PrimaryKey
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.SampleRate
 import java.util.*
 
-const val CURRENT_PRESET_ID = "CURRENT_PRESET"
-const val CURRENT_PRESET_NAME = "Default preset"
+const val LAST_PERSISTED_STATE_ID = "LAST_PERSISTED_STATE"
+const val LAST_PERSISTED_STATE_NAME = ""
+
+const val DEFAULT_PRESET_ID = "DEFAULT_PRESET"
+const val DEFAULT_PRESET_NAME = "Default preset"
 
 @Entity
 data class Preset(

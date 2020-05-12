@@ -56,6 +56,7 @@ class MixerFragment : Fragment() {
         view?.viewTreeObserver?.addOnGlobalLayoutListener(object : OnGlobalLayoutListener {
             override fun onGlobalLayout() {
                 view?.viewTreeObserver?.removeOnGlobalLayoutListener(this)
+                viewDataBinding.recyclerViewChannels.itemAnimator = null
                 viewDataBinding.recyclerViewChannels.layoutManager = LinearLayoutManager(
                     context,
                     LinearLayoutManager.HORIZONTAL,
@@ -67,7 +68,7 @@ class MixerFragment : Fragment() {
                 viewDataBinding.recyclerViewChannels.requestDisallowInterceptTouchEvent(true)
 
                 viewModel.audioChannels.observe(requireActivity(), Observer {
-                    //(viewDataBinding.recyclerViewChannels.adapter as ChannelsAdapter).notifyDataSetChanged()
+                        (viewDataBinding.recyclerViewChannels.adapter as ChannelsAdapter).notifyDataSetChanged()
                 })
             }
         })

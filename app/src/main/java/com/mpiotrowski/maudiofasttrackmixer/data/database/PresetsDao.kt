@@ -2,9 +2,7 @@ package com.mpiotrowski.maudiofasttrackmixer.data.database
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
-import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.Preset
-import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.PresetWithScenes
-import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.SCENES_IN_PRESET_COUNT
+import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.*
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.MIXER_INPUTS_COUNT
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.MIXER_STEREO_OUTPUTS_COUNT
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.Scene
@@ -18,16 +16,30 @@ interface PresetsDao {
 
 //region select
     @Transaction
-    @Query("SELECT * FROM Preset WHERE presetId != :defaultPresetId")
-    fun getPresetsWithScenes(defaultPresetId: String): LiveData<List<PresetWithScenes>>
+    @Query("SELECT * FROM Preset WHERE presetId != \"$LAST_PERSISTED_STATE_ID\"")
+    fun getPresetsWithScenes(): LiveData<List<PresetWithScenes>>
 
     @Transaction
-    @Query("SELECT * FROM Preset WHERE presetId = :defaultPresetId")
-    fun getDefaultPreset(defaultPresetId: String): List<PresetWithScenes>
+    @Query("SELECT * FROM Preset WHERE presetId = :presetId")
+    fun getPreset(presetId: String): List<PresetWithScenes>
+
+    @Transaction
+    @Query("SELECT * FROM CurrentPreset WHERE id = $CURRENT_PRESET_ID")
+    fun getCurrentPresetId(): List<CurrentPreset>
+
+    @Transaction
+    @Query("SELECT * FROM Preset WHERE presetId IN (SELECT presetId FROM CurrentPreset WHERE id = $CURRENT_PRESET_ID)")
+    fun getCurrentPreset(): LiveData<PresetWithScenes>
+
+    @Query("SELECT * FROM Preset WHERE presetId = \"$LAST_PERSISTED_STATE_ID\"")
+    fun getPersistedState(): LiveData<PresetWithScenes>
 
 //endregion select
 
 //region insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertCurrentPreset(currentPreset: CurrentPreset)
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertPreset(preset: Preset)
 

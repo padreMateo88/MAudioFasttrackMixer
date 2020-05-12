@@ -56,11 +56,13 @@ class PresetsFragment : Fragment(),
 
     private fun setSavePresetButtonClickListener() {
         viewDataBinding.buttonSavePreset.setOnClickListener {
-            SavePresetDialog(
-                requireContext(),
-                viewModel.currentPreset.preset.presetName,
-                this@PresetsFragment
-            ).show()
+            viewModel.currentPreset.value?.preset?.presetName?.let{
+                presetName -> SavePresetDialog(
+                    requireContext(),
+                    presetName,
+                    this@PresetsFragment
+                ).show()
+            }
         }
     }
 
