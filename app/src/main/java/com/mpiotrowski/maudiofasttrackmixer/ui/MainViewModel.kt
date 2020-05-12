@@ -38,10 +38,18 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     var masterChannel = MediatorLiveData<MasterChannel>()
     var fxSends = MediatorLiveData<List<FxSend>>()
 
-    var fxSettings = MutableLiveData<FxSettings>()
-    var sampleRate = MutableLiveData<SampleRate>()
+    var fxSettings = MediatorLiveData<FxSettings>()
+    var sampleRate = MediatorLiveData<SampleRate>()
 
     init {
+        fxSettings.addSource(currentScene) {
+            sceneWithComponents -> fxSettings.value = sceneWithComponents.scene.fxSettings
+        }
+
+        sampleRate.addSource(currentState) {
+                presetWithComponents -> sampleRate.value = presetWithComponents.preset.sampleRate
+        }
+
         selectedPreset.addSource(allPresets) { allPresetsListNullable ->
             allPresetsListNullable?.let {allPresets ->
                 if(selectedPreset.value == null && allPresets.isNotEmpty()) {

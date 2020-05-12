@@ -1,5 +1,6 @@
 package com.mpiotrowski.maudiofasttrackmixer.ui.views.observable_spinner
 
+import android.util.Log
 import androidx.databinding.BindingAdapter
 import androidx.databinding.InverseBindingAdapter
 import androidx.databinding.InverseBindingListener
@@ -7,15 +8,17 @@ import androidx.databinding.InverseBindingListener
 object ObservableSpinnerBindingAdapter {
 //region fxVolume
     @BindingAdapter("selectedItem")
-    @JvmStatic fun setSelectedPosition(spinner: ObservableSpinner, selectedItem: Any) {
-        for(i in 0 until spinner.adapter.count) {
-            if(spinner.adapter.getItem(i) == selectedItem)
+    @JvmStatic fun setSelectedPosition(spinner: ObservableSpinner, selectedItem: Any?) {
+    val adapterCount = spinner.adapter?.count ?: 0
+        for(i in 0 until adapterCount) {
+            if(spinner.adapter.getItem(i) == selectedItem){
                 spinner.setSelection(i)
+            }
         }
     }
 
     @InverseBindingAdapter(attribute = "selectedItem")
-    @JvmStatic fun getSelectedPosition(spinner: ObservableSpinner): Any {
+    @JvmStatic fun getSelectedPosition(spinner: ObservableSpinner): Any? {
         return spinner.adapter.getItem(spinner.selectedItemPosition)
     }
 

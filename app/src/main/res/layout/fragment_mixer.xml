@@ -37,6 +37,7 @@
             android:layout_marginTop="@dimen/dimen_4dp"
             android:layout_weight="1"
             android:gravity="center"
+            app:fine="@{viewmodel.fine}"
             app:volume="@={viewmodel.masterChannel.volume}"
             app:mute="@={viewmodel.masterChannel.mute}"
             app:panorama="@={viewmodel.masterChannel.panorama}"
