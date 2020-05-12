@@ -18,20 +18,20 @@ import kotlinx.android.synthetic.main.fragment_mixer.*
 
 class MixerFragment : Fragment() {
     lateinit var viewModel: MainViewModel
-    private lateinit var viewDataBinding: FragmentMixerBinding
+    private lateinit var binding: FragmentMixerBinding
     var outputIndex = 1
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                             savedInstanceState: Bundle?): View? {
-       viewDataBinding = FragmentMixerBinding.inflate(inflater, container, false)
-       viewDataBinding.lifecycleOwner = requireActivity()
-       return viewDataBinding.root
+       binding = FragmentMixerBinding.inflate(inflater, container, false)
+       binding.lifecycleOwner = requireActivity()
+       return binding.root
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProviders.of(requireActivity()).get(MainViewModel::class.java)
-        viewDataBinding.viewmodel = viewModel
+        binding.viewmodel = viewModel
         prepareChannelMixer()
         prepareSceneSelector()
 
@@ -56,29 +56,34 @@ class MixerFragment : Fragment() {
         view?.viewTreeObserver?.addOnGlobalLayoutListener(object : OnGlobalLayoutListener {
             override fun onGlobalLayout() {
                 view?.viewTreeObserver?.removeOnGlobalLayoutListener(this)
-                viewDataBinding.recyclerViewChannels.itemAnimator = null
-                viewDataBinding.recyclerViewChannels.layoutManager = LinearLayoutManager(
+                binding.recyclerViewChannels.itemAnimator = null
+                binding.recyclerViewChannels.layoutManager = LinearLayoutManager(
                     context,
                     LinearLayoutManager.HORIZONTAL,
                     false
                 )
                 val channelsAdapter = ChannelsAdapter(requireActivity() as androidx.appcompat.app.AppCompatActivity, viewModel)
                 channelsAdapter.setHasStableIds(true)
-                viewDataBinding.recyclerViewChannels.adapter = channelsAdapter
-                viewDataBinding.recyclerViewChannels.requestDisallowInterceptTouchEvent(true)
+                binding.recyclerViewChannels.adapter = channelsAdapter
+                binding.recyclerViewChannels.requestDisallowInterceptTouchEvent(true)
 
                 viewModel.audioChannels.observe(requireActivity(), Observer {
-                        (viewDataBinding.recyclerViewChannels.adapter as ChannelsAdapter).notifyDataSetChanged()
+                        (binding.recyclerViewChannels.adapter as ChannelsAdapter).notifyDataSetChanged()
                 })
             }
         })
     }
 
     private fun prepareSceneSelector() {
-        val recyclerViewSceneButtons = viewDataBinding.recyclerViewSceneButtons
+        val recyclerViewSceneButtons = binding.recyclerViewSceneButtons
         recyclerViewSceneButtons.isNestedScrollingEnabled = false
         recyclerViewSceneButtons.layoutManager = GridLayoutManager(context, 3)
-        recyclerViewSceneButtons.adapter = SceneButtonsAdapter(viewModel)
+        val sceneButtonsAdapter = SceneButtonsAdapter(viewModel)
+        sceneButtonsAdapter.setHasStableIds(true)
+        recyclerViewSceneButtons.adapter = sceneButtonsAdapter
+        viewModel.currentScene.observe(requireActivity(), Observer {
+            (recyclerViewSceneButtons.adapter as SceneButtonsAdapter).notifyDataSetChanged()
+        })
     }
 
     companion object {

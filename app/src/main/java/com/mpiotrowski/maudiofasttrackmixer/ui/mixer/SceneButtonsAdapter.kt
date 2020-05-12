@@ -22,6 +22,10 @@ class SceneButtonsAdapter(private var viewModel: MainViewModel): RecyclerView.Ad
         return SceneButtonViewHolder(layout)
     }
 
+    override fun getItemId(position: Int): Long {
+        return position.toLong()
+    }
+
     class SceneButtonViewHolder(val layout: LinearLayout) : RecyclerView.ViewHolder(layout)
 
     override fun onBindViewHolder(holder: SceneButtonViewHolder, position: Int) {

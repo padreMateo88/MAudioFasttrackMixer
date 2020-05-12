@@ -29,6 +29,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     var allPresets: LiveData<List<PresetWithScenes>> = repository.presetsWithScenes
     var currentPreset = repository.currentPreset
 
+    var selectedPreset = MediatorLiveData<PresetWithScenes>()
+
     var currentState = repository.currentState
     var currentScene = MediatorLiveData<SceneWithComponents>()
 
@@ -40,6 +42,20 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     var sampleRate = MutableLiveData<SampleRate>()
 
     init {
+        selectedPreset.addSource(allPresets) { allPresetsListNullable ->
+            allPresetsListNullable?.let {allPresets ->
+                if(selectedPreset.value == null && allPresets.isNotEmpty()) {
+                    selectedPreset.value = allPresets[0]
+                }
+
+                selectedPreset.value?.let {
+                    if(!allPresets.contains(it)){
+                        selectedPreset.value = allPresets[0]
+                    }
+                }
+            }
+        }
+
         audioChannels.addSource(currentOutput) { outputIndex ->
             Log.d("MPdebug", "audioChannels set ${currentOutput.value}")
             audioChannels.value = currentScene.value?.channelsByOutputsMap?.get(outputIndex)
@@ -63,7 +79,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         }
 
         currentScene.addSource(currentState) { value ->
-            currentScene.value = value?.scenes?.get(1)
+            currentScene.value = value?.scenesByOrder?.get(1)
         }
 
         currentScene.addSource(sceneLoadedEvent) { sceneSelectedEvent ->
@@ -77,6 +93,11 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
 // region save/load preset
+
+    fun selectPreset(presetWithScenes: PresetWithScenes) {
+        Log.d("MPdebug", "loadPreset ${presetWithScenes.preset.presetName}")
+        selectedPreset.value = presetWithScenes
+    }
 
     fun loadPreset(presetWithScenes: PresetWithScenes) {
         Log.d("MPdebug", "loadPreset ${presetWithScenes.preset.presetName}")

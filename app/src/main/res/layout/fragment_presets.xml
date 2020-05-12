@@ -39,7 +39,8 @@
                 android:id="@+id/textViewPresetName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/dimen_16dp"
+                android:textStyle="bold"
+                android:layout_marginTop="@dimen/dimen_12dp"
                 android:text="@{viewmodel.currentPreset.preset.presetName}"/>
 
             <Button
@@ -47,7 +48,7 @@
                 android:textAllCaps="false"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/dimen_16dp"
+                android:layout_marginTop="@dimen/dimen_22dp"
                 android:background="@drawable/button_unselected"
                 android:text="@string/button_save"/>
         </LinearLayout>

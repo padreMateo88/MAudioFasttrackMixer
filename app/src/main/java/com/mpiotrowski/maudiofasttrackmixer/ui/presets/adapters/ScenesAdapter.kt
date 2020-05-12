@@ -24,19 +24,23 @@ class ScenesAdapter(
     }
 
     fun onItemMoved(fromPosition: Int, toPosition: Int) {
-        mainViewModel.currentState.value?.let { mainViewModel.swapScenesInPreset(it, fromPosition + 1, toPosition + 1) }
+        mainViewModel.selectedPreset.value?.let { mainViewModel.swapScenesInPreset(it, fromPosition + 1, toPosition + 1) }
         super.notifyItemMoved(fromPosition, toPosition)
+    }
+
+    override fun getItemId(position: Int): Long {
+        return  mainViewModel.selectedPreset.value?.scenesByOrder?.get(position)?.scene?.sceneId ?: -1
     }
 
     class ScenesViewHolder(var customView : ItemSceneBinding) : RecyclerView.ViewHolder(customView.root)
 
     override fun onBindViewHolder(holder: ScenesViewHolder, position: Int) {
-        mainViewModel.currentState.value?.scenesByOrder?.get(position+1)?.let {
+        mainViewModel.selectedPreset.value?.scenesByOrder?.get(position+1)?.let {
             holder.customView.scene = it.scene
         }
     }
 
     override fun getItemCount(): Int {
-        return mainViewModel.currentState.value?.scenes?.size ?: 0
+        return mainViewModel.selectedPreset.value?.scenes?.size ?: 0
     }
 }

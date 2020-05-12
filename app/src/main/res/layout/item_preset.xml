@@ -4,8 +4,8 @@
 
     <data>
         <variable
-            name="scene"
-            type="com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.Scene"/>
+            name="preset"
+            type="com.mpiotrowski.maudiofasttrackmixer.data.model.preset.Preset"/>
     </data>
 
     <androidx.cardview.widget.CardView
@@ -25,7 +25,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="@dimen/dimen_16dp"
-            android:text="@{scene.sceneName}" />
+            android:text="@{preset.presetName}" />
     </androidx.cardview.widget.CardView>
 
 </layout>

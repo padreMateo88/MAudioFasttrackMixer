@@ -31,7 +31,6 @@ class PresetsAdapter(
         }
     }
 
-    private var selectedItemId = -1
     private lateinit var viewGroup : ViewGroup
 
     override fun getItemId(position: Int): Long {
@@ -52,22 +51,32 @@ class PresetsAdapter(
     class PresetsViewHolder(var customView : ItemPresetBinding) : RecyclerView.ViewHolder(customView.root)
 
     override fun onBindViewHolder(holder: PresetsViewHolder, position: Int) {
-        mainViewModel.currentState.value?.scenesByOrder?.get(position+1)?.let {
-            holder.customView.scene = it.scene
+        var colorResource = R.color.darkerGray
+        mainViewModel.allPresets.value?.get(position)?.let {
+            holder.customView.preset = it.preset
+            if(it == mainViewModel.selectedPreset.value)
+                colorResource = R.color.colorPrimaryDark
         }
-
-        val colorResource = if(selectedItemId == holder.adapterPosition) R.color.colorPrimaryDark else R.color.darkerGray
         holder.customView.cardViewPresetItemBackground.setCardBackgroundColor(
             ContextCompat.getColor(holder.customView.root.context,colorResource)
         )
+
         holder.customView.root.setOnClickListener {
-            selectedItemId = holder.adapterPosition
-            this@PresetsAdapter.notifyDataSetChanged()
+            mainViewModel.allPresets.value?.get(holder.adapterPosition)?.let {
+                mainViewModel.selectPreset(it)
+                this@PresetsAdapter.notifyDataSetChanged()
+            }
+        }
+    }
+
+    fun selectItem(position: Int) {
+        mainViewModel.allPresets.value?.get(position)?.let {
+            mainViewModel.selectPreset(it)
         }
     }
 
     override fun getItemCount(): Int {
-        return mainViewModel.currentState.value?.scenes?.size ?: 0
+        return mainViewModel.allPresets.value?.size ?: 0
     }
 
     override fun swipeRight(adapterPosition: Int) {
