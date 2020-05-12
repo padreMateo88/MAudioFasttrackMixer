@@ -38,12 +38,18 @@ class MyLinearLayout(context: Context, attrs: AttributeSet?) : LinearLayout(cont
     private val mTouchSlop: Int = android.view.ViewConfiguration.get(context).scaledTouchSlop
     private var gestureDirection: GestureDirection = GestureDirection.UP
     private var previousGestureDirection: GestureDirection = GestureDirection.UP
+    private var bottomBarLock: Boolean = false
 
     init {
+        stopAnimations()
+        val bottomNavigationView: BottomNavigationView = getBottomBar()
+        selfHide(bottomNavigationView)
+    }
+
+    public fun stopAnimations() {
         val bottomNavigationView: BottomNavigationView = getBottomBar()
         val handler: Handler? = bottomNavigationView.handler
         handler?.removeCallbacks(MyRunnable)
-        selfHide(bottomNavigationView)
     }
 
     private fun setOnSwipeTouchLister(bottomNavigationView: BottomNavigationView) {
@@ -63,19 +69,19 @@ class MyLinearLayout(context: Context, attrs: AttributeSet?) : LinearLayout(cont
     private fun getDistance(ev: MotionEvent): Int {
         var x = ev.x
         var y = ev.y
-        var distanceSum: Double = 0.0
+        var distanceSum = 0.0
         val historySize: Int = ev.historySize
         for (h in 0 until historySize step 1) {
             // historical point
-            val hx: Float = ev.getHistoricalX(0, h)
-            val hy: Float = ev.getHistoricalY(0, h)
+            val hx = ev.getHistoricalX(0, h)
+            val hy = ev.getHistoricalY(0, h)
             // distance between startX,startY and historical point
             val dx: Float = (hx - x)
             val dy: Float = (hy - y)
             distanceSum += sqrt((dx * dx + dy * dy).toDouble())
             // make historical point the start point for next loop iteration
-            x = hx;
-            y = hy;
+            x = hx
+            y = hy
         }
         // add distance from last historical point to event's point
         val dx: Float = (ev.getX(0) - x)
@@ -86,7 +92,7 @@ class MyLinearLayout(context: Context, attrs: AttributeSet?) : LinearLayout(cont
     }
 
     override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
-        val activity: MainActivity = context as MainActivity
+        val activity: MainActivity = getActivity()
         val navHostFragment: Fragment = activity.nav_host_fragment
         val fragment: Fragment = navHostFragment.childFragmentManager.fragments[0]
         val bottomNavigationView: BottomNavigationView = getBottomBar()
@@ -128,16 +134,26 @@ class MyLinearLayout(context: Context, attrs: AttributeSet?) : LinearLayout(cont
                 return true
             }
         }
-        return false;
+        return false
     }
 
     private fun getBottomBar(): BottomNavigationView {
-        val activity: MainActivity = context as MainActivity
+        val activity: MainActivity = getActivity()
         return activity.bottom_nav
     }
 
+    private fun getActivity(): MainActivity {
+        return context as MainActivity
+    }
+
+    fun lockBottomBar(lockedBottomBar: Boolean) {
+        bottomBarLock = lockedBottomBar
+        val marginHeight: Int = if (lockedBottomBar) getBottomBarHeight() else 0
+        setMarginBottom(marginHeight)
+    }
+
     private fun setBottomBarAnimation(bottomNavBar: BottomNavigationView) {
-        if (previousGestureDirection != gestureDirection) {
+        if (previousGestureDirection != gestureDirection && !bottomBarLock) {
             if (gestureDirection == GestureDirection.UP) {
                 bottomNavBar.slideAnimation(SlideDirection.UP, SlideType.SHOW)
                 selfHide(bottomNavBar)
@@ -154,5 +170,16 @@ class MyLinearLayout(context: Context, attrs: AttributeSet?) : LinearLayout(cont
         gestureDirection = GestureDirection.DOWN
         bottomNavBar.postDelayed(myRunnable, TIME_TO_HIDE)
         previousGestureDirection = gestureDirection
+    }
+
+    private fun getBottomBarHeight(): Int {
+        val bottomNavigationView: BottomNavigationView = getBottomBar()
+        return bottomNavigationView.height
+    }
+
+    private fun setMarginBottom(marginHeight: Int) {
+        val layoutParams = (this.layoutParams as? MarginLayoutParams)
+        layoutParams?.setMargins(layoutParams.leftMargin, layoutParams.topMargin, layoutParams.rightMargin, marginHeight)
+        this.layoutParams = layoutParams
     }
 }

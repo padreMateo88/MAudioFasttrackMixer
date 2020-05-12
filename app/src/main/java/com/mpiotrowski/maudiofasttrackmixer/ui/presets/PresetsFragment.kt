@@ -5,16 +5,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
 import com.mpiotrowski.maudiofasttrackmixer.databinding.FragmentPresetsBinding
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.mpiotrowski.maudiofasttrackmixer.ui.MainViewModel
+import com.mpiotrowski.maudiofasttrackmixer.ui.views.MyFragment
 import kotlinx.android.synthetic.main.fragment_presets.*
 
-class PresetsFragment : Fragment(),
+class PresetsFragment : MyFragment(),
     SavePresetDialog.SavePresetListener,
     OverwritePresetDialog.OverwritePresetListener,
     AddPresetDialog.AddPresetListener {
@@ -22,8 +22,14 @@ class PresetsFragment : Fragment(),
     lateinit var viewModel: MainViewModel
     private lateinit var viewDataBinding: FragmentPresetsBinding
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun provideViewCreated(view: View, savedInstanceState: Bundle?) {
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         viewDataBinding = FragmentPresetsBinding.inflate(inflater, container, false)
         viewModel = ViewModelProviders.of(requireActivity()).get(MainViewModel::class.java)
         return viewDataBinding.root

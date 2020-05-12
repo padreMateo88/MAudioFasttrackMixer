@@ -14,6 +14,7 @@
     <string name="label_mixer">Mixer</string>
     <string name="spinner_effectType">Effect type</string>
     <string name="spinner_sampleRate">Sample rate</string>
+    <string name="switch_bottomBarLock">Lock bottom bar</string>
     <string name="seekBar_duration">Duration</string>
     <string name="seekBar_feedback">Feedback</string>
     <string name="seekBar_volume">Volume</string>

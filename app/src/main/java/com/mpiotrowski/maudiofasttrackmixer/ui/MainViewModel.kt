@@ -33,6 +33,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     var fxSettings: MutableLiveData<FxSettings> = MutableLiveData()
      //device parameters
     var sampleRate: MutableLiveData<SampleRate> = MutableLiveData()
+    //bottom bar settings
+    var lockBottomBar: MutableLiveData<Boolean> = MutableLiveData(false)
 
     val allPresets = repository.presetsWithScenes
     var currentPreset: PresetWithScenes = PresetWithScenes.newInstance(Preset(CURRENT_PRESET_ID, CURRENT_PRESET_NAME))
@@ -195,4 +197,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         Log.d("MPdebug", "sampleRate $sampleRate")
     }
 //endregion FX listeners
+
+    //bottom bar settings listeners
+    fun onLockBottomBarChanged(isLocked: Boolean) {
+        Log.d("MPdebug", "Locked Bottm Bar Status: $isLocked")
+        lockBottomBar.value = isLocked
+    }
 }

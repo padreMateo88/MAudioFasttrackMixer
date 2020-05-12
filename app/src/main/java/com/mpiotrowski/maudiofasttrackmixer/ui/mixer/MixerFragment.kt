@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
@@ -13,19 +12,27 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.MIXER_STEREO_OUTPUTS_COUNT
 import com.mpiotrowski.maudiofasttrackmixer.databinding.FragmentMixerBinding
 import com.mpiotrowski.maudiofasttrackmixer.ui.MainViewModel
+import com.mpiotrowski.maudiofasttrackmixer.ui.views.MyFragment
 import kotlinx.android.synthetic.main.fragment_mixer.*
 
 
-class MixerFragment : Fragment() {
+class MixerFragment : MyFragment() {
     lateinit var viewModel: MainViewModel
+
+    override fun provideViewCreated(view: View, savedInstanceState: Bundle?) {
+    }
+
     private lateinit var viewDataBinding: FragmentMixerBinding
     var outputIndex = 1
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                            savedInstanceState: Bundle?): View? {
-       viewDataBinding = FragmentMixerBinding.inflate(inflater, container, false)
-       viewDataBinding.lifecycleOwner = requireActivity()
-       return viewDataBinding.root
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        viewDataBinding = FragmentMixerBinding.inflate(inflater, container, false)
+        viewDataBinding.lifecycleOwner = requireActivity()
+        return viewDataBinding.root
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {

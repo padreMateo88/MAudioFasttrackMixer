@@ -5,21 +5,27 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import com.mpiotrowski.maudiofasttrackmixer.databinding.FragmentSettingsBinding
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.SampleRate
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.scene_components.FxSettings
 import com.mpiotrowski.maudiofasttrackmixer.ui.MainViewModel
-import kotlinx.android.synthetic.main.layout_save_preset.*
+import com.mpiotrowski.maudiofasttrackmixer.ui.views.MyFragment
 
-class SettingsFragment : Fragment() {
+class SettingsFragment : MyFragment() {
 
     private lateinit var viewModel: MainViewModel
+
+    override fun provideViewCreated(view: View, savedInstanceState: Bundle?) {
+    }
+
     private lateinit var binding: FragmentSettingsBinding
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         binding = FragmentSettingsBinding.inflate(inflater, container, false)
         viewModel = ViewModelProviders.of(requireActivity()).get(MainViewModel::class.java)
         binding.viewmodel = viewModel
