@@ -102,14 +102,22 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
 // region save/load preset
 
+    fun saveCurrentDeviceState() {
+        viewModelScope.launch(Dispatchers.IO){
+            repository.saveCurrentDeviceState()
+        }
+    }
+
     fun selectPreset(presetWithScenes: PresetWithScenes) {
         Log.d("MPdebug", "loadPreset ${presetWithScenes.preset.presetName}")
         selectedPreset.value = presetWithScenes
     }
 
-    fun loadPreset(presetWithScenes: PresetWithScenes) {
-        Log.d("MPdebug", "loadPreset ${presetWithScenes.preset.presetName}")
-        //TODO
+    fun loadPreset(presetToLoad: PresetWithScenes) {
+        Log.d("MPdebug", "loadPreset ${presetToLoad.preset.presetName}")
+        viewModelScope.launch(Dispatchers.IO){
+            repository.loadPreset(presetToLoad)
+        }
     }
 
     fun removePreset(presetWithScenes: PresetWithScenes) {
@@ -146,17 +154,17 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun saveCurrentPresetAsExistingPreset(presetName: String) {
-        val presetToRemove = allPresets.value?.map { it.preset.presetName to it }?.toMap()?.get(presetName)?.preset
-        presetToRemove?.let {
-            viewModelScope.launch(Dispatchers.IO) {
-                repository.deletePreset(it)
-                currentState.value?.let{
-                    currentPreset ->
-                        currentPreset.preset.presetName = presetName
-                        repository.savePresetWithScenes(currentPreset, false)
-                }
-            }
-        }
+//        val presetToRemove = allPresets.value?.map { it.preset.presetName to it }?.toMap()?.get(presetName)?.preset
+//        presetToRemove?.let {
+//            viewModelScope.launch(Dispatchers.IO) {
+//                repository.deletePreset(it)
+//                currentState.value?.let{
+//                    currentPreset ->
+//                        currentPreset.preset.presetName = presetName
+//                        repository.savePresetWithScenes(currentPreset, false)
+//                }
+//            }
+//        }
     }
 
     fun swapScenesInPreset(presetWithScenes: PresetWithScenes, fromOrder: Int, toOrder: Int) {
@@ -184,6 +192,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
 //region mixer listeners
     fun onChannelChanged(audioChannel: AudioChannel) {
+        audioChannel.isDirty = true
         Log.d("MPdebug", "channel ${audioChannel.inputIndex} volume ${audioChannel.volume} panorama ${audioChannel.panorama} mute ${audioChannel.mute} solo ${audioChannel.solo}")
     }
 
@@ -201,15 +210,18 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun onFxSendChanged(fxSend: FxSend) {
+        fxSend.isDirty = true
         Log.d("MPdebug", "channel $fxSend")
     }
 
-    fun onFxReturnChanged(fxReturn: Int) {
+    fun onFxReturnChanged(masterChannel: MasterChannel, fxReturn: Int) {
+        masterChannel.isDirty
         Log.d("MPdebug", "fxReturn $fxReturn")
     }
 
     fun onMasterVolumeChanged(masterChannel: MasterChannel) {
-        Log.d("MPdebug", "master volume $masterChannel")
+        masterChannel.isDirty = true
+        Log.d("MPdebug", "master volume1 ${masterChannel.volume}")
     }
 //endregion mixer listeners
 

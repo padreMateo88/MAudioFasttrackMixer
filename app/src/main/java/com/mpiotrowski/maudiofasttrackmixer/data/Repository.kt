@@ -1,9 +1,6 @@
 package com.mpiotrowski.maudiofasttrackmixer.data
 
 import androidx.annotation.WorkerThread
-import androidx.lifecycle.LiveData
-import androidx.room.Query
-import androidx.room.Transaction
 import com.mpiotrowski.maudiofasttrackmixer.data.database.PresetsDao
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.*
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.*
@@ -13,13 +10,11 @@ import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.
 
 class Repository(private val presetsDao: PresetsDao) {
 
-
     val presetsWithScenes = presetsDao.getPresetsWithScenes()
 
     val currentPreset = presetsDao.getCurrentPreset()
 
     val currentState = presetsDao.getPersistedState()
-
 //endregion get
 
 //region add
@@ -31,6 +26,16 @@ class Repository(private val presetsDao: PresetsDao) {
 //endregion add
 
 //endregion save
+
+    suspend fun loadPreset(presetToLoad: PresetWithScenes) {
+        val currentStateCopy = currentState.value?.copy()
+        currentStateCopy?.let {
+            it.copyValues(presetToLoad, presetToLoad.preset.presetName)
+            savePresetWithScenes(it, true)
+            presetsDao.updateCurrentPreset(CurrentPreset(presetId = presetToLoad.preset.presetId))
+        }
+    }
+
     suspend fun savePreset(preset: Preset) {
         presetsDao.updatePreset(preset)
     }
@@ -53,6 +58,12 @@ class Repository(private val presetsDao: PresetsDao) {
 
     suspend fun saveSceneWithComponents(sceneWithComponents: SceneWithComponents, saveAll: Boolean) {
         presetsDao.updateSceneWithComponents(sceneWithComponents, updateAll = saveAll)
+    }
+
+    suspend fun saveCurrentDeviceState() {
+        currentState.value?.let {
+            savePresetWithScenes(it, false)
+        }
     }
 
     suspend fun savePresetWithScenes(presetWithScenes: PresetWithScenes, saveAll: Boolean) {

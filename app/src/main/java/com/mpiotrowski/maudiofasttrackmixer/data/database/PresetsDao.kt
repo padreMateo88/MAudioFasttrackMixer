@@ -107,8 +107,11 @@ interface PresetsDao {
     @Update
     fun updateFxSend(vararg fxSend: FxSend)
 
+    @Update
+    fun updateCurrentPreset(vararg currentPreset: CurrentPreset)
+
     @Transaction
-    suspend fun updatePresetWithScenes(presetWithScenes: PresetWithScenes, updateAll: Boolean) {
+    fun updatePresetWithScenes(presetWithScenes: PresetWithScenes, updateAll: Boolean) {
         updatePreset(presetWithScenes.preset)
         updateSceneWithComponents(*presetWithScenes.scenes.toTypedArray(), updateAll = updateAll)
     }

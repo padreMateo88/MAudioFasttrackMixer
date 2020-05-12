@@ -91,7 +91,7 @@ class PresetsAdapter(
     }
 
     override fun swipeLeft(adapterPosition: Int) {
-        mainViewModel.currentState.value?.let {
+        mainViewModel.allPresets.value?.get(adapterPosition)?.let {
             LoadDeletePresetDialog(
                 appCompatActivity,
                 it,

@@ -44,7 +44,7 @@
             app:fxVolume="@={viewmodel.masterChannel.fxReturn}"
             app:outputIndex="@{viewmodel.masterChannel.outputIndex}"
             app:onVolumeChanged="@{() -> viewmodel.onMasterVolumeChanged(viewmodel.masterChannel)}"
-            app:onFxVolumeChanged="@{() -> viewmodel.onFxReturnChanged(viewmodel.masterChannel.fxReturn)}"
+            app:onFxVolumeChanged="@{() -> viewmodel.onFxReturnChanged(viewmodel.masterChannel, viewmodel.masterChannel.fxReturn)}"
             />
 
         <LinearLayout
