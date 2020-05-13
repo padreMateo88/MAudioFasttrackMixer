@@ -40,9 +40,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textStyle="bold"
-                android:layout_marginTop="@dimen/dimen_12dp"
-                android:text="@{viewmodel.currentPreset.preset.presetName}"/>
-
+                android:layout_marginTop="@dimen/dimen_12dp"/>
             <Button
                 android:id="@+id/buttonSavePreset"
                 android:textAllCaps="false"

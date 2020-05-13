@@ -43,6 +43,19 @@ class PresetsFragment : Fragment(),
         preparePresetsRecyclerView()
         setSavePresetButtonClickListener()
         prepareAddPresetFab()
+        prepareCurrentPresetName()
+    }
+
+    private fun prepareCurrentPresetName() {
+        viewModel.currentState.observe(requireActivity(), Observer {
+            val currentState = viewModel.currentState.value?.preset
+            val currentPresetName = currentState?.presetName
+            textViewPresetName?.text =
+                if (currentState?.isDirty == true)
+                    "$currentPresetName*"
+                else
+                    currentPresetName
+        })
     }
 
     private fun prepareAddPresetFab() {
@@ -57,15 +70,15 @@ class PresetsFragment : Fragment(),
     }
 
     private fun setSavePresetButtonClickListener() {
-        binding.buttonSavePreset.setOnClickListener {
-            viewModel.currentPreset.value?.preset?.presetName?.let{
-                presetName -> SavePresetDialog(
-                    requireContext(),
-                    presetName,
-                    this@PresetsFragment
-                ).show()
-            }
-        }
+//        binding.buttonSavePreset.setOnClickListener {
+//            viewModel.currentPreset.value?.preset?.presetName?.let{
+//                presetName -> SavePresetDialog(
+//                    requireContext(),
+//                    presetName,
+//                    this@PresetsFragment
+//                ).show()
+//            }
+//        }
     }
 
     override fun onPresetSaved(presetName: String) {
@@ -89,7 +102,6 @@ class PresetsFragment : Fragment(),
         )
 
         val scenesAdapter = ScenesAdapter(requireActivity() as AppCompatActivity, viewModel)
-        scenesAdapter.setHasStableIds(true)
         binding.recyclerViewScenes.adapter = scenesAdapter
 
         val callback = object :

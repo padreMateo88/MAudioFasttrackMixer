@@ -2,6 +2,7 @@ package com.mpiotrowski.maudiofasttrackmixer.ui.presets.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
@@ -62,16 +63,13 @@ class PresetsAdapter(
         )
 
         holder.customView.root.setOnClickListener {
-            mainViewModel.allPresets.value?.get(holder.adapterPosition)?.let {
-                mainViewModel.selectPreset(it)
-                this@PresetsAdapter.notifyDataSetChanged()
+            val lastIndex = (mainViewModel.allPresets.value?.size ?: 1)
+            if(holder.adapterPosition in 0 until lastIndex) {
+                mainViewModel.allPresets.value?.get(holder.adapterPosition)?.let {
+                    mainViewModel.selectPreset(it)
+                    this@PresetsAdapter.notifyDataSetChanged()
+                }
             }
-        }
-    }
-
-    fun selectItem(position: Int) {
-        mainViewModel.allPresets.value?.get(position)?.let {
-            mainViewModel.selectPreset(it)
         }
     }
 
@@ -80,24 +78,55 @@ class PresetsAdapter(
     }
 
     override fun swipeRight(adapterPosition: Int) {
-        mainViewModel.currentState.value?.let {
-            LoadDeletePresetDialog(
+        val presetToDelete = mainViewModel.allPresets.value?.get(adapterPosition)
+        val presetToDeleteId = presetToDelete?.preset?.presetId
+        val currentPresetId = mainViewModel.currentState.value?.preset?.presetId
+
+        if(presetToDeleteId == currentPresetId) {
+            Toast.makeText(
                 appCompatActivity,
-                it,
-                removeListener,
-                R.string.delete_preset
+                appCompatActivity.getString(
+                    R.string.message_cant_delete_preset,
+                    presetToDelete?.preset?.presetName
+                ),
+                Toast.LENGTH_LONG
             ).show()
+        } else {
+            presetToDelete?.let {
+                LoadDeletePresetDialog(
+                    appCompatActivity,
+                    it,
+                    removeListener,
+                    R.string.delete_preset
+                ).show()
+            }
         }
     }
 
     override fun swipeLeft(adapterPosition: Int) {
-        mainViewModel.allPresets.value?.get(adapterPosition)?.let {
-            LoadDeletePresetDialog(
+
+        val currentState = mainViewModel.currentState.value?.preset
+        val currentPresetId = mainViewModel.currentPresetId.value
+        val presetToLoadId = mainViewModel.allPresets.value?.get(adapterPosition)?.preset?.presetId
+
+        if(presetToLoadId == currentPresetId && (currentState?.isDirty == false)) {
+            Toast.makeText(
                 appCompatActivity,
-                it,
-                loadListener,
-                R.string.load_preset
+                appCompatActivity.getString(
+                    R.string.message_preset_already_loaded,
+                    currentState.presetName
+                ),
+                Toast.LENGTH_LONG
             ).show()
+        } else {
+            mainViewModel.allPresets.value?.get(adapterPosition)?.let {
+                LoadDeletePresetDialog(
+                    appCompatActivity,
+                    it,
+                    loadListener,
+                    R.string.load_preset
+                ).show()
+            }
         }
     }
 }

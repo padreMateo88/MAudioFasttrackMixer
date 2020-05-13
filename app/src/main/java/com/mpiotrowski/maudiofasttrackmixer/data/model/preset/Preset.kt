@@ -1,6 +1,7 @@
 package com.mpiotrowski.maudiofasttrackmixer.data.model.preset
 
 import androidx.room.Entity
+import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.SampleRate
 import java.util.*
@@ -15,5 +16,6 @@ const val DEFAULT_PRESET_NAME = "Default preset"
 data class Preset(
     @PrimaryKey var presetId: String = UUID.randomUUID().toString(),
     var presetName: String,
-    var sampleRate: SampleRate = SampleRate.SR_48
+    var sampleRate: SampleRate = SampleRate.SR_48,
+    var isDirty: Boolean = false
 )

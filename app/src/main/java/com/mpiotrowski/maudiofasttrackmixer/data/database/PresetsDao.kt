@@ -15,21 +15,17 @@ import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.
 interface PresetsDao {
 
 //region select
-    @Transaction
     @Query("SELECT * FROM Preset WHERE presetId != \"$LAST_PERSISTED_STATE_ID\"")
     fun getPresetsWithScenes(): LiveData<List<PresetWithScenes>>
 
-    @Transaction
     @Query("SELECT * FROM Preset WHERE presetId = :presetId")
     fun getPreset(presetId: String): List<PresetWithScenes>
 
-    @Transaction
-    @Query("SELECT * FROM CurrentPreset WHERE id = $CURRENT_PRESET_ID")
-    fun getCurrentPresetId(): List<CurrentPreset>
+    @Query("SELECT * FROM CurrentPreset")
+    suspend fun getCurrentPreset(): List<CurrentPreset>
 
-    @Transaction
-    @Query("SELECT * FROM Preset WHERE presetId IN (SELECT presetId FROM CurrentPreset WHERE id = $CURRENT_PRESET_ID)")
-    fun getCurrentPreset(): LiveData<PresetWithScenes>
+    @Query("SELECT * FROM CurrentPreset")
+    fun getCurrentPresetLiveData(): LiveData<List<CurrentPreset>>
 
     @Query("SELECT * FROM Preset WHERE presetId = \"$LAST_PERSISTED_STATE_ID\"")
     fun getPersistedState(): LiveData<PresetWithScenes>

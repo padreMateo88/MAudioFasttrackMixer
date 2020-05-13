@@ -2,8 +2,6 @@ package com.mpiotrowski.maudiofasttrackmixer.data.model.preset
 
 import androidx.room.*
 
-const val CURRENT_PRESET_ID = 0
-
 @Entity(
     foreignKeys = [ForeignKey(
         entity = Preset::class,
@@ -14,6 +12,6 @@ const val CURRENT_PRESET_ID = 0
     indices = [Index(value = ["presetId"]), Index(value = ["id"], unique = true)]
 )
 data class CurrentPreset (
-    @PrimaryKey val id: Int = CURRENT_PRESET_ID,
+    @PrimaryKey val id: Long = Long.MAX_VALUE,
     var presetId: String
 )

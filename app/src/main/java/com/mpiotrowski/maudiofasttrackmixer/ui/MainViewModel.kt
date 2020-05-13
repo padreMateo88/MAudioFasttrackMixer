@@ -20,28 +20,33 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val database = PresetsDatabase.getDatabase(getApplication(),viewModelScope)
     private val repository = Repository(database.presetsDao())
 
+    var allPresets: LiveData<List<PresetWithScenes>> = repository.presetsWithScenes
+    var currentState = MediatorLiveData<PresetWithScenes>()
+    var currentPresetId = MediatorLiveData<String>()
     private val sceneLoadedEvent = MutableLiveData<Event<Int>>()
     private val currentOutput: MutableLiveData<Int> = MutableLiveData()
-
-    var fine:  MutableLiveData<Boolean> = MutableLiveData()
-    var deviceOnline:  MutableLiveData<Boolean> = MutableLiveData()
-
-    var allPresets: LiveData<List<PresetWithScenes>> = repository.presetsWithScenes
-    var currentPreset = repository.currentPreset
-
     var selectedPreset = MediatorLiveData<PresetWithScenes>()
-
-    var currentState = repository.currentState
     var currentScene = MediatorLiveData<SceneWithComponents>()
-
     var audioChannels = MediatorLiveData<List<AudioChannel>>()
     var masterChannel = MediatorLiveData<MasterChannel>()
     var fxSends = MediatorLiveData<List<FxSend>>()
-
     var fxSettings = MediatorLiveData<FxSettings>()
     var sampleRate = MediatorLiveData<SampleRate>()
+    var fine:  MutableLiveData<Boolean> = MutableLiveData()
+    var deviceOnline:  MutableLiveData<Boolean> = MutableLiveData()
 
     init {
+        currentPresetId.addSource(repository.currentPreset) {
+            Log.d("MPdebug", "currentPreset")
+            currentPresetId.value = repository.currentPreset.value?.get(0)?.presetId
+        }
+
+        currentState.addSource(repository.currentState) {
+            Log.d("MPdebug", "currentState")
+            if(currentState.value == null)
+                currentState.value = repository.currentState.value
+        }
+
         fxSettings.addSource(currentScene) {
             sceneWithComponents -> fxSettings.value = sceneWithComponents.scene.fxSettings
         }
@@ -65,13 +70,11 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         }
 
         audioChannels.addSource(currentOutput) { outputIndex ->
-            Log.d("MPdebug", "audioChannels set ${currentOutput.value}")
             audioChannels.value = currentScene.value?.channelsByOutputsMap?.get(outputIndex)
         }
 
         audioChannels.addSource(currentScene) { sceneWithComponents ->
-            Log.d("MPdebug", "audioChannels set ${currentScene.value}")
-            audioChannels.value = sceneWithComponents.channelsByOutputsMap[currentOutput.value]
+            audioChannels.value = sceneWithComponents?.channelsByOutputsMap?.get(currentOutput.value)
         }
 
         masterChannel.addSource(currentOutput) { outputIndex ->
@@ -79,7 +82,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         }
 
         masterChannel.addSource(currentScene) { sceneWithComponents ->
-            masterChannel.value = sceneWithComponents.mastersByOutputsMap[currentOutput.value]
+            masterChannel.value = sceneWithComponents?.mastersByOutputsMap?.get(currentOutput.value)
         }
 
         fxSends.addSource(currentScene) { sceneWithComponents ->
@@ -101,28 +104,34 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
 // region save/load preset
-
     fun saveCurrentDeviceState() {
         viewModelScope.launch(Dispatchers.IO){
-            repository.saveCurrentDeviceState()
+            currentState.value?.let {
+                repository.savePresetWithScenes(it, false)
+            }
         }
     }
 
     fun selectPreset(presetWithScenes: PresetWithScenes) {
-        Log.d("MPdebug", "loadPreset ${presetWithScenes.preset.presetName}")
         selectedPreset.value = presetWithScenes
     }
 
     fun loadPreset(presetToLoad: PresetWithScenes) {
-        Log.d("MPdebug", "loadPreset ${presetToLoad.preset.presetName}")
-        viewModelScope.launch(Dispatchers.IO){
-            repository.loadPreset(presetToLoad)
+        currentState.mutation {
+            it.value?.let {currentStateValue ->
+                currentStateValue.copyValues(presetToLoad, presetToLoad.preset.presetName)
+            }
+        }
+
+        viewModelScope.launch(Dispatchers.IO) {
+                repository.saveCurrentPreset(presetToLoad)
         }
     }
 
     fun removePreset(presetWithScenes: PresetWithScenes) {
-        Log.d("MPdebug", "removePreset ${presetWithScenes.preset.presetName}")
-        //TODO
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.deletePreset(presetWithScenes.preset)
+        }
     }
 
     fun saveSceneAs(copyFrom: SceneWithComponents, copyTo: SceneWithComponents, newName: String) {
@@ -173,8 +182,14 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
         sceneFrom?.scene?.sceneOrder = toOrder
         sceneTo?.scene?.sceneOrder = fromOrder
+
         sceneFrom?.let{presetWithScenes.scenesByOrder.put(toOrder, it)}
         sceneTo?.let{presetWithScenes.scenesByOrder.put(fromOrder, it)}
+
+        viewModelScope.launch(Dispatchers.IO) {
+            sceneFrom?.let {repository.saveScene(it.scene)}
+            sceneTo?.let {repository.saveScene(it.scene)}
+        }
     }
 // endregion save/load preset
 
@@ -192,6 +207,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
 //region mixer listeners
     fun onChannelChanged(audioChannel: AudioChannel) {
+        currentState.value?.preset?.isDirty = true
         audioChannel.isDirty = true
         Log.d("MPdebug", "channel ${audioChannel.inputIndex} volume ${audioChannel.volume} panorama ${audioChannel.panorama} mute ${audioChannel.mute} solo ${audioChannel.solo}")
     }
@@ -210,16 +226,19 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun onFxSendChanged(fxSend: FxSend) {
+        currentState.value?.preset?.isDirty = true
         fxSend.isDirty = true
         Log.d("MPdebug", "channel $fxSend")
     }
 
     fun onFxReturnChanged(masterChannel: MasterChannel, fxReturn: Int) {
+        currentState.value?.preset?.isDirty = true
         masterChannel.isDirty
         Log.d("MPdebug", "fxReturn $fxReturn")
     }
 
     fun onMasterVolumeChanged(masterChannel: MasterChannel) {
+        currentState.value?.preset?.isDirty = true
         masterChannel.isDirty = true
         Log.d("MPdebug", "master volume1 ${masterChannel.volume}")
     }
@@ -227,22 +246,27 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
 //region FX listeners
     fun onFxVolumeChanged(fxVolume: Int) {
+        currentState.value?.preset?.isDirty = true
         Log.d("MPdebug", "fxVolume $fxVolume")
     }
 
     fun onFxDurationChanged(fxDuration: Int) {
+        currentState.value?.preset?.isDirty = true
         Log.d("MPdebug", "fxDuration $fxDuration")
     }
 
     fun onFxFeedbackChanged(fxFeedback: Int) {
+        currentState.value?.preset?.isDirty = true
         Log.d("MPdebug", "fxFeedback $fxFeedback")
     }
 
     fun onFxTypeChanged(fxType: FxSettings.FxType) {
+        currentState.value?.preset?.isDirty = true
         Log.d("MPdebug", "fxType $fxType")
     }
 
     fun onSampleRateChanged(sampleRate: SampleRate) {
+        currentState.value?.preset?.isDirty = true
         Log.d("MPdebug", "sampleRate $sampleRate")
     }
 //endregion FX listeners

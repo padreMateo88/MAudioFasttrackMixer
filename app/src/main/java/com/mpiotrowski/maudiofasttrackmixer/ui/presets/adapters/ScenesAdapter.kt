@@ -28,10 +28,6 @@ class ScenesAdapter(
         super.notifyItemMoved(fromPosition, toPosition)
     }
 
-    override fun getItemId(position: Int): Long {
-        return  mainViewModel.selectedPreset.value?.scenesByOrder?.get(position)?.scene?.sceneId ?: -1
-    }
-
     class ScenesViewHolder(var customView : ItemSceneBinding) : RecyclerView.ViewHolder(customView.root)
 
     override fun onBindViewHolder(holder: ScenesViewHolder, position: Int) {

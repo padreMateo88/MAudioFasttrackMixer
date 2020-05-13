@@ -12,7 +12,7 @@ class Repository(private val presetsDao: PresetsDao) {
 
     val presetsWithScenes = presetsDao.getPresetsWithScenes()
 
-    val currentPreset = presetsDao.getCurrentPreset()
+    val currentPreset = presetsDao.getCurrentPresetLiveData()
 
     val currentState = presetsDao.getPersistedState()
 //endregion get
@@ -26,21 +26,23 @@ class Repository(private val presetsDao: PresetsDao) {
 //endregion add
 
 //endregion save
-
-    suspend fun loadPreset(presetToLoad: PresetWithScenes) {
-        val currentStateCopy = currentState.value?.copy()
-        currentStateCopy?.let {
-            it.copyValues(presetToLoad, presetToLoad.preset.presetName)
-            savePresetWithScenes(it, true)
-            presetsDao.updateCurrentPreset(CurrentPreset(presetId = presetToLoad.preset.presetId))
-        }
+    fun savePresetWithScenes(presetWithScenes: PresetWithScenes, saveAll: Boolean) {
+        presetsDao.updatePresetWithScenes(presetWithScenes, saveAll)
     }
 
-    suspend fun savePreset(preset: Preset) {
+    fun savePreset(preset: Preset) {
         presetsDao.updatePreset(preset)
     }
 
-    suspend fun saveScene(scene: Scene) {
+    fun saveSceneWithComponents(sceneWithComponents: SceneWithComponents, saveAll: Boolean) {
+        presetsDao.updateSceneWithComponents(sceneWithComponents, updateAll = saveAll)
+    }
+
+    fun saveCurrentPreset(currentPreset: PresetWithScenes) {
+        presetsDao.updateCurrentPreset(CurrentPreset(presetId = currentPreset.preset.presetId))
+    }
+
+    fun saveScene(scene: Scene) {
         presetsDao.updateScene(scene)
     }
 
@@ -54,20 +56,6 @@ class Repository(private val presetsDao: PresetsDao) {
 
     suspend fun saveFxSend(vararg fxSend: FxSend) {
         presetsDao.updateFxSend(*fxSend)
-    }
-
-    suspend fun saveSceneWithComponents(sceneWithComponents: SceneWithComponents, saveAll: Boolean) {
-        presetsDao.updateSceneWithComponents(sceneWithComponents, updateAll = saveAll)
-    }
-
-    suspend fun saveCurrentDeviceState() {
-        currentState.value?.let {
-            savePresetWithScenes(it, false)
-        }
-    }
-
-    suspend fun savePresetWithScenes(presetWithScenes: PresetWithScenes, saveAll: Boolean) {
-        presetsDao.updatePresetWithScenes(presetWithScenes, saveAll)
     }
 //endregion save
 
