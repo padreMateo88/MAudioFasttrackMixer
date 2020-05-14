@@ -1,5 +1,6 @@
 package com.mpiotrowski.maudiofasttrackmixer.data.database
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.*
@@ -15,18 +16,24 @@ import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.
 interface PresetsDao {
 
 //region select
+    @Transaction
     @Query("SELECT * FROM Preset WHERE presetId != \"$LAST_PERSISTED_STATE_ID\"")
     fun getPresetsWithScenes(): LiveData<List<PresetWithScenes>>
 
+    @Transaction
     @Query("SELECT * FROM Preset WHERE presetId = :presetId")
     fun getPreset(presetId: String): List<PresetWithScenes>
 
-    @Query("SELECT * FROM CurrentPreset")
+    @Query("SELECT * FROM CurrentPreset WHERE id = $CURRENT_PRESET_ID")
     suspend fun getCurrentPreset(): List<CurrentPreset>
+
+    @Query("SELECT * FROM Preset WHERE presetId in (SELECT presetId FROM CurrentPreset WHERE id = $CURRENT_PRESET_ID)")
+    suspend fun getCurrentPresetInstance(): PresetWithScenes
 
     @Query("SELECT * FROM CurrentPreset")
     fun getCurrentPresetLiveData(): LiveData<List<CurrentPreset>>
 
+    @Transaction
     @Query("SELECT * FROM Preset WHERE presetId = \"$LAST_PERSISTED_STATE_ID\"")
     fun getPersistedState(): LiveData<PresetWithScenes>
 
@@ -104,7 +111,7 @@ interface PresetsDao {
     fun updateFxSend(vararg fxSend: FxSend)
 
     @Update
-    fun updateCurrentPreset(vararg currentPreset: CurrentPreset)
+    suspend fun updateCurrentPreset(vararg currentPreset: CurrentPreset)
 
     @Transaction
     fun updatePresetWithScenes(presetWithScenes: PresetWithScenes, updateAll: Boolean) {
@@ -131,17 +138,23 @@ interface PresetsDao {
         updateAll: Boolean
     ) {
         for (masterChannel in sceneWithComponents.masterChannels)
-            if (masterChannel.isDirty || updateAll)
+            if (masterChannel.isDirty || updateAll) {
+                masterChannel.isDirty = false
                 updateMasterChannel(masterChannel)
+            }
     }
 
     fun updateAudioChannels(
         sceneWithComponents: SceneWithComponents,
         updateAll: Boolean
     ) {
-        for (audioChannel in sceneWithComponents.audioChannels)
-            if (audioChannel.isDirty || updateAll)
+        for (audioChannel in sceneWithComponents.audioChannels) {
+            if (audioChannel.isDirty || updateAll) {
+                audioChannel.isDirty = false
                 updateAudioChannel(audioChannel)
+            }
+        }
+
     }
 
     fun updateFxSends(
@@ -149,8 +162,10 @@ interface PresetsDao {
         updateAll: Boolean
     ) {
         for (fxSend in sceneWithComponents.fxSends)
-            if (fxSend.isDirty || updateAll)
+            if (fxSend.isDirty || updateAll) {
+                fxSend.isDirty = true
                 updateFxSend(fxSend)
+            }
     }
 //endregion update
 

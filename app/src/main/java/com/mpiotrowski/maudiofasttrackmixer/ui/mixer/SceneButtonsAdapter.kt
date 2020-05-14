@@ -50,14 +50,13 @@ class SceneButtonsAdapter(private var viewModel: MainViewModel): RecyclerView.Ad
         }
 
         holder.layout.button.setOnLongClickListener {
-//TODO
-//            viewModel.currentPreset.value?.scenesByOrder?.get(position + 1)?.let { sceneWithComponents ->
-//                viewModel.currentState.value?.let {
-//                    currentState ->
-//                    SaveSceneDialog(holder.layout.button.context,
-//                        sceneWithComponents,currentState,viewModel).show()
-//                }
-//            }
+            viewModel.currentState.value?.scenesByOrder?.get(position + 1)?.let { sceneWithComponents ->
+                viewModel.currentState.value?.let {
+                    currentState ->
+                    SaveSceneDialog(holder.layout.button.context,
+                        sceneWithComponents,currentState,viewModel).show()
+                }
+            }
             true
         }
     }

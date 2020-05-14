@@ -8,6 +8,7 @@ import com.mpiotrowski.maudiofasttrackmixer.data.database.PresetsDatabase
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.Preset
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.PresetWithScenes
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.SampleRate
+import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.Scene
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.SceneWithComponents
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.scene_components.*
 import com.mpiotrowski.maudiofasttrackmixer.util.Event
@@ -22,7 +23,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     var allPresets: LiveData<List<PresetWithScenes>> = repository.presetsWithScenes
     var currentState = MediatorLiveData<PresetWithScenes>()
-    var currentPresetId = MediatorLiveData<String>()
+    var allScenes = MediatorLiveData<List<Scene>>()
     private val sceneLoadedEvent = MutableLiveData<Event<Int>>()
     private val currentOutput: MutableLiveData<Int> = MutableLiveData()
     var selectedPreset = MediatorLiveData<PresetWithScenes>()
@@ -34,21 +35,24 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     var sampleRate = MediatorLiveData<SampleRate>()
     var fine:  MutableLiveData<Boolean> = MutableLiveData()
     var deviceOnline:  MutableLiveData<Boolean> = MutableLiveData()
+    lateinit var currentPresetId: String
 
     init {
-        currentPresetId.addSource(repository.currentPreset) {
-            Log.d("MPdebug", "currentPreset")
-            currentPresetId.value = repository.currentPreset.value?.get(0)?.presetId
+        fetchCurrentPresetId()
+
+        allScenes.addSource(repository.presetsWithScenes) {
+            Log.d("MPdebug", "scenes ${it.size}")
         }
 
         currentState.addSource(repository.currentState) {
-            Log.d("MPdebug", "currentState")
             if(currentState.value == null)
                 currentState.value = repository.currentState.value
         }
 
         fxSettings.addSource(currentScene) {
-            sceneWithComponents -> fxSettings.value = sceneWithComponents.scene.fxSettings
+            sceneWithComponents ->
+            Log.d("MPdebug","fxSettings")
+            fxSettings.value = sceneWithComponents.scene.fxSettings
         }
 
         sampleRate.addSource(currentState) {
@@ -90,12 +94,18 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         }
 
         currentScene.addSource(currentState) { value ->
-            currentScene.value = value?.scenesByOrder?.get(1)
+            val scenesById = value.scenes.map {it.scene.sceneId to it}.toMap()
+
+            if(scenesById.containsKey(currentScene.value?.scene?.sceneId))
+                currentScene.value = scenesById[currentScene.value?.scene?.sceneId]
+            else
+                currentScene.value = value?.scenesByOrder?.get(1)
         }
 
         currentScene.addSource(sceneLoadedEvent) { sceneSelectedEvent ->
             sceneSelectedEvent.getContentIfNotHandled()?.let {
-                sceneIndex -> currentScene.value = currentState.value?.scenesByOrder?.get(sceneIndex)
+                sceneIndex ->
+                currentScene.value = currentState.value?.scenesByOrder?.get(sceneIndex)
             }
         }
 
@@ -103,10 +113,17 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         currentOutput.value = 1
     }
 
-// region save/load preset
+    private fun fetchCurrentPresetId() {
+        viewModelScope.launch(Dispatchers.IO) {
+            currentPresetId = repository.getCurrentPresetId()
+        }
+    }
+
+    // region save/load preset
     fun saveCurrentDeviceState() {
-        viewModelScope.launch(Dispatchers.IO){
+        viewModelScope.launch(Dispatchers.IO) {
             currentState.value?.let {
+                Log.d("MPdebug", "save current device state")
                 repository.savePresetWithScenes(it, false)
             }
         }
@@ -118,13 +135,12 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     fun loadPreset(presetToLoad: PresetWithScenes) {
         currentState.mutation {
-            it.value?.let {currentStateValue ->
-                currentStateValue.copyValues(presetToLoad, presetToLoad.preset.presetName)
-            }
+            it.value?.copyValues(presetToLoad, presetToLoad.preset.presetName)
         }
 
+        currentPresetId = presetToLoad.preset.presetId
         viewModelScope.launch(Dispatchers.IO) {
-                repository.saveCurrentPreset(presetToLoad)
+                repository.saveCurrentPresetId(presetToLoad)
         }
     }
 
@@ -135,13 +151,16 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun saveSceneAs(copyFrom: SceneWithComponents, copyTo: SceneWithComponents, newName: String) {
-        if(copyFrom.scene.sceneId != copyTo.scene.sceneId)
-            copyTo.copyValues(copyFrom,newName)
-        else
+        if(copyFrom.scene.sceneId != copyTo.scene.sceneId) {
+            copyTo.copyValues(copyFrom, newName)
+        } else
             currentScene.mutation {
                 it.value?.scene?.sceneName = newName
-            }
-        //TODO save to database
+        }
+
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.saveSceneOfCurrentPresetAs(copyTo)
+        }
     }
 
     fun createPreset(presetName: String) {
@@ -150,33 +169,84 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun saveCurrentPresetAs(presetName: String): Boolean {
-        return if(allPresets.value?.map { it.preset.presetName}?.contains(presetName) == true)
+    fun saveCurrentPreset(presetName: String): Boolean {
+        return if(presetName != currentState.value?.preset?.presetName) {
             false
-        else {
+        } else {
+            currentState.mutation {
+                it.value?.preset?.isDirty = false
+            }
             viewModelScope.launch(Dispatchers.IO) {
-                currentState.value?.preset?.presetName = presetName
-                currentState.value?.let {currentPreset -> repository.savePresetWithScenes(currentPreset, false)}
+                currentState.value?.let { currentStateValue ->
+                    repository.saveCurrentPreset(currentStateValue)
+                }
             }
             true
         }
     }
 
-    fun saveCurrentPresetAsExistingPreset(presetName: String) {
-//        val presetToRemove = allPresets.value?.map { it.preset.presetName to it }?.toMap()?.get(presetName)?.preset
-//        presetToRemove?.let {
-//            viewModelScope.launch(Dispatchers.IO) {
-//                repository.deletePreset(it)
-//                currentState.value?.let{
-//                    currentPreset ->
-//                        currentPreset.preset.presetName = presetName
-//                        repository.savePresetWithScenes(currentPreset, false)
-//                }
-//            }
-//        }
+    fun saveAndRenameCurrentPreset(presetName: String) {
+        currentState.value?.let { currentStateValue ->
+            currentState.mutation {
+                currentStateValue.preset.isDirty = false
+                currentStateValue.preset.presetName = presetName
+            }
+            viewModelScope.launch(Dispatchers.IO) {
+                repository.saveCurrentPreset(currentStateValue)
+            }
+        }
     }
 
-    fun swapScenesInPreset(presetWithScenes: PresetWithScenes, fromOrder: Int, toOrder: Int) {
+    fun saveCurrentPresetAsExisting(presetName: String) {
+         val destinationPreset = allPresets.value?.map {it.preset.presetName to it}?.toMap()?.get(presetName) ?: return
+
+        currentState.value?.let { currentStateValue ->
+            currentState.mutation {
+                currentStateValue.preset.isDirty = false
+                currentStateValue.preset.presetName = presetName
+            }
+            viewModelScope.launch(Dispatchers.IO) {
+                destinationPreset.copyValues(currentStateValue, presetName)
+                repository.savePresetWithScenes(currentStateValue, false)
+                repository.savePresetWithScenes(destinationPreset, true)
+                repository.saveCurrentPresetId(destinationPreset)
+                fetchCurrentPresetId()
+            }
+        }
+    }
+
+    fun saveCurrentPresetAsNewPreset(presetName: String) {
+        if(allPresets.value?.map {it.preset.presetName}?.contains(presetName) == true) {
+            return
+        } else {
+            currentState.mutation {
+                it.value?.preset?.isDirty = false
+                it.value?.preset?.presetName = presetName
+            }
+            viewModelScope.launch(Dispatchers.IO) {
+                currentState.value?.let { currentState ->
+                        val newPreset = PresetWithScenes.newInstance(Preset(presetName = presetName))
+                        newPreset.copyValues(currentState, presetName)
+                        repository.addPresetWithScenes(newPreset)
+                        repository.savePresetWithScenes(currentState, false)
+                        repository.saveCurrentPresetId(newPreset)
+                        fetchCurrentPresetId()
+                }
+            }
+        }
+    }
+
+    fun swapScenesInPresetAndCurrentState(presetWithScenes: PresetWithScenes, fromOrder: Int, toOrder: Int) {
+            swapScenesInPreset(presetWithScenes, fromOrder, toOrder)
+        if(currentPresetId == presetWithScenes.preset.presetId)
+            currentState.mutation {
+                currentState.value?.let {
+                    swapScenesInPreset(it, fromOrder, toOrder)
+                }
+            }
+    }
+
+    private fun swapScenesInPreset(presetWithScenes: PresetWithScenes, fromOrder: Int, toOrder: Int) {
         val sceneFrom = presetWithScenes.scenesByOrder[fromOrder]
         val sceneTo = presetWithScenes.scenesByOrder[toOrder]
 
@@ -240,7 +310,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     fun onMasterVolumeChanged(masterChannel: MasterChannel) {
         currentState.value?.preset?.isDirty = true
         masterChannel.isDirty = true
-        Log.d("MPdebug", "master volume1 ${masterChannel.volume}")
+        Log.d("MPdebug", "master volume ${masterChannel.volume}")
     }
 //endregion mixer listeners
 

@@ -3,7 +3,6 @@
     <string name="label_scenes_list">Scenes</string>
     <string name="button_save">Save</string>
     <string name="button_load">Load</string>
-    <string name="button_save_as">Save as</string>
     <string name="button_new">New</string>
     <string name="button_delete">Delete</string>
     <string name="button_saveAs">Save as</string>
@@ -39,6 +38,11 @@
     <string name="device_offline">DEVICE OFFLINE</string>
     <string name="load_preset">Load \"%1$s\"?</string>
     <string name="delete_preset">Delete \"%1$s\"?</string>
+    <string name="button_overwrite_preset">Overwrite \"%1$s\"?</string>
     <string name="message_preset_already_loaded">Preset \"%1$s\" already loaded</string>
     <string name="message_cant_delete_preset">Can\'t delete \"%1$s\". Preset currently loaded to device.</string>
+    <string name="save_as_new_preset">Save as new preset</string>
+    <string name="button_rename">Rename</string>
+    <string name="button_save_as_new">Save as new</string>
+    <string name="title_rename_or_save_preset">Rename \"%1$s\" to \"%2$s\" or save it as new preset?</string>
 </resources>

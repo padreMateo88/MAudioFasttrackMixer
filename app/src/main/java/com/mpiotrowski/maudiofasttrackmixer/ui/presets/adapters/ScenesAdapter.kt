@@ -24,7 +24,7 @@ class ScenesAdapter(
     }
 
     fun onItemMoved(fromPosition: Int, toPosition: Int) {
-        mainViewModel.selectedPreset.value?.let { mainViewModel.swapScenesInPreset(it, fromPosition + 1, toPosition + 1) }
+        mainViewModel.selectedPreset.value?.let { mainViewModel.swapScenesInPresetAndCurrentState(it, fromPosition + 1, toPosition + 1) }
         super.notifyItemMoved(fromPosition, toPosition)
     }
 

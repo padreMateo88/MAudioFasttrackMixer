@@ -18,7 +18,7 @@
         android:layout_marginLeft="@dimen/dimen_16dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/title_preset_name" />
+        android:text="@string/label_overwrite_preset" />
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

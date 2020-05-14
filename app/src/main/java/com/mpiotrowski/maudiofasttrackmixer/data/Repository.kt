@@ -12,9 +12,16 @@ class Repository(private val presetsDao: PresetsDao) {
 
     val presetsWithScenes = presetsDao.getPresetsWithScenes()
 
-    val currentPreset = presetsDao.getCurrentPresetLiveData()
+    suspend fun getCurrentPresetId(): String {
+        val currentPresetList = presetsDao.getCurrentPreset()
+        return if(currentPresetList.isEmpty())
+            ""
+        else
+            currentPresetList[0].presetId
+    }
 
     val currentState = presetsDao.getPersistedState()
+
 //endregion get
 
 //region add
@@ -23,22 +30,42 @@ class Repository(private val presetsDao: PresetsDao) {
     suspend fun addPreset(preset: Preset) {
         presetsDao.addPreset(preset)
     }
+
+    @Suppress("RedundantSuspendModifier")
+    @WorkerThread
+    suspend fun addPresetWithScenes(presetWithScenes: PresetWithScenes) {
+        presetsDao.insertPresetWithScenes(presetWithScenes)
+    }
 //endregion add
 
 //endregion save
-    fun savePresetWithScenes(presetWithScenes: PresetWithScenes, saveAll: Boolean) {
+    @Suppress("RedundantSuspendModifier")
+    @WorkerThread
+    suspend fun savePresetWithScenes(presetWithScenes: PresetWithScenes, saveAll: Boolean) {
         presetsDao.updatePresetWithScenes(presetWithScenes, saveAll)
     }
 
-    fun savePreset(preset: Preset) {
-        presetsDao.updatePreset(preset)
+    suspend fun saveCurrentPreset(currentState: PresetWithScenes) {
+        val currentPreset = presetsDao.getCurrentPresetInstance()
+        currentPreset.copyValues(currentState, currentState.preset.presetName)
+        presetsDao.updatePresetWithScenes(currentPreset, true)
+        presetsDao.updatePresetWithScenes(currentState, true)
     }
 
     fun saveSceneWithComponents(sceneWithComponents: SceneWithComponents, saveAll: Boolean) {
         presetsDao.updateSceneWithComponents(sceneWithComponents, updateAll = saveAll)
     }
 
-    fun saveCurrentPreset(currentPreset: PresetWithScenes) {
+    suspend fun saveSceneOfCurrentPresetAs(sceneWithComponents: SceneWithComponents) {
+        val sceneOfCurrentPreset = presetsDao.getCurrentPresetInstance().scenesByOrder[sceneWithComponents.scene.sceneOrder]
+        presetsDao.updateSceneWithComponents(sceneWithComponents, updateAll = true)
+        sceneOfCurrentPreset?.let {
+            it.copyValues(sceneWithComponents, sceneWithComponents.scene.sceneName)
+            presetsDao.updateSceneWithComponents(it, updateAll = true)
+        }
+    }
+
+    suspend fun saveCurrentPresetId(currentPreset: PresetWithScenes) {
         presetsDao.updateCurrentPreset(CurrentPreset(presetId = currentPreset.preset.presetId))
     }
 

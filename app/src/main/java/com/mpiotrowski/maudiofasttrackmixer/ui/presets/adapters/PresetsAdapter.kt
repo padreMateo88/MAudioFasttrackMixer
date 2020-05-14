@@ -1,5 +1,6 @@
 package com.mpiotrowski.maudiofasttrackmixer.ui.presets.adapters
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Toast
@@ -80,14 +81,13 @@ class PresetsAdapter(
     override fun swipeRight(adapterPosition: Int) {
         val presetToDelete = mainViewModel.allPresets.value?.get(adapterPosition)
         val presetToDeleteId = presetToDelete?.preset?.presetId
-        val currentPresetId = mainViewModel.currentState.value?.preset?.presetId
 
-        if(presetToDeleteId == currentPresetId) {
+        if(presetToDeleteId == mainViewModel.currentPresetId) {
             Toast.makeText(
                 appCompatActivity,
                 appCompatActivity.getString(
                     R.string.message_cant_delete_preset,
-                    presetToDelete?.preset?.presetName
+                    presetToDelete.preset.presetName
                 ),
                 Toast.LENGTH_LONG
             ).show()
@@ -106,7 +106,7 @@ class PresetsAdapter(
     override fun swipeLeft(adapterPosition: Int) {
 
         val currentState = mainViewModel.currentState.value?.preset
-        val currentPresetId = mainViewModel.currentPresetId.value
+        val currentPresetId = mainViewModel.currentPresetId
         val presetToLoadId = mainViewModel.allPresets.value?.get(adapterPosition)?.preset?.presetId
 
         if(presetToLoadId == currentPresetId && (currentState?.isDirty == false)) {

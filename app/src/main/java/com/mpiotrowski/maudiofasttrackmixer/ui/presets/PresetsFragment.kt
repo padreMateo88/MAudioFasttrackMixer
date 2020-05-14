@@ -17,12 +17,11 @@ import com.mpiotrowski.maudiofasttrackmixer.ui.presets.adapters.PresetsAdapter
 import com.mpiotrowski.maudiofasttrackmixer.ui.presets.adapters.ScenesAdapter
 import com.mpiotrowski.maudiofasttrackmixer.ui.presets.dialogs.AddPresetDialog
 import com.mpiotrowski.maudiofasttrackmixer.ui.presets.dialogs.OverwritePresetDialog
+import com.mpiotrowski.maudiofasttrackmixer.ui.presets.dialogs.RenameOrCreateNewPresetDialog
 import com.mpiotrowski.maudiofasttrackmixer.ui.presets.dialogs.SavePresetDialog
 import kotlinx.android.synthetic.main.fragment_presets.*
 
 class PresetsFragment : Fragment(),
-    SavePresetDialog.SavePresetListener,
-    OverwritePresetDialog.OverwritePresetListener,
     AddPresetDialog.AddPresetListener {
 
     lateinit var viewModel: MainViewModel
@@ -41,7 +40,7 @@ class PresetsFragment : Fragment(),
         binding.viewmodel = viewModel
         prepareScenesRecyclerView()
         preparePresetsRecyclerView()
-        setSavePresetButtonClickListener()
+        setSavePresetAsButtonClickListener()
         prepareAddPresetFab()
         prepareCurrentPresetName()
     }
@@ -69,30 +68,63 @@ class PresetsFragment : Fragment(),
         }
     }
 
-    private fun setSavePresetButtonClickListener() {
-//        binding.buttonSavePreset.setOnClickListener {
-//            viewModel.currentPreset.value?.preset?.presetName?.let{
-//                presetName -> SavePresetDialog(
-//                    requireContext(),
-//                    presetName,
-//                    this@PresetsFragment
-//                ).show()
-//            }
-//        }
+//region save preset
+    private fun setSavePresetAsButtonClickListener() {
+
+        val confirmOverwritePresetListener = object: OverwritePresetDialog.ConfirmOverwritePresetListener {
+            override fun onPresetOverwriteConfirmed(presetName: String) {
+                viewModel.saveCurrentPresetAsExisting(presetName)
+            }
+        }
+
+        val renameCreateNewListener = object: RenameOrCreateNewPresetDialog.RenameCreateNewListener{
+            override fun onRenamePreset(presetName: String) {
+                viewModel.saveAndRenameCurrentPreset(presetName)
+            }
+
+            override fun onSaveAsNewPreset(presetName: String) {
+                viewModel.saveCurrentPresetAsNewPreset(presetName)
+            }
+
+        }
+
+        val confirmSavePresetListener = object: SavePresetDialog.ConfirmSavePresetListener {
+            override fun onSavePresetConfirmed(presetName: String) {
+                if(!viewModel.saveCurrentPreset(presetName)) {
+                    if (viewModel.allPresets.value?.map { it.preset.presetName }
+                            ?.contains(presetName) == true) {
+                        OverwritePresetDialog(
+                            requireContext(),
+                            presetName,
+                            confirmOverwritePresetListener
+                        ).show()
+                    } else {
+                        viewModel.currentState.value?.preset?.presetName?.let {
+                            RenameOrCreateNewPresetDialog(
+                                requireContext(),
+                                it,
+                                presetName,
+                                renameCreateNewListener
+                            ).show()
+                        }
+                    }
+                }
+            }
+        }
+
+        binding.buttonSavePresetAs.setOnClickListener {
+            viewModel.currentState.value?.preset?.presetName?.let{
+                presetName -> SavePresetDialog(
+                    requireContext(),
+                    presetName,
+                    confirmSavePresetListener
+                ).show()
+            }
+        }
+
     }
 
-    override fun onPresetSaved(presetName: String) {
-        if(!viewModel.saveCurrentPresetAs(presetName))
-            OverwritePresetDialog(
-                requireContext(),
-                presetName,
-                this@PresetsFragment
-            ).show()
-    }
-
-    override fun onPresetOverwriteConfirmed(presetName: String) {
-        viewModel.saveCurrentPresetAsExistingPreset(presetName)
-    }
+//endregion save button
 
     private fun prepareScenesRecyclerView() {
         binding.recyclerViewScenes.layoutManager = LinearLayoutManager(
