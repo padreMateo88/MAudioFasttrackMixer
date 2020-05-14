@@ -1,4 +1,4 @@
-package com.mpiotrowski.maudiofasttrackmixer.ui.presets
+package com.mpiotrowski.maudiofasttrackmixer.ui.presets.dialogs
 
 import android.app.Dialog
 import android.content.Context
@@ -10,10 +10,10 @@ import kotlinx.android.synthetic.main.layout_overwrite_preset.*
 class OverwritePresetDialog(
     dialogContext: Context,
     private val presetName: String,
-    private val listener: OverwritePresetListener
+    private val listener: ConfirmOverwritePresetListener
 ) : Dialog(dialogContext) {
 
-    interface OverwritePresetListener {
+    interface ConfirmOverwritePresetListener {
         fun onPresetOverwriteConfirmed(presetName: String)
     }
 

@@ -1,4 +1,4 @@
-package com.mpiotrowski.maudiofasttrackmixer.ui.presets
+package com.mpiotrowski.maudiofasttrackmixer.ui.presets.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -24,19 +24,19 @@ class ScenesAdapter(
     }
 
     fun onItemMoved(fromPosition: Int, toPosition: Int) {
-        mainViewModel.swapScenesInPreset(mainViewModel.currentPreset, fromPosition + 1, toPosition + 1)
+        mainViewModel.selectedPreset.value?.let { mainViewModel.swapScenesInPresetAndCurrentState(it, fromPosition + 1, toPosition + 1) }
         super.notifyItemMoved(fromPosition, toPosition)
     }
 
     class ScenesViewHolder(var customView : ItemSceneBinding) : RecyclerView.ViewHolder(customView.root)
 
     override fun onBindViewHolder(holder: ScenesViewHolder, position: Int) {
-        mainViewModel.currentPreset.scenesByOrder[position+1]?.let {
+        mainViewModel.selectedPreset.value?.scenesByOrder?.get(position+1)?.let {
             holder.customView.scene = it.scene
         }
     }
 
     override fun getItemCount(): Int {
-        return mainViewModel.currentPreset.scenes.size
+        return mainViewModel.selectedPreset.value?.scenes?.size ?: 0
     }
 }

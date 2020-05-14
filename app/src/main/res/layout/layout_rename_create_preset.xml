@@ -23,23 +23,13 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
-            android:id="@+id/textViewSavePresetLabel"
+            android:id="@+id/textViewTitle"
             android:layout_gravity="right"
             android:textSize="@dimen/text_16sp"
             android:textColor="?android:attr/editTextColor"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/title_preset_name" />
-
-        <EditText
-            android:id="@+id/editTextPresetName"
-            android:paddingLeft="@dimen/dimen_8dp"
-            android:layout_width="@dimen/dimen_100dp"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/text_16sp"
-            android:textColor="?android:attr/editTextColor"
-            tools:text="@string/preset_name_value" />
-
+            android:text="@string/title_rename_or_save_preset" />
     </GridLayout>
 
     <LinearLayout
@@ -58,24 +48,24 @@
         app:layout_constraintTop_toBottomOf="@+id/mainGrid">
 
         <Button
-            android:id="@+id/buttonSave"
+            android:id="@+id/buttonRename"
             android:textAllCaps="false"
             android:paddingLeft="@dimen/dimen_8dp"
             android:paddingRight="@dimen/dimen_8dp"
             android:background="@drawable/button_unselected"
-            android:layout_width="wrap_content"
+            android:layout_width="@dimen/dimen_100dp"
             android:layout_height="wrap_content"
-            android:text="@string/button_save"/>
+            android:text="@string/button_rename"/>
 
         <Button
-            android:id="@+id/buttonCancel"
+            android:id="@+id/buttonSaveAsNew"
             android:paddingLeft="@dimen/dimen_8dp"
             android:paddingRight="@dimen/dimen_8dp"
             android:layout_marginLeft="@dimen/dimen_16dp"
             android:textAllCaps="false"
             android:background="@drawable/button_unselected"
-            android:layout_width="wrap_content"
+            android:layout_width="@dimen/dimen_100dp"
             android:layout_height="wrap_content"
-            android:text="@string/button_cancel"/>
+            android:text="@string/button_save_as_new"/>
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -10,16 +10,18 @@ import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.
 
 class Repository(private val presetsDao: PresetsDao) {
 
-//region get
-    val presetsWithScenes = presetsDao.getPresetsWithScenes(CURRENT_PRESET_ID)
+    val presetsWithScenes = presetsDao.getPresetsWithScenes()
 
-    suspend fun getCurrentPreset(): PresetWithScenes {
-        val currentPresetList = presetsDao.getDefaultPreset(CURRENT_PRESET_ID)
-        return if(currentPresetList.isNotEmpty())
-            currentPresetList[0]
+    suspend fun getCurrentPresetId(): String {
+        val currentPresetList = presetsDao.getCurrentPreset()
+        return if(currentPresetList.isEmpty())
+            ""
         else
-            presetsDao.addPreset(Preset(CURRENT_PRESET_ID,CURRENT_PRESET_NAME))
+            currentPresetList[0].presetId
     }
+
+    val currentState = presetsDao.getPersistedState()
+
 //endregion get
 
 //region add
@@ -28,14 +30,46 @@ class Repository(private val presetsDao: PresetsDao) {
     suspend fun addPreset(preset: Preset) {
         presetsDao.addPreset(preset)
     }
+
+    @Suppress("RedundantSuspendModifier")
+    @WorkerThread
+    suspend fun addPresetWithScenes(presetWithScenes: PresetWithScenes) {
+        presetsDao.insertPresetWithScenes(presetWithScenes)
+    }
 //endregion add
 
 //endregion save
-    suspend fun savePreset(preset: Preset) {
-        presetsDao.updatePreset(preset)
+    @Suppress("RedundantSuspendModifier")
+    @WorkerThread
+    suspend fun savePresetWithScenes(presetWithScenes: PresetWithScenes, saveAll: Boolean) {
+        presetsDao.updatePresetWithScenes(presetWithScenes, saveAll)
     }
 
-    suspend fun saveScene(scene: Scene) {
+    suspend fun saveCurrentPreset(currentState: PresetWithScenes) {
+        val currentPreset = presetsDao.getCurrentPresetInstance()
+        currentPreset.copyValues(currentState, currentState.preset.presetName)
+        presetsDao.updatePresetWithScenes(currentPreset, true)
+        presetsDao.updatePresetWithScenes(currentState, true)
+    }
+
+    fun saveSceneWithComponents(sceneWithComponents: SceneWithComponents, saveAll: Boolean) {
+        presetsDao.updateSceneWithComponents(sceneWithComponents, updateAll = saveAll)
+    }
+
+    suspend fun saveSceneOfCurrentPresetAs(sceneWithComponents: SceneWithComponents) {
+        val sceneOfCurrentPreset = presetsDao.getCurrentPresetInstance().scenesByOrder[sceneWithComponents.scene.sceneOrder]
+        presetsDao.updateSceneWithComponents(sceneWithComponents, updateAll = true)
+        sceneOfCurrentPreset?.let {
+            it.copyValues(sceneWithComponents, sceneWithComponents.scene.sceneName)
+            presetsDao.updateSceneWithComponents(it, updateAll = true)
+        }
+    }
+
+    suspend fun saveCurrentPresetId(currentPreset: PresetWithScenes) {
+        presetsDao.updateCurrentPreset(CurrentPreset(presetId = currentPreset.preset.presetId))
+    }
+
+    fun saveScene(scene: Scene) {
         presetsDao.updateScene(scene)
     }
 
@@ -49,14 +83,6 @@ class Repository(private val presetsDao: PresetsDao) {
 
     suspend fun saveFxSend(vararg fxSend: FxSend) {
         presetsDao.updateFxSend(*fxSend)
-    }
-
-    suspend fun saveSceneWithComponents(sceneWithComponents: SceneWithComponents, saveAll: Boolean) {
-        presetsDao.updateSceneWithComponents(sceneWithComponents, updateAll = saveAll)
-    }
-
-    suspend fun savePresetWithScenes(presetWithScenes: PresetWithScenes, saveAll: Boolean) {
-        presetsDao.updatePresetWithScenes(presetWithScenes, saveAll)
     }
 //endregion save
 

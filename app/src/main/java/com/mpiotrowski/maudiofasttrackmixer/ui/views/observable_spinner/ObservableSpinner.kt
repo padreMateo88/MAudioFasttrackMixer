@@ -2,9 +2,8 @@ package com.mpiotrowski.maudiofasttrackmixer.ui.views.observable_spinner
 
 import android.content.Context
 import android.util.AttributeSet
-import android.widget.Spinner
 
-class ObservableSpinner: Spinner{
+class ObservableSpinner: androidx.appcompat.widget.AppCompatSpinner {
 
     constructor(context: Context) : super(context)
 

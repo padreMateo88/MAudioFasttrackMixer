@@ -21,7 +21,8 @@ data class PresetWithScenes (
 
     fun copyValues(copyFrom: PresetWithScenes, presetName: String) {
         this.preset.presetName = presetName
-        this.preset.sampleRate = this.preset.sampleRate
+        this.preset.sampleRate = copyFrom.preset.sampleRate
+        this.preset.isDirty = copyFrom.preset.isDirty
         for(order in scenesByOrder.keys) {
             copyFrom.scenesByOrder[order]?.let {
                 scenesByOrder[order]?.copyValues(it,it.scene.sceneName)

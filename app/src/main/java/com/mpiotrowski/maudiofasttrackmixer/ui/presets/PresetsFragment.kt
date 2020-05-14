@@ -6,36 +6,55 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import com.mpiotrowski.maudiofasttrackmixer.databinding.FragmentPresetsBinding
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.mpiotrowski.maudiofasttrackmixer.ui.MainViewModel
+import com.mpiotrowski.maudiofasttrackmixer.ui.presets.adapters.PresetsAdapter
+import com.mpiotrowski.maudiofasttrackmixer.ui.presets.adapters.ScenesAdapter
+import com.mpiotrowski.maudiofasttrackmixer.ui.presets.dialogs.AddPresetDialog
+import com.mpiotrowski.maudiofasttrackmixer.ui.presets.dialogs.OverwritePresetDialog
+import com.mpiotrowski.maudiofasttrackmixer.ui.presets.dialogs.RenameOrCreateNewPresetDialog
+import com.mpiotrowski.maudiofasttrackmixer.ui.presets.dialogs.SavePresetDialog
 import kotlinx.android.synthetic.main.fragment_presets.*
 
 class PresetsFragment : Fragment(),
-    SavePresetDialog.SavePresetListener,
-    OverwritePresetDialog.OverwritePresetListener,
     AddPresetDialog.AddPresetListener {
 
     lateinit var viewModel: MainViewModel
-    private lateinit var viewDataBinding: FragmentPresetsBinding
+    private lateinit var binding: FragmentPresetsBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        viewDataBinding = FragmentPresetsBinding.inflate(inflater, container, false)
-        viewModel = ViewModelProviders.of(requireActivity()).get(MainViewModel::class.java)
-        return viewDataBinding.root
+        binding = FragmentPresetsBinding.inflate(inflater, container, false)
+        binding.lifecycleOwner = requireActivity()
+        return binding.root
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProviders.of(requireActivity()).get(MainViewModel::class.java)
+        binding.viewmodel = viewModel
         prepareScenesRecyclerView()
         preparePresetsRecyclerView()
-        setSavePresetButtonClickListener()
+        setSavePresetAsButtonClickListener()
         prepareAddPresetFab()
+        prepareCurrentPresetName()
+    }
+
+    private fun prepareCurrentPresetName() {
+        viewModel.currentState.observe(requireActivity(), Observer {
+            val currentState = viewModel.currentState.value?.preset
+            val currentPresetName = currentState?.presetName
+            textViewPresetName?.text =
+                if (currentState?.isDirty == true)
+                    "$currentPresetName*"
+                else
+                    currentPresetName
+        })
     }
 
     private fun prepareAddPresetFab() {
@@ -49,29 +68,73 @@ class PresetsFragment : Fragment(),
         }
     }
 
-    private fun setSavePresetButtonClickListener() {
-        viewDataBinding.buttonSavePreset.setOnClickListener {
-            SavePresetDialog(requireContext(), viewModel.currentPreset.preset.presetName, this@PresetsFragment).show()
+//region save preset
+    private fun setSavePresetAsButtonClickListener() {
+
+        val confirmOverwritePresetListener = object: OverwritePresetDialog.ConfirmOverwritePresetListener {
+            override fun onPresetOverwriteConfirmed(presetName: String) {
+                viewModel.saveCurrentPresetAsExisting(presetName)
+            }
         }
+
+        val renameCreateNewListener = object: RenameOrCreateNewPresetDialog.RenameCreateNewListener{
+            override fun onRenamePreset(presetName: String) {
+                viewModel.saveAndRenameCurrentPreset(presetName)
+            }
+
+            override fun onSaveAsNewPreset(presetName: String) {
+                viewModel.saveCurrentPresetAsNewPreset(presetName)
+            }
+
+        }
+
+        val confirmSavePresetListener = object: SavePresetDialog.ConfirmSavePresetListener {
+            override fun onSavePresetConfirmed(presetName: String) {
+                if(!viewModel.saveCurrentPreset(presetName)) {
+                    if (viewModel.allPresets.value?.map { it.preset.presetName }
+                            ?.contains(presetName) == true) {
+                        OverwritePresetDialog(
+                            requireContext(),
+                            presetName,
+                            confirmOverwritePresetListener
+                        ).show()
+                    } else {
+                        viewModel.currentState.value?.preset?.presetName?.let {
+                            RenameOrCreateNewPresetDialog(
+                                requireContext(),
+                                it,
+                                presetName,
+                                renameCreateNewListener
+                            ).show()
+                        }
+                    }
+                }
+            }
+        }
+
+        binding.buttonSavePresetAs.setOnClickListener {
+            viewModel.currentState.value?.preset?.presetName?.let{
+                presetName -> SavePresetDialog(
+                    requireContext(),
+                    presetName,
+                    confirmSavePresetListener
+                ).show()
+            }
+        }
+
     }
 
-    override fun onPresetSaved(presetName: String) {
-        if(!viewModel.saveCurrentPresetAs(presetName))
-            OverwritePresetDialog(requireContext(), presetName, this@PresetsFragment).show()
-    }
-
-    override fun onPresetOverwriteConfirmed(presetName: String) {
-        viewModel.saveCurrentPresetAsExistingPreset(presetName)
-    }
+//endregion save button
 
     private fun prepareScenesRecyclerView() {
-        viewDataBinding.recyclerViewScenes.layoutManager = LinearLayoutManager(
+        binding.recyclerViewScenes.layoutManager = LinearLayoutManager(
             context,
             LinearLayoutManager.VERTICAL,
             false
         )
 
-        viewDataBinding.recyclerViewScenes.adapter = ScenesAdapter(requireActivity() as AppCompatActivity, viewModel)
+        val scenesAdapter = ScenesAdapter(requireActivity() as AppCompatActivity, viewModel)
+        binding.recyclerViewScenes.adapter = scenesAdapter
 
         val callback = object :
             ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP.or(ItemTouchHelper.DOWN), 0) {
@@ -80,7 +143,7 @@ class PresetsFragment : Fragment(),
                 viewHolder: RecyclerView.ViewHolder,
                 target: RecyclerView.ViewHolder
             ): Boolean {
-                (viewDataBinding.recyclerViewScenes.adapter as ScenesAdapter).onItemMoved(
+                scenesAdapter.onItemMoved(
                     viewHolder.adapterPosition,
                     target.adapterPosition
                 )
@@ -92,21 +155,34 @@ class PresetsFragment : Fragment(),
         }
 
         val itemTouchHelper = ItemTouchHelper(callback)
-        itemTouchHelper.attachToRecyclerView(viewDataBinding.recyclerViewScenes)
+        itemTouchHelper.attachToRecyclerView(binding.recyclerViewScenes)
+        viewModel.selectedPreset.observe(requireActivity(), Observer {
+            scenesAdapter.notifyDataSetChanged()
+        })
     }
 
     private fun preparePresetsRecyclerView() {
-        viewDataBinding.recyclerViewPresets.layoutManager = LinearLayoutManager(
+        binding.recyclerViewPresets.layoutManager = LinearLayoutManager(
             context,
             LinearLayoutManager.VERTICAL,
             false
         )
-        val presetsAdapter = PresetsAdapter(requireActivity() as AppCompatActivity, viewModel)
+        val presetsAdapter = PresetsAdapter(
+                requireActivity() as AppCompatActivity,
+                viewModel
+            )
         presetsAdapter.setHasStableIds(true)
-        viewDataBinding.recyclerViewPresets.adapter = presetsAdapter
-        val callback = PresetSwipeCallback(0, ItemTouchHelper.RIGHT.or(ItemTouchHelper.LEFT), viewDataBinding.recyclerViewPresets.adapter as PresetsAdapter)
+        binding.recyclerViewPresets.adapter = presetsAdapter
+        val callback = PresetSwipeCallback(0, ItemTouchHelper.RIGHT.or(ItemTouchHelper.LEFT), binding.recyclerViewPresets.adapter as PresetsAdapter)
         val itemTouchHelper = ItemTouchHelper(callback)
-        itemTouchHelper.attachToRecyclerView(viewDataBinding.recyclerViewPresets)
+        itemTouchHelper.attachToRecyclerView(binding.recyclerViewPresets)
+        viewModel.allPresets.observe(requireActivity(), Observer {
+            presetsAdapter.notifyDataSetChanged()
+        })
+
+        viewModel.selectedPreset.observe(requireActivity(), Observer {
+            presetsAdapter.notifyDataSetChanged()
+        })
     }
 
     companion object {

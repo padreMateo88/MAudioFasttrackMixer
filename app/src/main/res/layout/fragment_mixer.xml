@@ -37,13 +37,14 @@
             android:layout_marginTop="@dimen/dimen_4dp"
             android:layout_weight="1"
             android:gravity="center"
+            app:fine="@{viewmodel.fine}"
             app:volume="@={viewmodel.masterChannel.volume}"
             app:mute="@={viewmodel.masterChannel.mute}"
             app:panorama="@={viewmodel.masterChannel.panorama}"
             app:fxVolume="@={viewmodel.masterChannel.fxReturn}"
             app:outputIndex="@{viewmodel.masterChannel.outputIndex}"
             app:onVolumeChanged="@{() -> viewmodel.onMasterVolumeChanged(viewmodel.masterChannel)}"
-            app:onFxVolumeChanged="@{() -> viewmodel.onFxReturnChanged(viewmodel.masterChannel.fxReturn)}"
+            app:onFxVolumeChanged="@{() -> viewmodel.onFxReturnChanged(viewmodel.masterChannel, viewmodel.masterChannel.fxReturn)}"
             />
 
         <LinearLayout
@@ -152,7 +153,7 @@
                 android:layout_gravity="center"
                 android:layout_marginLeft="@dimen/dimen_4dp"
                 android:layout_marginRight="@dimen/dimen_4dp"
-                android:text="@{viewmodel.currentSceneName}" />
+                android:text="@{viewmodel.currentScene.scene.sceneName}" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:layout_marginTop="@dimen/dimen_4dp"
