@@ -21,21 +21,21 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val database = PresetsDatabase.getDatabase(getApplication(),viewModelScope)
     private val repository = Repository(database.presetsDao())
 
-    var allPresets: LiveData<List<PresetWithScenes>> = repository.presetsWithScenes
-    var currentState = MediatorLiveData<PresetWithScenes>()
-    var allScenes = MediatorLiveData<List<Scene>>()
-    private val sceneLoadedEvent = MutableLiveData<Event<Int>>()
-    private val currentOutput: MutableLiveData<Int> = MutableLiveData()
-    var selectedPreset = MediatorLiveData<PresetWithScenes>()
-    var currentScene = MediatorLiveData<SceneWithComponents>()
-    var audioChannels = MediatorLiveData<List<AudioChannel>>()
-    var masterChannel = MediatorLiveData<MasterChannel>()
-    var fxSends = MediatorLiveData<List<FxSend>>()
-    var fxSettings = MediatorLiveData<FxSettings>()
-    var sampleRate = MediatorLiveData<SampleRate>()
-    var fine:  MutableLiveData<Boolean> = MutableLiveData()
-    var deviceOnline:  MutableLiveData<Boolean> = MutableLiveData()
     lateinit var currentPresetId: String
+    val allPresets: LiveData<List<PresetWithScenes>> = repository.presetsWithScenes
+    val currentState = MediatorLiveData<PresetWithScenes>()
+    private val allScenes = MediatorLiveData<List<Scene>>()
+    private val sceneLoadedEvent = MutableLiveData<Event<Int>>()
+    private val currentOutput = MutableLiveData<Int>()
+    val selectedPreset = MediatorLiveData<PresetWithScenes>()
+    val currentScene = MediatorLiveData<SceneWithComponents>()
+    val audioChannels = MediatorLiveData<List<AudioChannel>>()
+    val masterChannel = MediatorLiveData<MasterChannel>()
+    val fxSends = MediatorLiveData<List<FxSend>>()
+    val fxSettings = MediatorLiveData<FxSettings>()
+    val sampleRate = MediatorLiveData<SampleRate>()
+    val fine = MutableLiveData<Boolean>()
+    val deviceOnline = MutableLiveData<Boolean>()
 
     init {
         fetchCurrentPresetId()
@@ -113,6 +113,30 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         currentOutput.value = 1
     }
 
+    fun getPresetsCount(): Int{
+       return allPresets.value?.size ?: 0
+    }
+
+    fun getPreset(presetIndex: Int): PresetWithScenes?{
+        return allPresets.value?.get(presetIndex)
+    }
+
+    fun getSceneOfCurrentState(order: Int): SceneWithComponents? {
+        return currentState.value?.scenesByOrder?.get(order)
+    }
+
+    fun getCurrentState(): PresetWithScenes? {
+        return currentState.value
+    }
+
+    fun getCurrentSceneOrder(): Int? {
+        return currentScene.value?.scene?.sceneOrder
+    }
+
+    fun getAudioChannelsNumber(): Int {
+        return audioChannels.value?.size ?: 0
+    }
+
     private fun fetchCurrentPresetId() {
         viewModelScope.launch(Dispatchers.IO) {
             currentPresetId = repository.getCurrentPresetId()
@@ -129,8 +153,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun selectPreset(presetWithScenes: PresetWithScenes) {
-        selectedPreset.value = presetWithScenes
+    fun selectPreset(index: Int) {
+        getPreset(index)?.let {
+            selectedPreset.value = it
+        }
     }
 
     fun loadPreset(presetToLoad: PresetWithScenes) {

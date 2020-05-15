@@ -89,5 +89,4 @@ class MixerFragment : Fragment() {
     companion object {
         fun newInstance() = MixerFragment()
     }
-
 }

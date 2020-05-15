@@ -54,7 +54,7 @@ class PresetsAdapter(
 
     override fun onBindViewHolder(holder: PresetsViewHolder, position: Int) {
         var colorResource = R.color.darkerGray
-        mainViewModel.allPresets.value?.get(position)?.let {
+        mainViewModel.getPreset(position)?.let {
             holder.customView.preset = it.preset
             if(it == mainViewModel.selectedPreset.value)
                 colorResource = R.color.colorPrimaryDark
@@ -64,22 +64,19 @@ class PresetsAdapter(
         )
 
         holder.customView.root.setOnClickListener {
-            val lastIndex = (mainViewModel.allPresets.value?.size ?: 1)
-            if(holder.adapterPosition in 0 until lastIndex) {
-                mainViewModel.allPresets.value?.get(holder.adapterPosition)?.let {
-                    mainViewModel.selectPreset(it)
+            if(holder.adapterPosition in 0 until mainViewModel.getPresetsCount()) {
+                    mainViewModel.selectPreset(holder.adapterPosition)
                     this@PresetsAdapter.notifyDataSetChanged()
-                }
             }
         }
     }
 
     override fun getItemCount(): Int {
-        return mainViewModel.allPresets.value?.size ?: 0
+        return mainViewModel.getPresetsCount()
     }
 
     override fun swipeRight(adapterPosition: Int) {
-        val presetToDelete = mainViewModel.allPresets.value?.get(adapterPosition)
+        val presetToDelete = mainViewModel.getPreset(adapterPosition)
         val presetToDeleteId = presetToDelete?.preset?.presetId
 
         if(presetToDeleteId == mainViewModel.currentPresetId) {
@@ -104,10 +101,9 @@ class PresetsAdapter(
     }
 
     override fun swipeLeft(adapterPosition: Int) {
-
         val currentState = mainViewModel.currentState.value?.preset
         val currentPresetId = mainViewModel.currentPresetId
-        val presetToLoadId = mainViewModel.allPresets.value?.get(adapterPosition)?.preset?.presetId
+        val presetToLoadId = mainViewModel.getPreset(adapterPosition)?.preset?.presetId
 
         if(presetToLoadId == currentPresetId && (currentState?.isDirty == false)) {
             Toast.makeText(
@@ -120,9 +116,9 @@ class PresetsAdapter(
             ).show()
         } else {
             mainViewModel.allPresets.value?.get(adapterPosition)?.let {
-                LoadDeletePresetDialog(
+                presetToLoad -> LoadDeletePresetDialog(
                     appCompatActivity,
-                    it,
+                    presetToLoad,
                     loadListener,
                     R.string.load_preset
                 ).show()

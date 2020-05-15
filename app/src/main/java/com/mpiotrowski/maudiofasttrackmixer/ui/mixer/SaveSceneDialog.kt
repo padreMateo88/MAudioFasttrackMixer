@@ -19,10 +19,6 @@ class SaveSceneDialog(private var dialogContext: Context,
                       var viewModel: MainViewModel
 ) : Dialog(dialogContext) {
 
-    interface CopySceneListener{
-        fun onSceneCopied(copyFrom: SceneWithComponents, copyTo: SceneWithComponents, newName: String)
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestWindowFeature(Window.FEATURE_NO_TITLE)
