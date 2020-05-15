@@ -24,7 +24,7 @@ import kotlinx.android.synthetic.main.fragment_presets.*
 class PresetsFragment : Fragment(),
     AddPresetDialog.AddPresetListener {
 
-    lateinit var viewModel: MainViewModel
+    lateinit var mainViewModel: MainViewModel
     private lateinit var binding: FragmentPresetsBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -36,8 +36,8 @@ class PresetsFragment : Fragment(),
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProviders.of(requireActivity()).get(MainViewModel::class.java)
-        binding.viewmodel = viewModel
+        mainViewModel = ViewModelProviders.of(requireActivity()).get(MainViewModel::class.java)
+        binding.viewmodel = mainViewModel
         prepareScenesRecyclerView()
         preparePresetsRecyclerView()
         setSavePresetAsButtonClickListener()
@@ -46,11 +46,10 @@ class PresetsFragment : Fragment(),
     }
 
     private fun prepareCurrentPresetName() {
-        viewModel.currentState.observe(requireActivity(), Observer {
-            val currentState = viewModel.currentState.value?.preset
-            val currentPresetName = currentState?.presetName
+        mainViewModel.currentState.observe(requireActivity(), Observer {
+            val currentPresetName = mainViewModel.getCurrentPresetName()
             textViewPresetName?.text =
-                if (currentState?.isDirty == true)
+                if (mainViewModel.isCurrentStateDirty())
                     "$currentPresetName*"
                 else
                     currentPresetName
@@ -58,7 +57,7 @@ class PresetsFragment : Fragment(),
     }
 
     private fun prepareAddPresetFab() {
-        val presetNames = viewModel.allPresets.value?.map { it.preset.presetName } ?: emptyList()
+        val presetNames = mainViewModel.getAllPresets()?.map { it.preset.presetName } ?: emptyList()
         fabCreatePreset.setOnClickListener {
             AddPresetDialog(
                 requireContext(),
@@ -73,25 +72,25 @@ class PresetsFragment : Fragment(),
 
         val confirmOverwritePresetListener = object: OverwritePresetDialog.ConfirmOverwritePresetListener {
             override fun onPresetOverwriteConfirmed(presetName: String) {
-                viewModel.saveCurrentPresetAsExisting(presetName)
+                mainViewModel.saveCurrentPresetAsExisting(presetName)
             }
         }
 
         val renameCreateNewListener = object: RenameOrCreateNewPresetDialog.RenameCreateNewListener{
             override fun onRenamePreset(presetName: String) {
-                viewModel.saveAndRenameCurrentPreset(presetName)
+                mainViewModel.saveAndRenameCurrentPreset(presetName)
             }
 
             override fun onSaveAsNewPreset(presetName: String) {
-                viewModel.saveCurrentPresetAsNewPreset(presetName)
+                mainViewModel.saveCurrentPresetAsNewPreset(presetName)
             }
 
         }
 
         val confirmSavePresetListener = object: SavePresetDialog.ConfirmSavePresetListener {
             override fun onSavePresetConfirmed(presetName: String) {
-                if(!viewModel.saveCurrentPreset(presetName)) {
-                    if (viewModel.allPresets.value?.map { it.preset.presetName }
+                if(!mainViewModel.saveCurrentPreset(presetName)) {
+                    if (mainViewModel.getAllPresets()?.map { it.preset.presetName }
                             ?.contains(presetName) == true) {
                         OverwritePresetDialog(
                             requireContext(),
@@ -99,7 +98,7 @@ class PresetsFragment : Fragment(),
                             confirmOverwritePresetListener
                         ).show()
                     } else {
-                        viewModel.currentState.value?.preset?.presetName?.let {
+                        mainViewModel.getCurrentPresetName()?.let {
                             RenameOrCreateNewPresetDialog(
                                 requireContext(),
                                 it,
@@ -113,7 +112,7 @@ class PresetsFragment : Fragment(),
         }
 
         binding.buttonSavePresetAs.setOnClickListener {
-            viewModel.currentState.value?.preset?.presetName?.let{
+            mainViewModel.getCurrentPresetName()?.let{
                 presetName -> SavePresetDialog(
                     requireContext(),
                     presetName,
@@ -133,7 +132,7 @@ class PresetsFragment : Fragment(),
             false
         )
 
-        val scenesAdapter = ScenesAdapter(requireActivity() as AppCompatActivity, viewModel)
+        val scenesAdapter = ScenesAdapter(requireActivity() as AppCompatActivity, mainViewModel)
         binding.recyclerViewScenes.adapter = scenesAdapter
 
         val callback = object :
@@ -156,7 +155,8 @@ class PresetsFragment : Fragment(),
 
         val itemTouchHelper = ItemTouchHelper(callback)
         itemTouchHelper.attachToRecyclerView(binding.recyclerViewScenes)
-        viewModel.selectedPreset.observe(requireActivity(), Observer {
+        mainViewModel.selectedPreset.observe(requireActivity(), Observer {
+            scenesAdapter.scenesMap = mainViewModel.getSelectedPresetScenes()
             scenesAdapter.notifyDataSetChanged()
         })
     }
@@ -169,18 +169,22 @@ class PresetsFragment : Fragment(),
         )
         val presetsAdapter = PresetsAdapter(
                 requireActivity() as AppCompatActivity,
-                viewModel
+                mainViewModel
             )
         presetsAdapter.setHasStableIds(true)
         binding.recyclerViewPresets.adapter = presetsAdapter
         val callback = PresetSwipeCallback(0, ItemTouchHelper.RIGHT.or(ItemTouchHelper.LEFT), binding.recyclerViewPresets.adapter as PresetsAdapter)
         val itemTouchHelper = ItemTouchHelper(callback)
         itemTouchHelper.attachToRecyclerView(binding.recyclerViewPresets)
-        viewModel.allPresets.observe(requireActivity(), Observer {
+        mainViewModel.allPresets.observe(requireActivity(), Observer {
+            presetsAdapter.selectedPreset = mainViewModel.selectedPreset.value
+            presetsAdapter.presetsList = mainViewModel.getAllPresets()
             presetsAdapter.notifyDataSetChanged()
         })
 
-        viewModel.selectedPreset.observe(requireActivity(), Observer {
+        mainViewModel.selectedPreset.observe(requireActivity(), Observer {
+            presetsAdapter.selectedPreset = mainViewModel.selectedPreset.value
+            presetsAdapter.presetsList = mainViewModel.getAllPresets()
             presetsAdapter.notifyDataSetChanged()
         })
     }
@@ -190,6 +194,6 @@ class PresetsFragment : Fragment(),
     }
 
     override fun onCreatePreset(presetName: String) {
-        viewModel.createPreset(presetName)
+        mainViewModel.createPreset(presetName)
     }
 }

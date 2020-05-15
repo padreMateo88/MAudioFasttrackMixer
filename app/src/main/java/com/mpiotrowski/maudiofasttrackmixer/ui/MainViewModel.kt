@@ -113,12 +113,12 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         currentOutput.value = 1
     }
 
-    fun getPresetsCount(): Int{
-       return allPresets.value?.size ?: 0
+    fun getSelectedPresetScenes(): Map<Int, SceneWithComponents>? {
+        return selectedPreset.value?.scenesByOrder
     }
 
-    fun getPreset(presetIndex: Int): PresetWithScenes?{
-        return allPresets.value?.get(presetIndex)
+    fun getAllPresets(): List<PresetWithScenes>? {
+        return allPresets.value
     }
 
     fun getSceneOfCurrentState(order: Int): SceneWithComponents? {
@@ -127,6 +127,14 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     fun getCurrentState(): PresetWithScenes? {
         return currentState.value
+    }
+
+    fun isCurrentStateDirty(): Boolean {
+        return currentState.value?.preset?.isDirty == true
+    }
+
+    fun getCurrentPresetName(): String? {
+        return currentState.value?.preset?.presetName
     }
 
     fun getCurrentSceneOrder(): Int? {
@@ -154,7 +162,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun selectPreset(index: Int) {
-        getPreset(index)?.let {
+        allPresets.value?.get(index)?.let {
             selectedPreset.value = it
         }
     }
@@ -262,14 +270,16 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun swapScenesInPresetAndCurrentState(presetWithScenes: PresetWithScenes, fromOrder: Int, toOrder: Int) {
-            swapScenesInPreset(presetWithScenes, fromOrder, toOrder)
-        if(currentPresetId == presetWithScenes.preset.presetId)
-            currentState.mutation {
-                currentState.value?.let {
-                    swapScenesInPreset(it, fromOrder, toOrder)
+    fun swapScenesInSelectedPresetAndCurrentState(fromOrder: Int, toOrder: Int) {
+        selectedPreset.value?.let {
+            swapScenesInPreset(it, fromOrder, toOrder)
+            if(currentPresetId == it.preset.presetId)
+                currentState.mutation {
+                currentState.value?.let {currentStateValue ->
+                    swapScenesInPreset(currentStateValue, fromOrder, toOrder)
                 }
             }
+        }
     }
 
     private fun swapScenesInPreset(presetWithScenes: PresetWithScenes, fromOrder: Int, toOrder: Int) {
