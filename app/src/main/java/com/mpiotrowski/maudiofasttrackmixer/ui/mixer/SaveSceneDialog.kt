@@ -16,7 +16,7 @@ import kotlinx.android.synthetic.main.layout_save_scene.*
 class SaveSceneDialog(private var dialogContext: Context,
                       var copyFrom: SceneWithComponents,
                       var presetWithScenes: PresetWithScenes,
-                      var viewModel: MainViewModel
+                      var viewModel: MixerViewModel
 ) : Dialog(dialogContext) {
 
     override fun onCreate(savedInstanceState: Bundle?) {

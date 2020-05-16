@@ -14,7 +14,7 @@ import com.mpiotrowski.maudiofasttrackmixer.ui.MainViewModel
 
 class SettingsFragment : Fragment() {
 
-    private lateinit var viewModel: MainViewModel
+    private lateinit var viewModel: SettingsViewModel
     private lateinit var binding: FragmentSettingsBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -26,7 +26,7 @@ class SettingsFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(requireActivity()).get(MainViewModel::class.java)
+        viewModel = ViewModelProvider(requireActivity()).get(SettingsViewModel::class.java)
         binding.viewmodel = viewModel
         val effectTypeAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, FxSettings.FxType.values())
         effectTypeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)

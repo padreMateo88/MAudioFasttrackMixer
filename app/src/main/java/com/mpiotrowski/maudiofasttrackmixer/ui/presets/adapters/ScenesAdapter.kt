@@ -6,12 +6,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.SceneWithComponents
 import com.mpiotrowski.maudiofasttrackmixer.databinding.ItemSceneBinding
-import com.mpiotrowski.maudiofasttrackmixer.ui.MainViewModel
+import com.mpiotrowski.maudiofasttrackmixer.ui.presets.PresetsViewModel
 
 
 class ScenesAdapter(
     private val appCompatActivity: AppCompatActivity,
-    private val mainViewModel: MainViewModel
+    private val mainViewModel: PresetsViewModel
 ) : RecyclerView.Adapter<ScenesAdapter.ScenesViewHolder>() {
 
     private lateinit var viewGroup : ViewGroup

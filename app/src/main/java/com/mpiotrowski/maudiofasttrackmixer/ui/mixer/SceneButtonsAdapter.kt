@@ -11,7 +11,7 @@ import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.SCENES_IN_PRESET_C
 import com.mpiotrowski.maudiofasttrackmixer.ui.MainViewModel
 import kotlinx.android.synthetic.main.scene_buttom_item.view.*
 
-class SceneButtonsAdapter(private var viewModel: MainViewModel): RecyclerView.Adapter<SceneButtonsAdapter.SceneButtonViewHolder>() {
+class SceneButtonsAdapter(private var viewModel: MixerViewModel): RecyclerView.Adapter<SceneButtonsAdapter.SceneButtonViewHolder>() {
 
     private var lastChecked : Button? = null
 

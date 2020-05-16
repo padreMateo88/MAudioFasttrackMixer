@@ -9,14 +9,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.mpiotrowski.maudiofasttrackmixer.R
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.PresetWithScenes
 import com.mpiotrowski.maudiofasttrackmixer.databinding.ItemPresetBinding
-import com.mpiotrowski.maudiofasttrackmixer.ui.MainViewModel
 import com.mpiotrowski.maudiofasttrackmixer.ui.presets.PresetSwipeCallback
+import com.mpiotrowski.maudiofasttrackmixer.ui.presets.PresetsViewModel
 import com.mpiotrowski.maudiofasttrackmixer.ui.presets.dialogs.LoadDeletePresetDialog
 
 
 class PresetsAdapter(
     private val appCompatActivity: AppCompatActivity,
-    private val mainViewModel: MainViewModel
+    private val viewModel: PresetsViewModel
 ) : RecyclerView.Adapter<PresetsAdapter.PresetsViewHolder>(),
     PresetSwipeCallback.SwipeListener {
 
@@ -25,13 +25,13 @@ class PresetsAdapter(
 
     private val loadListener = object: LoadDeletePresetDialog.DialogListener{
         override fun onActionConfirmed(presetWithScenes: PresetWithScenes) {
-            mainViewModel.loadPreset(presetWithScenes)
+            viewModel.loadPreset(presetWithScenes)
         }
     }
 
     private val removeListener = object: LoadDeletePresetDialog.DialogListener{
         override fun onActionConfirmed(presetWithScenes: PresetWithScenes) {
-            mainViewModel.removePreset(presetWithScenes)
+            viewModel.removePreset(presetWithScenes)
         }
     }
 
@@ -67,7 +67,7 @@ class PresetsAdapter(
 
         holder.customView.root.setOnClickListener {
             if(holder.adapterPosition in 0 until (presetsList?.size ?: 0)) {
-                    mainViewModel.selectPreset(holder.adapterPosition)
+                    viewModel.selectPreset(holder.adapterPosition)
                     this@PresetsAdapter.notifyDataSetChanged()
             }
         }
@@ -81,7 +81,7 @@ class PresetsAdapter(
         val presetToDelete = presetsList?.get(adapterPosition)
         val presetToDeleteId = presetToDelete?.preset?.presetId
 
-        if(presetToDeleteId == mainViewModel.currentPresetId) {
+        if(presetToDeleteId == viewModel.currentPresetId) {
             Toast.makeText(
                 appCompatActivity,
                 appCompatActivity.getString(
@@ -104,11 +104,11 @@ class PresetsAdapter(
 
     override fun swipeLeft(adapterPosition: Int) {
 
-        val currentState = mainViewModel.getCurrentState()?.preset
-        val currentPresetId = mainViewModel.currentPresetId
+        val currentState = viewModel.getCurrentState()?.preset
+        val currentPresetId = viewModel.currentPresetId
         val presetToLoadId = presetsList?.get(adapterPosition)?.preset?.presetId
 
-        if(presetToLoadId == currentPresetId && (!mainViewModel.isCurrentStateDirty())) {
+        if(presetToLoadId == currentPresetId && (!viewModel.isCurrentStateDirty())) {
             if (currentState != null) {
                 Toast.makeText(
                     appCompatActivity,
