@@ -10,18 +10,13 @@ import android.widget.ArrayAdapter
 import com.mpiotrowski.maudiofasttrackmixer.R
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.PresetWithScenes
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.SceneWithComponents
-import com.mpiotrowski.maudiofasttrackmixer.ui.MainViewModel
 import kotlinx.android.synthetic.main.layout_save_scene.*
 
 class SaveSceneDialog(private var dialogContext: Context,
                       var copyFrom: SceneWithComponents,
                       var presetWithScenes: PresetWithScenes,
-                      var viewModel: MainViewModel
+                      var viewModel: MixerViewModel
 ) : Dialog(dialogContext) {
-
-    interface CopySceneListener{
-        fun onSceneCopied(copyFrom: SceneWithComponents, copyTo: SceneWithComponents, newName: String)
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

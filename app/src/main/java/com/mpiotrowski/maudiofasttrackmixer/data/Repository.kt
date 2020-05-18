@@ -1,16 +1,53 @@
 package com.mpiotrowski.maudiofasttrackmixer.data
 
 import androidx.annotation.WorkerThread
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.MutableLiveData
 import com.mpiotrowski.maudiofasttrackmixer.data.database.PresetsDao
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.*
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.*
-import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.scene_components.AudioChannel
-import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.scene_components.FxSend
-import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.scene_components.MasterChannel
+import com.mpiotrowski.maudiofasttrackmixer.util.Event
+import com.mpiotrowski.maudiofasttrackmixer.util.mutation
+import java.net.ResponseCache
 
 class Repository(private val presetsDao: PresetsDao) {
 
-    val presetsWithScenes = presetsDao.getPresetsWithScenes()
+    private val _sceneLoadedEvent = MutableLiveData<Event<Int>>()
+    private val _currentState = MediatorLiveData<PresetWithScenes>()
+    private val _currentScene = MediatorLiveData<SceneWithComponents>()
+
+    val presetsWithScenes
+        get() = presetsDao.getPresetsWithScenes()
+
+    val currentState: LiveData<PresetWithScenes>
+        get() = _currentState
+
+    val currentScene: LiveData<SceneWithComponents>
+        get() = _currentScene
+
+    init {
+        _currentScene.addSource(_currentState) { value ->
+            val scenesById = value.scenes.map {it.scene.sceneId to it}.toMap()
+
+            if(scenesById.containsKey(currentScene.value?.scene?.sceneId))
+                _currentScene.value = scenesById[currentScene.value?.scene?.sceneId]
+            else
+                _currentScene.value = value?.scenesByOrder?.get(1)
+        }
+
+        _currentState.addSource(presetsDao.getPersistedState()) {
+            if(_currentState.value == null)
+                _currentState.value = it
+        }
+
+        _currentScene.addSource(_sceneLoadedEvent) { sceneSelectedEvent ->
+            sceneSelectedEvent.getContentIfNotHandled()?.let {
+                    sceneIndex ->
+                _currentScene.value = currentState.value?.scenesByOrder?.get(sceneIndex)
+            }
+        }
+    }
 
     suspend fun getCurrentPresetId(): String {
         val currentPresetList = presetsDao.getCurrentPreset()
@@ -20,7 +57,15 @@ class Repository(private val presetsDao: PresetsDao) {
             currentPresetList[0].presetId
     }
 
-    val currentState = presetsDao.getPersistedState()
+    fun setSelectedScene(sceneIndex :Int) {
+        _sceneLoadedEvent.value = Event(sceneIndex)
+    }
+
+    fun setCurrentSceneName(sceneName: String) {
+        _currentScene.mutation {
+            it.value?.scene?.sceneName = sceneName
+        }
+    }
 
 //endregion get
 
@@ -45,15 +90,24 @@ class Repository(private val presetsDao: PresetsDao) {
         presetsDao.updatePresetWithScenes(presetWithScenes, saveAll)
     }
 
+    fun saveSceneWithComponents(sceneWithComponents: SceneWithComponents, saveAll: Boolean) {
+        presetsDao.updateSceneWithComponents(sceneWithComponents, updateAll = saveAll)
+    }
+
+    fun notifyCurrentStateChanged() {
+        _currentState.mutation {}
+    }
+    fun setCurrentPreset(presetToLoad: PresetWithScenes) {
+        _currentState.mutation {
+            it.value?.copyValues(presetToLoad, presetToLoad.preset.presetName)
+        }
+    }
+
     suspend fun saveCurrentPreset(currentState: PresetWithScenes) {
         val currentPreset = presetsDao.getCurrentPresetInstance()
         currentPreset.copyValues(currentState, currentState.preset.presetName)
         presetsDao.updatePresetWithScenes(currentPreset, true)
         presetsDao.updatePresetWithScenes(currentState, true)
-    }
-
-    fun saveSceneWithComponents(sceneWithComponents: SceneWithComponents, saveAll: Boolean) {
-        presetsDao.updateSceneWithComponents(sceneWithComponents, updateAll = saveAll)
     }
 
     suspend fun saveSceneOfCurrentPresetAs(sceneWithComponents: SceneWithComponents) {
@@ -72,27 +126,11 @@ class Repository(private val presetsDao: PresetsDao) {
     fun saveScene(scene: Scene) {
         presetsDao.updateScene(scene)
     }
-
-    suspend fun saveMasterChannel(vararg masterChannel: MasterChannel) {
-        presetsDao.updateMasterChannel(*masterChannel)
-    }
-
-    suspend fun saveAudioChannel(vararg audioChannel: AudioChannel) {
-        presetsDao.updateAudioChannel(*audioChannel)
-    }
-
-    suspend fun saveFxSend(vararg fxSend: FxSend) {
-        presetsDao.updateFxSend(*fxSend)
-    }
 //endregion save
 
 //endregion remove
     suspend fun deletePreset(preset: Preset) {
         presetsDao.deletePreset(preset)
-    }
-
-    suspend fun deleteScene(scene: Scene) {
-        presetsDao.deleteScene(scene)
     }
 //endregion remove
 }

@@ -5,9 +5,8 @@ import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.View.VISIBLE
+import android.view.View.*
 import android.view.Window
-import androidx.constraintlayout.solver.widgets.ConstraintWidget.GONE
 import com.mpiotrowski.maudiofasttrackmixer.R
 import kotlinx.android.synthetic.main.layout_add_preset.*
 import kotlinx.android.synthetic.main.layout_save_preset.editTextPresetName

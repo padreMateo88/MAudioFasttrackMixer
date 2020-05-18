@@ -5,7 +5,7 @@
     <data>
         <variable
             name="viewmodel"
-            type="com.mpiotrowski.maudiofasttrackmixer.ui.MainViewModel"/>
+            type="com.mpiotrowski.maudiofasttrackmixer.ui.presets.PresetsViewModel"/>
     </data>
 
     <com.mpiotrowski.maudiofasttrackmixer.ui.views.MyLinearLayout
@@ -15,42 +15,6 @@
         android:gravity="center"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:layout_height="match_parent"
-            android:background="@drawable/panel_background"
-            android:padding="@dimen/dimen_8dp"
-            android:layout_marginLeft="@dimen/dimen_4dp"
-            android:layout_marginTop="@dimen/dimen_4dp"
-            android:layout_marginRight="@dimen/dimen_4dp"
-            android:layout_marginBottom="@dimen/dimen_4dp"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/textViewCurrentPresetsLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/label_current_preset"/>
-
-            <TextView
-                android:id="@+id/textViewPresetName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textStyle="bold"
-                android:layout_marginTop="@dimen/dimen_12dp"/>
-
-            <Button
-                android:id="@+id/buttonSavePresetAs"
-                android:textAllCaps="false"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/dimen_22dp"
-                android:background="@drawable/button_unselected"
-                android:text="@string/button_save"/>
-        </LinearLayout>
 
         <RelativeLayout
             android:background="@drawable/panel_background"
@@ -88,9 +52,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
-                android:layout_alignParentRight="true"
+                android:layout_alignParentLeft="true"
                 android:layout_marginBottom="@dimen/dimen_16dp"
-                android:layout_marginRight="@dimen/dimen_16dp"
+                android:layout_marginLeft="@dimen/dimen_16dp"
                 android:clickable="true"
                 android:focusable="true"
                 android:src="@drawable/plus"/>
@@ -125,6 +89,41 @@
                 android:layout_marginRight="@dimen/dimen_8dp"
                 android:layout_marginBottom="@dimen/dimen_4dp"
                 android:orientation="horizontal"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:layout_height="match_parent"
+            android:background="@drawable/panel_background"
+            android:padding="@dimen/dimen_8dp"
+            android:layout_marginLeft="@dimen/dimen_4dp"
+            android:layout_marginTop="@dimen/dimen_4dp"
+            android:layout_marginRight="@dimen/dimen_4dp"
+            android:layout_marginBottom="@dimen/dimen_4dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textViewCurrentPresetsLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/label_current_preset"/>
+
+            <TextView
+                android:id="@+id/textViewPresetName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_marginTop="@dimen/dimen_12dp"/>
+
+            <Button
+                android:id="@+id/buttonSavePresetAs"
+                android:textAllCaps="false"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dimen_22dp"
+                android:background="@drawable/button_unselected"
+                android:text="@string/button_save"/>
         </LinearLayout>
     </com.mpiotrowski.maudiofasttrackmixer.ui.views.MyLinearLayout>
 </layout>

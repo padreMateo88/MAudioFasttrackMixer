@@ -13,7 +13,7 @@ class PresetSwipeCallback(dragDirs: Int, swipeDirs: Int) : ItemTouchHelper.Simpl
     enum class IconPosition{LEFT, RIGHT}
     enum class ItemState{CENTER, LEFT, RIGHT}
 
-    var itemState: ItemState = ItemState.CENTER
+    private var itemState: ItemState = ItemState.CENTER
 
     private lateinit var swipeListener: SwipeListener
 

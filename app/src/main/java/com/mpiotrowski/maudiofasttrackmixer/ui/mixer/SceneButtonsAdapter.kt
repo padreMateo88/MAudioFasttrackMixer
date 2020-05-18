@@ -8,10 +8,9 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.mpiotrowski.maudiofasttrackmixer.R
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.SCENES_IN_PRESET_COUNT
-import com.mpiotrowski.maudiofasttrackmixer.ui.MainViewModel
 import kotlinx.android.synthetic.main.scene_buttom_item.view.*
 
-class SceneButtonsAdapter(private var viewModel: MainViewModel): RecyclerView.Adapter<SceneButtonsAdapter.SceneButtonViewHolder>() {
+class SceneButtonsAdapter(private var viewModel: MixerViewModel): RecyclerView.Adapter<SceneButtonsAdapter.SceneButtonViewHolder>() {
 
     private var lastChecked : Button? = null
 
@@ -30,7 +29,7 @@ class SceneButtonsAdapter(private var viewModel: MainViewModel): RecyclerView.Ad
 
     override fun onBindViewHolder(holder: SceneButtonViewHolder, position: Int) {
         holder.layout.button.text = (position + 1).toString()
-        if(viewModel.currentScene.value?.scene?.sceneOrder == position + 1) {
+        if(viewModel.getCurrentSceneOrder() == position + 1) {
             val button = holder.layout.button
             button.background = ContextCompat.getDrawable(button.context,R.drawable.gray_button_selected)
             button.setTextColor(ContextCompat.getColor(button.context, android.R.color.black))
@@ -50,8 +49,8 @@ class SceneButtonsAdapter(private var viewModel: MainViewModel): RecyclerView.Ad
         }
 
         holder.layout.button.setOnLongClickListener {
-            viewModel.currentState.value?.scenesByOrder?.get(position + 1)?.let { sceneWithComponents ->
-                viewModel.currentState.value?.let {
+            viewModel.getSceneOfCurrentState(position + 1)?.let { sceneWithComponents ->
+                viewModel.getCurrentState()?.let {
                     currentState ->
                     SaveSceneDialog(holder.layout.button.context,
                         sceneWithComponents,currentState,viewModel).show()
