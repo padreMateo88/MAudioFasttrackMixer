@@ -3,31 +3,26 @@ package com.mpiotrowski.maudiofasttrackmixer.ui.mixer
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.*
+import com.mpiotrowski.maudiofasttrackmixer.MAudioFasttrackMixerApplication
 import com.mpiotrowski.maudiofasttrackmixer.data.Repository
 import com.mpiotrowski.maudiofasttrackmixer.data.database.PresetsDatabase
-import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.Preset
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.PresetWithScenes
-import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.SampleRate
-import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.Scene
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.SceneWithComponents
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.scene_components.AudioChannel
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.scene_components.FxSend
-import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.scene_components.FxSettings
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.scene_components.MasterChannel
-import com.mpiotrowski.maudiofasttrackmixer.util.Event
 import com.mpiotrowski.maudiofasttrackmixer.util.mutation
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class MixerViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val database = PresetsDatabase.getDatabase(getApplication(),viewModelScope)
-    private val repository = Repository(database.presetsDao())
+    private val repository = (application as MAudioFasttrackMixerApplication).repository
 
-    val currentState = MediatorLiveData<PresetWithScenes>()
-    private val sceneLoadedEvent = MutableLiveData<Event<Int>>()
+    private val currentState = repository.currentState
     private val currentOutput = MutableLiveData<Int>()
-    val currentScene = MediatorLiveData<SceneWithComponents>()
+
+    val currentScene = repository.currentScene
     val audioChannels = MediatorLiveData<List<AudioChannel>>()
     val masterChannel = MediatorLiveData<MasterChannel>()
     val fxSends = MediatorLiveData<List<FxSend>>()
@@ -35,11 +30,6 @@ class MixerViewModel(application: Application) : AndroidViewModel(application) {
     val deviceOnline = MutableLiveData<Boolean>()
 
     init {
-
-        currentState.addSource(repository.currentState) {
-            if(currentState.value == null)
-                currentState.value = repository.currentState.value
-        }
 
         audioChannels.addSource(currentOutput) { outputIndex ->
             audioChannels.value = currentScene.value?.channelsByOutputsMap?.get(outputIndex)
@@ -59,22 +49,6 @@ class MixerViewModel(application: Application) : AndroidViewModel(application) {
 
         fxSends.addSource(currentScene) { sceneWithComponents ->
             fxSends.value = sceneWithComponents.fxSends
-        }
-
-        currentScene.addSource(currentState) { value ->
-            val scenesById = value.scenes.map {it.scene.sceneId to it}.toMap()
-
-            if(scenesById.containsKey(currentScene.value?.scene?.sceneId))
-                currentScene.value = scenesById[currentScene.value?.scene?.sceneId]
-            else
-                currentScene.value = value?.scenesByOrder?.get(1)
-        }
-
-        currentScene.addSource(sceneLoadedEvent) { sceneSelectedEvent ->
-            sceneSelectedEvent.getContentIfNotHandled()?.let {
-                    sceneIndex ->
-                currentScene.value = currentState.value?.scenesByOrder?.get(sceneIndex)
-            }
         }
 
         deviceOnline.value = false
@@ -97,32 +71,29 @@ class MixerViewModel(application: Application) : AndroidViewModel(application) {
         return currentState.value
     }
 
+//region scene control
     fun saveSceneAs(copyFrom: SceneWithComponents, copyTo: SceneWithComponents, newName: String) {
         if(copyFrom.scene.sceneId != copyTo.scene.sceneId) {
             copyTo.copyValues(copyFrom, newName)
         } else
-            currentScene.mutation {
-                it.value?.scene?.sceneName = newName
-            }
+            repository.setCurrentSceneName(newName)
 
         viewModelScope.launch(Dispatchers.IO) {
             repository.saveSceneOfCurrentPresetAs(copyTo)
         }
     }
 
-//region scene/preset/output changed
     fun onSceneSelected(sceneIndex :Int) {
-        Log.d("MPdebug", "scene $sceneIndex")
-        sceneLoadedEvent.value = Event(sceneIndex)
+        repository.setSelectedScene(sceneIndex)
     }
+//endregion scene control
 
+//region mixer parameters listener
     fun onOutputSelected(outputIndex: Int) {
         Log.d("MPdebug", "output $outputIndex")
         currentOutput.value = outputIndex
     }
-//endregion controls
 
-//region mixer listeners
     fun onChannelChanged(audioChannel: AudioChannel) {
         currentState.value?.preset?.isDirty = true
         audioChannel.isDirty = true
@@ -159,5 +130,5 @@ class MixerViewModel(application: Application) : AndroidViewModel(application) {
         masterChannel.isDirty = true
         Log.d("MPdebug", "master volume ${masterChannel.volume}")
     }
-//endregion mixer listeners
+//endregion mixer parameters listener
 }

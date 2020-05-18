@@ -1,37 +1,24 @@
 package com.mpiotrowski.maudiofasttrackmixer.ui.presets
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.*
-import com.mpiotrowski.maudiofasttrackmixer.data.Repository
-import com.mpiotrowski.maudiofasttrackmixer.data.database.PresetsDatabase
+import com.mpiotrowski.maudiofasttrackmixer.MAudioFasttrackMixerApplication
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.Preset
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.PresetWithScenes
-import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.SampleRate
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.SceneWithComponents
-import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.scene_components.*
-import com.mpiotrowski.maudiofasttrackmixer.util.Event
-import com.mpiotrowski.maudiofasttrackmixer.util.mutation
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class PresetsViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val database = PresetsDatabase.getDatabase(getApplication(),viewModelScope)
-    private val repository = Repository(database.presetsDao())
-
+    private val repository = (application as MAudioFasttrackMixerApplication).repository
     lateinit var currentPresetId: String
     val allPresets: LiveData<List<PresetWithScenes>> = repository.presetsWithScenes
-    val currentState = MediatorLiveData<PresetWithScenes>()
+    val currentState = repository.currentState
     val selectedPreset = MediatorLiveData<PresetWithScenes>()
 
     init {
         fetchCurrentPresetId()
-
-        currentState.addSource(repository.currentState) {
-            if(currentState.value == null)
-                currentState.value = repository.currentState.value
-        }
 
         selectedPreset.addSource(allPresets) { allPresetsListNullable ->
             allPresetsListNullable?.let {allPresets ->
@@ -74,16 +61,6 @@ class PresetsViewModel(application: Application) : AndroidViewModel(application)
         }
     }
 
-    // region save/load preset
-    fun saveCurrentDeviceState() {
-        viewModelScope.launch(Dispatchers.IO) {
-            currentState.value?.let {
-                Log.d("MPdebug", "save current device state")
-                repository.savePresetWithScenes(it, false)
-            }
-        }
-    }
-
     fun selectPreset(index: Int) {
         allPresets.value?.get(index)?.let {
             selectedPreset.value = it
@@ -91,10 +68,7 @@ class PresetsViewModel(application: Application) : AndroidViewModel(application)
     }
 
     fun loadPreset(presetToLoad: PresetWithScenes) {
-        currentState.mutation {
-            it.value?.copyValues(presetToLoad, presetToLoad.preset.presetName)
-        }
-
+        repository.setCurrentPreset(presetToLoad)
         currentPresetId = presetToLoad.preset.presetId
         viewModelScope.launch(Dispatchers.IO) {
                 repository.saveCurrentPresetId(presetToLoad)
@@ -117,9 +91,8 @@ class PresetsViewModel(application: Application) : AndroidViewModel(application)
         return if(presetName != currentState.value?.preset?.presetName) {
             false
         } else {
-            currentState.mutation {
-                it.value?.preset?.isDirty = false
-            }
+            currentState.value?.preset?.isDirty = false
+            repository.notifyCurrentStateChanged()
             viewModelScope.launch(Dispatchers.IO) {
                 currentState.value?.let { currentStateValue ->
                     repository.saveCurrentPreset(currentStateValue)
@@ -131,10 +104,9 @@ class PresetsViewModel(application: Application) : AndroidViewModel(application)
 
     fun saveAndRenameCurrentPreset(presetName: String) {
         currentState.value?.let { currentStateValue ->
-            currentState.mutation {
-                currentStateValue.preset.isDirty = false
-                currentStateValue.preset.presetName = presetName
-            }
+            currentStateValue.preset.isDirty = false
+            currentStateValue.preset.presetName = presetName
+            repository.notifyCurrentStateChanged()
             viewModelScope.launch(Dispatchers.IO) {
                 repository.saveCurrentPreset(currentStateValue)
             }
@@ -145,10 +117,9 @@ class PresetsViewModel(application: Application) : AndroidViewModel(application)
          val destinationPreset = allPresets.value?.map {it.preset.presetName to it}?.toMap()?.get(presetName) ?: return
 
         currentState.value?.let { currentStateValue ->
-            currentState.mutation {
-                currentStateValue.preset.isDirty = false
-                currentStateValue.preset.presetName = presetName
-            }
+            currentStateValue.preset.isDirty = false
+            currentStateValue.preset.presetName = presetName
+            repository.notifyCurrentStateChanged()
             viewModelScope.launch(Dispatchers.IO) {
                 destinationPreset.copyValues(currentStateValue, presetName)
                 repository.savePresetWithScenes(currentStateValue, false)
@@ -163,10 +134,9 @@ class PresetsViewModel(application: Application) : AndroidViewModel(application)
         if(allPresets.value?.map {it.preset.presetName}?.contains(presetName) == true) {
             return
         } else {
-            currentState.mutation {
-                it.value?.preset?.isDirty = false
-                it.value?.preset?.presetName = presetName
-            }
+            currentState.value?.preset?.isDirty = false
+            currentState.value?.preset?.presetName = presetName
+            repository.notifyCurrentStateChanged()
             viewModelScope.launch(Dispatchers.IO) {
                 currentState.value?.let { currentState ->
                         val newPreset = PresetWithScenes.newInstance(Preset(presetName = presetName))
@@ -183,10 +153,10 @@ class PresetsViewModel(application: Application) : AndroidViewModel(application)
     fun swapScenesInSelectedPresetAndCurrentState(fromOrder: Int, toOrder: Int) {
         selectedPreset.value?.let {
             swapScenesInPreset(it, fromOrder, toOrder)
-            if(currentPresetId == it.preset.presetId)
-                currentState.mutation {
-                currentState.value?.let {currentStateValue ->
+            if(currentPresetId == it.preset.presetId) {
+                currentState.value?.let { currentStateValue ->
                     swapScenesInPreset(currentStateValue, fromOrder, toOrder)
+                    repository.notifyCurrentStateChanged()
                 }
             }
         }
@@ -207,5 +177,4 @@ class PresetsViewModel(application: Application) : AndroidViewModel(application)
             sceneTo?.let {repository.saveScene(it.scene)}
         }
     }
-// endregion save/load preset
 }

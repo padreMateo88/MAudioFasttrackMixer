@@ -8,7 +8,6 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.mpiotrowski.maudiofasttrackmixer.R
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.SCENES_IN_PRESET_COUNT
-import com.mpiotrowski.maudiofasttrackmixer.ui.MainViewModel
 import kotlinx.android.synthetic.main.scene_buttom_item.view.*
 
 class SceneButtonsAdapter(private var viewModel: MixerViewModel): RecyclerView.Adapter<SceneButtonsAdapter.SceneButtonViewHolder>() {
