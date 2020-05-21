@@ -1,17 +1,16 @@
 package com.mpiotrowski.maudiofasttrackmixer.ui.presets
 
-import android.app.Application
 import androidx.lifecycle.*
-import com.mpiotrowski.maudiofasttrackmixer.MAudioFasttrackMixerApplication
+import com.mpiotrowski.maudiofasttrackmixer.data.Repository
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.Preset
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.PresetWithScenes
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.SceneWithComponents
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class PresetsViewModel(application: Application) : AndroidViewModel(application) {
+class PresetsViewModel @Inject constructor(private val repository: Repository) : ViewModel()  {
 
-    private val repository = (application as MAudioFasttrackMixerApplication).repository
     lateinit var currentPresetId: String
     val allPresets: LiveData<List<PresetWithScenes>> = repository.presetsWithScenes
     val currentState = repository.currentState

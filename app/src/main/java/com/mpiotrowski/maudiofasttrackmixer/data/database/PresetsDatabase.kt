@@ -32,68 +32,21 @@ abstract class PresetsDatabase : RoomDatabase() {
 
     abstract fun presetsDao(): PresetsDao
 
-    class PresetsDatabaseCallback1 : RoomDatabase.Callback() {
-        override fun onOpen(db: SupportSQLiteDatabase) {
-            super.onOpen(db)
-            Log.d("MPdebug", "onOpen")
-            CoroutineScope(Dispatchers.Default).launch(Dispatchers.IO) {
-                Log.d("MPdebug", "populateDatabase")
-                populateDatabase((db as PresetsDatabase).presetsDao())
-            }
-        }
-    }
-
-    companion object {
-        @Volatile
-        private var INSTANCE: PresetsDatabase? = null
-
-        fun getDatabase(
-            context: Context,
-            scope: CoroutineScope
-        ): PresetsDatabase {
-            return INSTANCE
-                ?: synchronized(this) {
-                val instance = databaseBuilder(
-                    context.applicationContext,
-                    PresetsDatabase::class.java,
-                    "presets_database"
-                )
-                .fallbackToDestructiveMigration()
-                .addCallback(PresetsDatabaseCallback(scope))
-                .build()
-                INSTANCE = instance
-                instance
-            }
+    suspend fun populateDatabase() {
+        val presetsDao = presetsDao()
+        val defaultPreset = presetsDao.getPreset(DEFAULT_PRESET_ID)
+        if(defaultPreset.isEmpty()) {
+            presetsDao.addPreset(Preset(presetId = DEFAULT_PRESET_ID, presetName = DEFAULT_PRESET_NAME))
         }
 
-        private class PresetsDatabaseCallback(
-            private val scope: CoroutineScope
-        ) : RoomDatabase.Callback() {
-            override fun onOpen(db: SupportSQLiteDatabase) {
-                super.onOpen(db)
-                INSTANCE?.let { database ->
-                    scope.launch(Dispatchers.IO) {
-                        populateDatabase(database.presetsDao())
-                    }
-                }
-            }
+        val currentState = presetsDao.getPreset(LAST_PERSISTED_STATE_ID)
+        if(currentState.isEmpty()) {
+            presetsDao.addPreset(Preset(presetId = LAST_PERSISTED_STATE_ID, presetName = LAST_PERSISTED_STATE_NAME))
         }
 
-        suspend fun populateDatabase(presetsDao: PresetsDao) {
-            val defaultPreset = presetsDao.getPreset(DEFAULT_PRESET_ID)
-            if(defaultPreset.isEmpty()) {
-                presetsDao.addPreset(Preset(presetId = DEFAULT_PRESET_ID, presetName = DEFAULT_PRESET_NAME))
-            }
-
-            val currentState = presetsDao.getPreset(LAST_PERSISTED_STATE_ID)
-            if(currentState.isEmpty()) {
-                presetsDao.addPreset(Preset(presetId = LAST_PERSISTED_STATE_ID, presetName = LAST_PERSISTED_STATE_NAME))
-            }
-
-            val currentPreset = presetsDao.getCurrentPreset()
-            if(currentPreset.isEmpty()) {
-                presetsDao.insertCurrentPreset(CurrentPreset(presetId = DEFAULT_PRESET_ID))
-            }
+        val currentPreset = presetsDao.getCurrentPreset()
+        if(currentPreset.isEmpty()) {
+            presetsDao.insertCurrentPreset(CurrentPreset(presetId = DEFAULT_PRESET_ID))
         }
     }
 }

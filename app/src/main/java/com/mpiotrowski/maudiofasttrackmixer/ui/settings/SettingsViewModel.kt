@@ -1,15 +1,13 @@
 package com.mpiotrowski.maudiofasttrackmixer.ui.settings
 
-import android.app.Application
 import android.util.Log
 import androidx.lifecycle.*
-import com.mpiotrowski.maudiofasttrackmixer.MAudioFasttrackMixerApplication
+import com.mpiotrowski.maudiofasttrackmixer.data.Repository
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.SampleRate
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.scene_components.*
+import javax.inject.Inject
 
-class SettingsViewModel(application: Application) : AndroidViewModel(application) {
-
-    private val repository = (application as MAudioFasttrackMixerApplication).repository
+class SettingsViewModel @Inject constructor(repository: Repository) : ViewModel() {
 
     private val currentState = repository.currentState
     private val currentScene = repository.currentScene
@@ -18,7 +16,7 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
 
     init {
         fxSettings.addSource(currentScene) {
-            sceneWithComponents ->
+                sceneWithComponents ->
             fxSettings.value = sceneWithComponents.scene.fxSettings
         }
 
@@ -27,7 +25,7 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
-//region FX listeners
+    //region FX listeners
     fun onFxVolumeChanged(fxVolume: Int) {
         currentState.value?.preset?.isDirty = true
         Log.d("MPdebug", "fxVolume $fxVolume")
