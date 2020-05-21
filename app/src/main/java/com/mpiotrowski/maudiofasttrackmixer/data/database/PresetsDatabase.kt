@@ -32,6 +32,17 @@ abstract class PresetsDatabase : RoomDatabase() {
 
     abstract fun presetsDao(): PresetsDao
 
+    class PresetsDatabaseCallback1 : RoomDatabase.Callback() {
+        override fun onOpen(db: SupportSQLiteDatabase) {
+            super.onOpen(db)
+            Log.d("MPdebug", "onOpen")
+            CoroutineScope(Dispatchers.Default).launch(Dispatchers.IO) {
+                Log.d("MPdebug", "populateDatabase")
+                populateDatabase((db as PresetsDatabase).presetsDao())
+            }
+        }
+    }
+
     companion object {
         @Volatile
         private var INSTANCE: PresetsDatabase? = null

@@ -1,16 +1,13 @@
 package com.mpiotrowski.maudiofasttrackmixer.ui
 
-import android.app.Application
-import android.util.Log
 import androidx.lifecycle.*
-import com.mpiotrowski.maudiofasttrackmixer.MAudioFasttrackMixerApplication
-import kotlinx.coroutines.CoroutineScope
+import com.mpiotrowski.maudiofasttrackmixer.data.Repository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class MainViewModel(application: Application) : AndroidViewModel(application) {
+class MainViewModel @Inject constructor(private val repository: Repository) : ViewModel() {
 
-    private val repository = (application as MAudioFasttrackMixerApplication).repository
     private val currentState = repository.currentState
 
     fun saveCurrentDeviceState() {
