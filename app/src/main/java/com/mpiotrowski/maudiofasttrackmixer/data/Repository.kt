@@ -1,5 +1,6 @@
 package com.mpiotrowski.maudiofasttrackmixer.data
 
+import android.util.Log
 import androidx.annotation.WorkerThread
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
@@ -9,7 +10,6 @@ import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.*
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.*
 import com.mpiotrowski.maudiofasttrackmixer.util.Event
 import com.mpiotrowski.maudiofasttrackmixer.util.mutation
-import java.net.ResponseCache
 
 class Repository(private val presetsDao: PresetsDao) {
 
@@ -87,6 +87,7 @@ class Repository(private val presetsDao: PresetsDao) {
     @Suppress("RedundantSuspendModifier")
     @WorkerThread
     suspend fun savePresetWithScenes(presetWithScenes: PresetWithScenes, saveAll: Boolean) {
+        Log.d("MPdebug", "savePresetWithScenes")
         presetsDao.updatePresetWithScenes(presetWithScenes, saveAll)
     }
 

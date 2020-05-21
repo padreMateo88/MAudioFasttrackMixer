@@ -152,7 +152,7 @@ class MyLinearLayout(context: Context, attrs: AttributeSet?) : LinearLayout(cont
         val myRunnable = MyRunnable
         MyRunnable.setBnb(bottomNavBar)
         gestureDirection = GestureDirection.DOWN
-        bottomNavBar.postDelayed(myRunnable, TIME_TO_HIDE)
+        //bottomNavBar.postDelayed(myRunnable, TIME_TO_HIDE)
         previousGestureDirection = gestureDirection
     }
 }

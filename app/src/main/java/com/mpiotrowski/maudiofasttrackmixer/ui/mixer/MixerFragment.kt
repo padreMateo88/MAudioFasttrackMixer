@@ -5,19 +5,28 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
-import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.MIXER_STEREO_OUTPUTS_COUNT
 import com.mpiotrowski.maudiofasttrackmixer.databinding.FragmentMixerBinding
+import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_mixer.*
+import javax.inject.Inject
 
-class MixerFragment : Fragment() {
-    lateinit var viewModel: MixerViewModel
-    private lateinit var binding: FragmentMixerBinding
+class MixerFragment() : DaggerFragment() {
+
     var outputIndex = 1
+
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
+    private val viewModel by viewModels<MixerViewModel> {
+        viewModelFactory
+    }
+
+    private lateinit var binding: FragmentMixerBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                             savedInstanceState: Bundle?): View? {
@@ -28,7 +37,6 @@ class MixerFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(requireActivity()).get(MixerViewModel::class.java)
         binding.viewmodel = viewModel
         prepareChannelMixer()
         prepareSceneSelector()

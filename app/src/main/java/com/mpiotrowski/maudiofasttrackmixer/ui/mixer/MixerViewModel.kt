@@ -1,11 +1,8 @@
 package com.mpiotrowski.maudiofasttrackmixer.ui.mixer
 
-import android.app.Application
 import android.util.Log
 import androidx.lifecycle.*
-import com.mpiotrowski.maudiofasttrackmixer.MAudioFasttrackMixerApplication
 import com.mpiotrowski.maudiofasttrackmixer.data.Repository
-import com.mpiotrowski.maudiofasttrackmixer.data.database.PresetsDatabase
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.PresetWithScenes
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.SceneWithComponents
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.scene_components.AudioChannel
@@ -14,10 +11,9 @@ import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.
 import com.mpiotrowski.maudiofasttrackmixer.util.mutation
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class MixerViewModel(application: Application) : AndroidViewModel(application) {
-
-    private val repository = (application as MAudioFasttrackMixerApplication).repository
+class MixerViewModel @Inject constructor(private val repository: Repository) : ViewModel() {
 
     private val currentState = repository.currentState
     private val currentOutput = MutableLiveData<Int>()

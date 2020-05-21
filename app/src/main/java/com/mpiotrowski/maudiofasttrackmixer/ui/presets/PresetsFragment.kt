@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.mpiotrowski.maudiofasttrackmixer.databinding.FragmentPresetsBinding
@@ -18,12 +18,19 @@ import com.mpiotrowski.maudiofasttrackmixer.ui.presets.dialogs.AddPresetDialog
 import com.mpiotrowski.maudiofasttrackmixer.ui.presets.dialogs.OverwritePresetDialog
 import com.mpiotrowski.maudiofasttrackmixer.ui.presets.dialogs.RenameOrCreateNewPresetDialog
 import com.mpiotrowski.maudiofasttrackmixer.ui.presets.dialogs.SavePresetDialog
+import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_presets.*
+import javax.inject.Inject
 
-class PresetsFragment : Fragment(),
+class PresetsFragment(): DaggerFragment(),
     AddPresetDialog.AddPresetListener {
 
-    lateinit var viewModel: PresetsViewModel
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
+    private val viewModel by viewModels<PresetsViewModel> {
+        viewModelFactory
+    }
+
     private lateinit var binding: FragmentPresetsBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -35,7 +42,6 @@ class PresetsFragment : Fragment(),
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(requireActivity()).get(PresetsViewModel::class.java)
         binding.viewmodel = viewModel
         prepareScenesRecyclerView()
         preparePresetsRecyclerView()
