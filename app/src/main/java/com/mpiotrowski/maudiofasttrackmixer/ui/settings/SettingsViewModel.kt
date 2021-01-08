@@ -5,6 +5,7 @@ import androidx.lifecycle.*
 import com.mpiotrowski.maudiofasttrackmixer.data.Repository
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.SampleRate
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.scene_components.*
+import com.mpiotrowski.maudiofasttrackmixer.util.LogUtil
 import javax.inject.Inject
 
 class SettingsViewModel @Inject constructor(repository: Repository) : ViewModel() {
@@ -28,27 +29,27 @@ class SettingsViewModel @Inject constructor(repository: Repository) : ViewModel(
     //region FX listeners
     fun onFxVolumeChanged(fxVolume: Int) {
         currentState.value?.preset?.isDirty = true
-        Log.d("MPdebug", "fxVolume $fxVolume")
+        LogUtil.d( "fxVolume $fxVolume")
     }
 
     fun onFxDurationChanged(fxDuration: Int) {
         currentState.value?.preset?.isDirty = true
-        Log.d("MPdebug", "fxDuration $fxDuration")
+        LogUtil.d( "fxDuration $fxDuration")
     }
 
     fun onFxFeedbackChanged(fxFeedback: Int) {
         currentState.value?.preset?.isDirty = true
-        Log.d("MPdebug", "fxFeedback $fxFeedback")
+        LogUtil.d( "fxFeedback $fxFeedback")
     }
 
     fun onFxTypeChanged(fxType: FxSettings.FxType) {
         currentState.value?.preset?.isDirty = true
-        Log.d("MPdebug", "fxType $fxType")
+        LogUtil.d( "fxType $fxType")
     }
 
     fun onSampleRateChanged(sampleRate: SampleRate) {
         currentState.value?.preset?.isDirty = true
-        Log.d("MPdebug", "sampleRate $sampleRate")
+        LogUtil.d( "sampleRate $sampleRate")
     }
 //endregion FX listeners
 }

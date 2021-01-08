@@ -16,7 +16,7 @@ import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_mixer.*
 import javax.inject.Inject
 
-class MixerFragment() : DaggerFragment() {
+class MixerFragment : DaggerFragment() {
 
     var outputIndex = 1
 

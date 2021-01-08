@@ -9,6 +9,7 @@ import com.mpiotrowski.maudiofasttrackmixer.data.database.PresetsDao
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.*
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.*
 import com.mpiotrowski.maudiofasttrackmixer.util.Event
+import com.mpiotrowski.maudiofasttrackmixer.util.LogUtil
 import com.mpiotrowski.maudiofasttrackmixer.util.mutation
 
 class Repository(private val presetsDao: PresetsDao) {
@@ -28,12 +29,14 @@ class Repository(private val presetsDao: PresetsDao) {
 
     init {
         _currentScene.addSource(_currentState) { value ->
-            val scenesById = value.scenes.map {it.scene.sceneId to it}.toMap()
+            if(value != null) {
+                val scenesById = value.scenes.map { it.scene.sceneId to it }.toMap()
 
-            if(scenesById.containsKey(currentScene.value?.scene?.sceneId))
-                _currentScene.value = scenesById[currentScene.value?.scene?.sceneId]
-            else
-                _currentScene.value = value?.scenesByOrder?.get(1)
+                if (scenesById.containsKey(currentScene.value?.scene?.sceneId))
+                    _currentScene.value = scenesById[currentScene.value?.scene?.sceneId]
+                else
+                    _currentScene.value = value.scenesByOrder[1]
+            }
         }
 
         _currentState.addSource(presetsDao.getPersistedState()) {
@@ -87,7 +90,7 @@ class Repository(private val presetsDao: PresetsDao) {
     @Suppress("RedundantSuspendModifier")
     @WorkerThread
     suspend fun savePresetWithScenes(presetWithScenes: PresetWithScenes, saveAll: Boolean) {
-        Log.d("MPdebug", "savePresetWithScenes")
+        LogUtil.d( "savePresetWithScenes")
         presetsDao.updatePresetWithScenes(presetWithScenes, saveAll)
     }
 

@@ -8,6 +8,7 @@ import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.scene_components.AudioChannel
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.scene_components.FxSend
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.scene_components.MasterChannel
+import com.mpiotrowski.maudiofasttrackmixer.util.LogUtil
 import com.mpiotrowski.maudiofasttrackmixer.util.mutation
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -86,14 +87,14 @@ class MixerViewModel @Inject constructor(private val repository: Repository) : V
 
 //region mixer parameters listener
     fun onOutputSelected(outputIndex: Int) {
-        Log.d("MPdebug", "output $outputIndex")
+        LogUtil.d( "output $outputIndex")
         currentOutput.value = outputIndex
     }
 
     fun onChannelChanged(audioChannel: AudioChannel) {
         currentState.value?.preset?.isDirty = true
         audioChannel.isDirty = true
-        Log.d("MPdebug", "channel ${audioChannel.inputIndex} volume ${audioChannel.volume} panorama ${audioChannel.panorama} mute ${audioChannel.mute} solo ${audioChannel.solo}")
+        LogUtil.d( "channel ${audioChannel.inputIndex} volume ${audioChannel.volume} panorama ${audioChannel.panorama} mute ${audioChannel.mute} solo ${audioChannel.solo}")
     }
 
     fun onSoloChanged(audioChannel: AudioChannel) {
@@ -112,19 +113,19 @@ class MixerViewModel @Inject constructor(private val repository: Repository) : V
     fun onFxSendChanged(fxSend: FxSend) {
         currentState.value?.preset?.isDirty = true
         fxSend.isDirty = true
-        Log.d("MPdebug", "channel $fxSend")
+        LogUtil.d( "channel $fxSend")
     }
 
     fun onFxReturnChanged(masterChannel: MasterChannel, fxReturn: Int) {
         currentState.value?.preset?.isDirty = true
         masterChannel.isDirty
-        Log.d("MPdebug", "fxReturn $fxReturn")
+        LogUtil.d( "fxReturn $fxReturn")
     }
 
     fun onMasterVolumeChanged(masterChannel: MasterChannel) {
         currentState.value?.preset?.isDirty = true
         masterChannel.isDirty = true
-        Log.d("MPdebug", "master volume ${masterChannel.volume}")
+        LogUtil.d( "master volume ${masterChannel.volume}")
     }
 //endregion mixer parameters listener
 }

@@ -7,6 +7,7 @@ import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.mpiotrowski.maudiofasttrackmixer.data.Repository
 import com.mpiotrowski.maudiofasttrackmixer.data.database.PresetsDatabase
+import com.mpiotrowski.maudiofasttrackmixer.util.LogUtil
 import dagger.Module
 import dagger.Provides
 import kotlinx.coroutines.CoroutineScope
@@ -25,7 +26,7 @@ object AppModule {
         val callback = object: RoomDatabase.Callback() {
             override fun onOpen(db: SupportSQLiteDatabase) {
                 super.onOpen(db)
-                Log.d("MPdebug", "onOpen")
+                LogUtil.d( "onOpen")
                 CoroutineScope(Dispatchers.Default).launch(Dispatchers.IO) {
                     presetsDatabase.populateDatabase()
                 }
