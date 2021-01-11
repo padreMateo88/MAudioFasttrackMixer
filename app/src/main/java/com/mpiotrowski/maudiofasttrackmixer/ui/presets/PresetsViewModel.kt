@@ -13,7 +13,7 @@ class PresetsViewModel @Inject constructor(private val repository: Repository) :
 
     lateinit var currentPresetId: String
     val allPresets: LiveData<List<PresetWithScenes>> = repository.presetsWithScenes
-    val currentState = repository.currentState
+    val currentState = repository.currentModelState
     val selectedPreset = MediatorLiveData<PresetWithScenes>()
 
     init {

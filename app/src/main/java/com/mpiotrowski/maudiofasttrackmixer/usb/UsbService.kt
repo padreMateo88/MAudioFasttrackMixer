@@ -25,7 +25,7 @@ class UsbService: Service() {
 
     private var device: UsbDevice? = null
 
-    private var usbHelper: UsbHelper? = null
+    private var usbConnectionHelper: UsbConnectionHelper? = null
 
     private var usbDetachedReceiver: BroadcastReceiver? = null
     private val binder = UsbServiceBinder()
@@ -47,8 +47,8 @@ class UsbService: Service() {
 
         device = intent.getParcelableExtra(DEVICE_INTENT_EXTRA)
         device?.let {
-            usbHelper = UsbHelper()
-            usbHelper!!.connectDevice(applicationContext, device!!)
+            usbConnectionHelper = UsbConnectionHelper()
+            usbConnectionHelper!!.connectDevice(applicationContext, device!!)
         } ?: stopSelf()
 
         return START_STICKY
@@ -72,7 +72,7 @@ class UsbService: Service() {
                     if(device?.vendorId != USB_VENDOR_ID || device.productId != USB_PRODUCT_ID)
                         return
 
-                    usbHelper?.disconnectDevice()
+                    usbConnectionHelper?.disconnectDevice()
                     stopSelf()
                 }
             }
@@ -126,35 +126,35 @@ class UsbService: Service() {
     }
 
     fun setChannelVolume(volume: Int, pan: Int, input: Int, outputPair: Int, masterVolume: Int, masterPan: Int, mute: Boolean) {
-        usbHelper?.setChannelVolume(volume, pan,input, outputPair, masterVolume, masterPan, mute)
+        usbConnectionHelper?.setChannelVolume(volume, pan,input, outputPair, masterVolume, masterPan, mute)
     }
 
     fun setFxSend(sendValue: Int, input: Int) {
-        usbHelper?.setFxSend(sendValue, input)
+        usbConnectionHelper?.setFxSend(sendValue, input)
     }
 
     fun setFxReturn(fxReturnValue: Int, outputPair: Int) {
-        usbHelper?.setFxReturn(fxReturnValue, outputPair)
+        usbConnectionHelper?.setFxReturn(fxReturnValue, outputPair)
     }
 
     //1..127 linear
     fun setFxVolume(value: Int) {
-        usbHelper?.setFxVolume(value)
+        usbConnectionHelper?.setFxVolume(value)
     }
 
     fun setFxDuration(value: Int) {
-        usbHelper?.setFxDuration(value)
+        usbConnectionHelper?.setFxDuration(value)
     }
 
     fun setFxFeedback(value: Int) {
-        usbHelper?.setFxFeedback(value)
+        usbConnectionHelper?.setFxFeedback(value)
     }
 
     fun setNextFxType(): FxType? {
-        return usbHelper?.setFxType()
+        return usbConnectionHelper?.setFxType()
     }
 
     fun setSampleRate(): SampleRate? {
-        return usbHelper?.setSampleRate()
+        return usbConnectionHelper?.setSampleRate()
     }
 }

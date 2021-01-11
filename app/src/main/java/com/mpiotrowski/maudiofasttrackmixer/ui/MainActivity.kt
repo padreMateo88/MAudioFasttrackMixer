@@ -1,7 +1,6 @@
 package com.mpiotrowski.maudiofasttrackmixer.ui
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.Navigation

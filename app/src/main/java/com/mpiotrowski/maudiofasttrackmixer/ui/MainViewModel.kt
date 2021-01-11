@@ -8,7 +8,7 @@ import javax.inject.Inject
 
 class MainViewModel @Inject constructor(private val repository: Repository) : ViewModel() {
 
-    private val currentState = repository.currentState
+    private val currentState = repository.currentModelState
 
     fun saveCurrentDeviceState() {
         viewModelScope.launch(Dispatchers.IO) {

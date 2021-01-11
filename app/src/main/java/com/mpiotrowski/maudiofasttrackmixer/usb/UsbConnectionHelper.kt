@@ -8,7 +8,7 @@ import android.hardware.usb.UsbManager
 import com.mpiotrowski.maudiofasttrackmixer.util.LogUtil
 import kotlin.math.abs
 
-class UsbHelper {
+class UsbConnectionHelper {
 
     companion object {
         private const val MASTER_VOLUME_SCALE = 10000

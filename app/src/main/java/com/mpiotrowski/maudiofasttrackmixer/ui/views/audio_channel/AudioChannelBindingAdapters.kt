@@ -1,6 +1,5 @@
 package com.mpiotrowski.maudiofasttrackmixer.ui.views.audio_channel
 
-import android.util.Log
 import android.view.View
 import android.widget.CompoundButton
 import androidx.databinding.BindingAdapter

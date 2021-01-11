@@ -1,6 +1,5 @@
 package com.mpiotrowski.maudiofasttrackmixer.ui.mixer
 
-import android.util.Log
 import androidx.lifecycle.*
 import com.mpiotrowski.maudiofasttrackmixer.data.Repository
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.PresetWithScenes
@@ -16,7 +15,7 @@ import javax.inject.Inject
 
 class MixerViewModel @Inject constructor(private val repository: Repository) : ViewModel() {
 
-    private val currentState = repository.currentState
+    private val currentState = repository.currentModelState
     private val currentOutput = MutableLiveData<Int>()
 
     val currentScene = repository.currentScene
@@ -26,8 +25,7 @@ class MixerViewModel @Inject constructor(private val repository: Repository) : V
     val fine = MutableLiveData<Boolean>()
     val deviceOnline = MutableLiveData<Boolean>()
 
-    init {
-
+        init {
         audioChannels.addSource(currentOutput) { outputIndex ->
             audioChannels.value = currentScene.value?.channelsByOutputsMap?.get(outputIndex)
         }

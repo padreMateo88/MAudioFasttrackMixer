@@ -1,6 +1,5 @@
 package com.mpiotrowski.maudiofasttrackmixer.data
 
-import android.util.Log
 import androidx.annotation.WorkerThread
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
@@ -15,20 +14,20 @@ import com.mpiotrowski.maudiofasttrackmixer.util.mutation
 class Repository(private val presetsDao: PresetsDao) {
 
     private val _sceneLoadedEvent = MutableLiveData<Event<Int>>()
-    private val _currentState = MediatorLiveData<PresetWithScenes>()
+    private val _currentModelState = MediatorLiveData<PresetWithScenes>()
     private val _currentScene = MediatorLiveData<SceneWithComponents>()
 
     val presetsWithScenes
         get() = presetsDao.getPresetsWithScenes()
 
-    val currentState: LiveData<PresetWithScenes>
-        get() = _currentState
+    val currentModelState: LiveData<PresetWithScenes>
+        get() = _currentModelState
 
     val currentScene: LiveData<SceneWithComponents>
         get() = _currentScene
 
     init {
-        _currentScene.addSource(_currentState) { value ->
+        _currentScene.addSource(_currentModelState) { value ->
             if(value != null) {
                 val scenesById = value.scenes.map { it.scene.sceneId to it }.toMap()
 
@@ -39,15 +38,15 @@ class Repository(private val presetsDao: PresetsDao) {
             }
         }
 
-        _currentState.addSource(presetsDao.getPersistedState()) {
-            if(_currentState.value == null)
-                _currentState.value = it
+        _currentModelState.addSource(presetsDao.getPersistedState()) {
+            if(_currentModelState.value == null)
+                _currentModelState.value = it
         }
 
         _currentScene.addSource(_sceneLoadedEvent) { sceneSelectedEvent ->
             sceneSelectedEvent.getContentIfNotHandled()?.let {
                     sceneIndex ->
-                _currentScene.value = currentState.value?.scenesByOrder?.get(sceneIndex)
+                _currentScene.value = currentModelState.value?.scenesByOrder?.get(sceneIndex)
             }
         }
     }
@@ -99,10 +98,10 @@ class Repository(private val presetsDao: PresetsDao) {
     }
 
     fun notifyCurrentStateChanged() {
-        _currentState.mutation {}
+        _currentModelState.mutation {}
     }
     fun setCurrentPreset(presetToLoad: PresetWithScenes) {
-        _currentState.mutation {
+        _currentModelState.mutation {
             it.value?.copyValues(presetToLoad, presetToLoad.preset.presetName)
         }
     }
