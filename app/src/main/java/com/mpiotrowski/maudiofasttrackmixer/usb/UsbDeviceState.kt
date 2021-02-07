@@ -2,24 +2,21 @@ package com.mpiotrowski.maudiofasttrackmixer.usb
 
 class UsbDeviceState {
 
-    private val outputsMap = HashMap<Int, HashMap<Int,Int>>()
-    private val fxSendsMap = HashMap<Int,Int>()
-    private val fxReturnsMap = HashMap<Int, Int>()
+    val outputsMap = HashMap<Int, HashMap<Int,Int>>()
+    val fxSendsMap = HashMap<Int,Int>()
+    val fxReturnsMap = HashMap<Int, Int>()
 
-    private var sampleRate: SampleRate? = null
+    var sampleRate: SampleRate? = null
 
-    private var fxType: FxType? = null
+    var fxType: FxType? = null
 
-    private var fxDuration: Int? = null
-    private var fxFeedback: Int? = null
-    private var fxVolume: Int? = null
+    var fxDuration: Int? = null
+    var fxFeedback: Int? = null
+    var fxVolume: Int? = null
 
-    fun sameLevel(input: Int, output: Int, value: Int):Boolean {
-        var inputsMap = outputsMap[output]
+    fun sameVolume(input: Int, output: Int, value: Int):Boolean {
+        val inputsMap = outputsMap[output]
         return if(inputsMap == null) {
-            inputsMap = HashMap()
-            inputsMap[input] = value
-            outputsMap[output] = inputsMap
             false
         } else {
             if(inputsMap[input] == value) {
@@ -31,68 +28,44 @@ class UsbDeviceState {
         }
     }
 
-    fun sameFxSend(input: Int, value: Int):Boolean {
-        return if(fxSendsMap[input] == value)
-            true
-        else{
-            fxSendsMap[input] = value
-            false
+    fun setVolume(input: Int, output: Int, value: Int) {
+        var inputsMap = outputsMap[output]
+        return if(inputsMap == null) {
+            inputsMap = HashMap()
+            inputsMap[input] = value
+            outputsMap[output] = inputsMap
+        } else {
+                inputsMap[input] = value
         }
     }
 
+    fun sameFxSend(input: Int, value: Int):Boolean {
+        return fxSendsMap[input] == value
+    }
+
     fun sameFxReturn(output: Int, value: Int):Boolean {
-        return if(fxReturnsMap[output] == value)
-            true
-        else{
-            fxReturnsMap[output] = value
-            false
-        }
+        return fxReturnsMap[output] == value
     }
 
 
     fun sameSampleRate(sampleRate: SampleRate):Boolean {
-        return if(this.sampleRate == sampleRate)
-            true
-        else{
-            this.sampleRate = sampleRate
-            false
-        }
+        return this.sampleRate == sampleRate
     }
 
     fun sameFxType(fxType: FxType):Boolean {
-        return if(this.fxType == fxType)
-            true
-        else{
-            this.fxType = fxType
-            false
-        }
+        return this.fxType == fxType
     }
 
     fun sameFxDuration(fxDuration: Int):Boolean {
-        return if(this.fxDuration == fxDuration)
-            true
-        else{
-            this.fxDuration = fxDuration
-            false
-        }
+        return this.fxDuration == fxDuration
     }
 
     fun sameFxFeedback(fxFeedback: Int):Boolean {
-        return if(this.fxFeedback == fxFeedback)
-            true
-        else{
-            this.fxFeedback = fxFeedback
-            false
-        }
+        return this.fxFeedback == fxFeedback
     }
 
     fun sameFxVolume(fxVolume: Int):Boolean {
-        return if(this.fxVolume == fxVolume)
-            true
-        else{
-            this.fxVolume = fxVolume
-            false
-        }
+        return this.fxVolume == fxVolume
     }
 
 }

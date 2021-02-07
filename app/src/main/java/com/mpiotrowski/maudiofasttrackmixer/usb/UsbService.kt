@@ -23,8 +23,6 @@ const val NOTIFICATION_CHANNEL_NAME = "FastTrack Ultra 8R notification"
 
 class UsbService: Service() {
 
-    private var device: UsbDevice? = null
-
     private var usbConnectionHelper: UsbConnectionHelper? = null
 
     private var usbDetachedReceiver: BroadcastReceiver? = null
@@ -45,10 +43,10 @@ class UsbService: Service() {
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
 
-        device = intent.getParcelableExtra(DEVICE_INTENT_EXTRA)
+        val device: UsbDevice? = intent.getParcelableExtra(DEVICE_INTENT_EXTRA)
         device?.let {
             usbConnectionHelper = UsbConnectionHelper()
-            usbConnectionHelper!!.connectDevice(applicationContext, device!!)
+            usbConnectionHelper!!.connectDevice(applicationContext, device)
         } ?: stopSelf()
 
         return START_STICKY
@@ -73,6 +71,7 @@ class UsbService: Service() {
                         return
 
                     usbConnectionHelper?.disconnectDevice()
+                    usbConnectionHelper = null
                     stopSelf()
                 }
             }
@@ -150,11 +149,11 @@ class UsbService: Service() {
         usbConnectionHelper?.setFxFeedback(value)
     }
 
-    fun setNextFxType(): FxType? {
-        return usbConnectionHelper?.setFxType()
+    fun setNextFxType(fxType: FxType) {
+        usbConnectionHelper?.setFxType(fxType)
     }
 
-    fun setSampleRate(): SampleRate? {
-        return usbConnectionHelper?.setSampleRate()
+    fun setSampleRate(sampleRate: SampleRate) {
+        usbConnectionHelper?.setSampleRate(sampleRate)
     }
 }

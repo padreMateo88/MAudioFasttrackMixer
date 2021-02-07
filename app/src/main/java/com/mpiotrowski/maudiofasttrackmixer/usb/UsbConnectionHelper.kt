@@ -33,24 +33,11 @@ class UsbConnectionHelper {
         private const val FX_FEEDBACK = 0x0400
 
         private const val USB_TIMEOUT = 1000
-
-        val FX_TYPES = arrayOf(
-            FxType.ROOM1, FxType.ROOM2,
-            FxType.ROOM3, FxType.HALL1,
-            FxType.HALL2, FxType.PLATE,
-            FxType.DELAY, FxType.ECHO
-        )
-
-        val SAMPLE_RATE = arrayOf(
-            SampleRate.SR_441, SampleRate.SR_48,
-            SampleRate.SR_882, SampleRate.SR_96
-        )
     }
 
-    private var selectedFxType = 0
-    private var selectedSampleRate = 0
     private var connection: UsbDeviceConnection? = null
     private var usbInterface: UsbInterface? = null
+    private var usbDeviceState: UsbDeviceState? = null
 
     fun connectDevice(context: Context, device: UsbDevice) {
         val usbManager = context.getSystemService(Context.USB_SERVICE) as UsbManager
@@ -62,6 +49,7 @@ class UsbConnectionHelper {
                     LogUtil.d("USB CONNECTED")
                     val conf = setConfiguration()
                     muteAll()
+                    usbDeviceState = UsbDeviceState()
                     LogUtil.d("USB CONFIGURATION $conf")
                 } else {
                     LogUtil.d("USB NOT CONNECTED")
@@ -79,7 +67,7 @@ class UsbConnectionHelper {
         connection?.close()
     }
 
-    private fun setConfiguration(): String {
+    private fun setConfiguration(): Int {
         return connection?.controlTransfer(
             0x00,//request type
             9,//
@@ -88,10 +76,11 @@ class UsbConnectionHelper {
             null,//buffer
             0,//length
             USB_TIMEOUT// timeout
-        ).toString()
+        ) ?: -1
     }
 
-    fun setChannelVolume(volume: Int, pan: Int, input: Int, outputPair: Int, masterVolume: Int, masterPan: Int, mute: Boolean): String {
+//region public setters
+    fun setChannelVolume(volume: Int, pan: Int, input: Int, outputPair: Int, masterVolume: Int, masterPan: Int, mute: Boolean) {
         val isPanRight = pan > 0
         val panCoefficient = (PAN_MAX.toDouble() -  abs(pan))/ PAN_MAX
         val leftPanCoefficient = if(isPanRight) panCoefficient else 1.toDouble()
@@ -112,35 +101,88 @@ class UsbConnectionHelper {
             leftLogValue = VOLUME_MIN
             rightLogValue = VOLUME_MIN
         }
-        val bufferLeft = toReversedByteArray(leftLogValue)
-        val bufferRight = toReversedByteArray(rightLogValue)
-        setVolume(input,outputPair*2 - 1, bufferLeft)
-        return setVolume(input,outputPair*2, bufferRight)
+        setVolumeRegardDeviceState(input,outputPair*2 - 1, leftLogValue)
+        setVolumeRegardDeviceState(input,outputPair*2, rightLogValue)
     }
 
     fun setFxSend(sendValue: Int, input: Int) {
-        val logValue = toLogScale(sendValue, SEND_MIN, SEND_DELTA, SEND_SCALE)
-        val buffer = toReversedByteArray(logValue)
-        setVolume(input,9, buffer)
+        if(usbDeviceState?.sameFxSend(input, sendValue)?.not() == true) {
+            val logValue = toLogScale(sendValue, SEND_MIN, SEND_DELTA, SEND_SCALE)
+            val buffer = toReversedByteArray(logValue)
+            if(setVolume(input, 9, buffer) >= 0){
+                usbDeviceState?.fxSendsMap?.put(input, sendValue)
+            }
+        }
     }
 
     fun setFxReturn(fxReturnValue: Int, outputPair: Int) {
-        val logValue = toLogScale(fxReturnValue, RETURN_MIN, RETURN_DELTA, RETURN_SCALE)
-        val buffer = toReversedByteArray(logValue)
-        setFxReturnVolume(outputPair*2-1, buffer)
-        setFxReturnVolume(outputPair*2, buffer)
+        if (usbDeviceState?.sameFxReturn(outputPair,fxReturnValue)?.not() == true) {
+            val logValue = toLogScale(fxReturnValue, RETURN_MIN, RETURN_DELTA, RETURN_SCALE)
+            val buffer = toReversedByteArray(logValue)
+            if (setFxReturnVolume(outputPair*2-1, buffer) >= 0
+                && setFxReturnVolume(outputPair*2, buffer) >= 0) {
+                usbDeviceState?.fxReturnsMap?.put(outputPair,fxReturnValue)
+            }
+        }
     }
 
-    private fun toLogScale(value: Int, scaleStart: Int, scaleDelta: Int, widgetScale: Int): Int {
-        return (scaleStart + (kotlin.math.log10((1 + value).toDouble()) / kotlin.math.log10(widgetScale.toDouble()))*scaleDelta).toInt()
+    fun setFxType(fxType: FxType) {
+        if(usbDeviceState?.sameFxType(fxType)?.not() == true) {
+            if(setFxParameter(FX_TYPE, fxType.buffer, 2) >= 0) {
+                usbDeviceState?.fxType = fxType
+            }
+        }
     }
 
-    private fun toReversedByteArray(number: Int): ByteArray {
-        return byteArrayOf((number and 0x00FF).toByte(), ((number and 0xFF00) shr 8).toByte())
+    //1..127 linear
+    fun setFxVolume(value: Int) {
+        if (usbDeviceState?.sameFxVolume(value)?.not() == true) {
+            if(setFxParameter(FX_VOLUME, byteArrayOf(value.toByte()), 1) >= 0 ) {
+                usbDeviceState?.fxVolume = value
+            }
+        }
     }
+
+    //1..127 linear
+    fun setFxDuration(value: Int) {
+        if(usbDeviceState?.sameFxDuration(value)?.not() == true) {
+            val byteArray = byteArrayOf(0.toByte(), value.toByte())
+            if(setFxParameter(FX_DURATION, byteArray, 2) >= 0) {
+                usbDeviceState?.fxDuration = value
+            }
+        }
+    }
+
+    //1..127 linear
+    fun setFxFeedback(value: Int) {
+        if(usbDeviceState?.sameFxFeedback(value)?.not() == true) {
+            if(setFxParameter(FX_FEEDBACK, byteArrayOf(value.toByte()), 1) >= 0) {
+                usbDeviceState?.fxFeedback = value
+            }
+        }
+    }
+
+    fun setSampleRate(sampleRate: SampleRate) {
+        if(usbDeviceState?.sameSampleRate(sampleRate)?.not() == true) {
+            if(setSampleRate(sampleRate.buffer) >= 0) {
+                usbDeviceState?.sampleRate = sampleRate
+            }
+        }
+    }
+
+//endregion public setters
+    private fun setVolumeRegardDeviceState(input: Int, output: Int, value: Int) {
+        if(usbDeviceState?.sameVolume(input, output, value)?.not() == true) {
+            val buffer = toReversedByteArray(value)
+            if(setVolume(input, output, buffer) >= 0) {
+                usbDeviceState?.setVolume(input, output, value)
+            }
+        }
+    }
+//region low USB calls
 
     //wIndex 0x0500 wysyłka na wyjścia(parametr value) 1-8,9(AUX) kanałów  1-16, wartość 0xffff - ?
-    private fun setVolume(input: Int, output: Int, value: ByteArray): String {
+    private fun setVolume(input: Int, output: Int, value: ByteArray): Int {
         return connection?.controlTransfer(
             0x21,//request type
             1,//
@@ -149,22 +191,10 @@ class UsbConnectionHelper {
             value,//
             2,//length
             USB_TIMEOUT// timeout
-        ).toString()
+        ) ?: -1
     }
 
-    private fun setFxParameter(parameterType: Int, parameterValue: ByteArray, valueLength: Int): String {
-        return connection?.controlTransfer(
-            0x21,//request type
-            1,//
-            parameterType,//output//input 0xffff, 0x (01-09) (01-09,0a-0f,10)
-            0x0600,//wIndex
-            parameterValue,//
-            valueLength,//length
-            USB_TIMEOUT// timeout
-        ).toString()
-    }
-
-    fun setFxReturnVolume(output: Int, value: ByteArray): String {
+    private fun setFxReturnVolume(output: Int, value: ByteArray): Int {
         return connection?.controlTransfer(
             0x21,//request type
             1,//
@@ -173,15 +203,29 @@ class UsbConnectionHelper {
             value,//
             2,//length
             USB_TIMEOUT// timeout
-        ).toString()
+        ) ?: -1
     }
 
-    fun setSampleRate(value: ByteArray) {
-        LogUtil.d("sample rate 1 " + setInternalSampleRate(value))
-        LogUtil.d("sample rate 2 " + setDawSampleRate(value))
+    private fun setFxParameter(parameterType: Int, parameterValue: ByteArray, valueLength: Int): Int {
+        return connection?.controlTransfer(
+            0x21,//request type
+            1,//
+            parameterType,//output//input 0xffff, 0x (01-09) (01-09,0a-0f,10)
+            0x0600,//wIndex
+            parameterValue,//
+            valueLength,//length
+            USB_TIMEOUT// timeout
+        ) ?: -1
     }
 
-    fun setInternalSampleRate(value: ByteArray): String{
+    private fun setSampleRate(value: ByteArray): Int {
+        return if(setInternalSampleRate(value) >= 0 && setDawSampleRate(value) >=0)
+            0
+        else
+            -1
+    }
+
+    private fun setInternalSampleRate(value: ByteArray): Int{
         return connection?.controlTransfer(
             0x22,//request type
             1,//
@@ -190,10 +234,10 @@ class UsbConnectionHelper {
             value,//
             3,//length
             USB_TIMEOUT// timeout
-        ).toString()
+        ) ?: -1
     }
 
-    fun setDawSampleRate(value: ByteArray): String {
+    private fun setDawSampleRate(value: ByteArray): Int {
         return connection?.controlTransfer(
             0x22,//request type
             1,//
@@ -202,44 +246,10 @@ class UsbConnectionHelper {
             value,//
             3,//length
             USB_TIMEOUT// timeout
-        ).toString()
+        ) ?: -1
     }
 
-    fun setFxType(): FxType {
-        if(selectedFxType + 1 == FX_TYPES.size)
-            selectedFxType = 0
-        else
-            selectedFxType += 1
-        setFxParameter(FX_TYPE, FX_TYPES[selectedFxType].buffer, 2)
-        return FX_TYPES[selectedFxType]
-    }
-
-    fun setSampleRate(): SampleRate {
-        if(selectedSampleRate + 1 == SAMPLE_RATE.size)
-            selectedSampleRate = 0
-        else
-            selectedSampleRate += 1
-        setSampleRate(SAMPLE_RATE[selectedSampleRate].buffer)
-        return SAMPLE_RATE[selectedSampleRate]
-    }
-
-    //1..127 linear
-    fun setFxVolume(value: Int): String {
-        return setFxParameter(FX_VOLUME, byteArrayOf(value.toByte()), 1)
-    }
-
-    //1..127 linear
-    fun setFxDuration(value: Int): String {
-        val byteArray = byteArrayOf(0.toByte(), value.toByte())
-        return setFxParameter(FX_DURATION, byteArray, 2)
-    }
-
-    //1..127 linear
-    fun setFxFeedback(value: Int): String {
-        return setFxParameter(FX_FEEDBACK, byteArrayOf(value.toByte()), 1)
-    }
-
-    private fun muteAll(): String {
+    private fun muteAll(): Int {
         return connection?.controlTransfer(
             0x21,//request type
             1,//
@@ -248,6 +258,16 @@ class UsbConnectionHelper {
             toReversedByteArray(32768),
             2,//length
             USB_TIMEOUT// timeout
-        ).toString()
+        ) ?: -1
+    }
+
+//endregion low USB calls
+
+    private fun toLogScale(value: Int, scaleStart: Int, scaleDelta: Int, widgetScale: Int): Int {
+        return (scaleStart + (kotlin.math.log10((1 + value).toDouble()) / kotlin.math.log10(widgetScale.toDouble()))*scaleDelta).toInt()
+    }
+
+    private fun toReversedByteArray(number: Int): ByteArray {
+        return byteArrayOf((number and 0x00FF).toByte(), ((number and 0xFF00) shr 8).toByte())
     }
 }
