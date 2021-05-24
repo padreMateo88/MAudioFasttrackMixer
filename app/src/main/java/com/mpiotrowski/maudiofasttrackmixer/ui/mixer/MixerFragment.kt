@@ -5,6 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
+import android.widget.Toast
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -12,6 +14,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.MIXER_STEREO_OUTPUTS_COUNT
 import com.mpiotrowski.maudiofasttrackmixer.databinding.FragmentMixerBinding
+import com.mpiotrowski.maudiofasttrackmixer.ui.MainViewModel
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_mixer.*
 import javax.inject.Inject
@@ -22,7 +25,11 @@ class MixerFragment : DaggerFragment() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
-    private val viewModel by viewModels<MixerViewModel> {
+    private val mixerViewModel by viewModels<MixerViewModel> {
+        viewModelFactory
+    }
+
+    private val mainViewModel by activityViewModels<MainViewModel> {
         viewModelFactory
     }
 
@@ -37,7 +44,9 @@ class MixerFragment : DaggerFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        binding.viewmodel = viewModel
+        binding.mixerViewModel = mixerViewModel
+        Toast.makeText(this.context,"Activity: ${mainViewModel.hashCode()}", Toast.LENGTH_LONG).show()
+        binding.mainViewModel = mainViewModel
         prepareChannelMixer()
         prepareSceneSelector()
 
@@ -46,7 +55,7 @@ class MixerFragment : DaggerFragment() {
                 return@OnClickListener
             outputIndex --
             textViewOutputIndex.text = "Output:\n${outputIndex*2-1}-${outputIndex*2}"
-            viewModel.onOutputSelected(outputIndex)
+            mixerViewModel.onOutputSelected(outputIndex)
         })
 
         buttonIncreaseOutput.setOnClickListener (View.OnClickListener {
@@ -54,7 +63,7 @@ class MixerFragment : DaggerFragment() {
                 return@OnClickListener
             outputIndex ++
             textViewOutputIndex.text = "Output:\n${outputIndex*2-1}-${outputIndex*2}"
-            viewModel.onOutputSelected(outputIndex)
+            mixerViewModel.onOutputSelected(outputIndex)
         })
     }
 
@@ -68,12 +77,12 @@ class MixerFragment : DaggerFragment() {
                     LinearLayoutManager.HORIZONTAL,
                     false
                 )
-                val channelsAdapter = ChannelsAdapter(requireActivity() as androidx.appcompat.app.AppCompatActivity, viewModel)
+                val channelsAdapter = ChannelsAdapter(requireActivity() as androidx.appcompat.app.AppCompatActivity, mixerViewModel)
                 channelsAdapter.setHasStableIds(true)
                 binding.recyclerViewChannels.adapter = channelsAdapter
                 binding.recyclerViewChannels.requestDisallowInterceptTouchEvent(true)
 
-                viewModel.audioChannels.observe(requireActivity(), Observer {
+                mixerViewModel.audioChannels.observe(requireActivity(), Observer {
                         (binding.recyclerViewChannels.adapter as ChannelsAdapter).notifyDataSetChanged()
                 })
             }
@@ -84,10 +93,10 @@ class MixerFragment : DaggerFragment() {
         val recyclerViewSceneButtons = binding.recyclerViewSceneButtons
         recyclerViewSceneButtons.isNestedScrollingEnabled = false
         recyclerViewSceneButtons.layoutManager = GridLayoutManager(context, 3)
-        val sceneButtonsAdapter = SceneButtonsAdapter(viewModel)
+        val sceneButtonsAdapter = SceneButtonsAdapter(mixerViewModel)
         sceneButtonsAdapter.setHasStableIds(true)
         recyclerViewSceneButtons.adapter = sceneButtonsAdapter
-        viewModel.currentScene.observe(requireActivity(), Observer {
+        mixerViewModel.currentScene.observe(requireActivity(), Observer {
             (recyclerViewSceneButtons.adapter as SceneButtonsAdapter).notifyDataSetChanged()
         })
     }

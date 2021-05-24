@@ -79,7 +79,7 @@ class UsbConnectionHelper {
         ) ?: -1
     }
 
-//region public setters
+//region public audio mixer parameter setters
     fun setChannelVolume(volume: Int, pan: Int, input: Int, outputPair: Int, masterVolume: Int, masterPan: Int, mute: Boolean) {
         val isPanRight = pan > 0
         val panCoefficient = (PAN_MAX.toDouble() -  abs(pan))/ PAN_MAX
@@ -170,7 +170,10 @@ class UsbConnectionHelper {
         }
     }
 
-//endregion public setters
+//endregion public audio mixer parameter setters
+
+//region private low level USB calls
+
     private fun setVolumeRegardDeviceState(input: Int, output: Int, value: Int) {
         if(usbDeviceState?.sameVolume(input, output, value)?.not() == true) {
             val buffer = toReversedByteArray(value)
@@ -179,7 +182,6 @@ class UsbConnectionHelper {
             }
         }
     }
-//region low USB calls
 
     //wIndex 0x0500 wysyłka na wyjścia(parametr value) 1-8,9(AUX) kanałów  1-16, wartość 0xffff - ?
     private fun setVolume(input: Int, output: Int, value: ByteArray): Int {
@@ -261,7 +263,7 @@ class UsbConnectionHelper {
         ) ?: -1
     }
 
-//endregion low USB calls
+//endregion private low level USB calls
 
     private fun toLogScale(value: Int, scaleStart: Int, scaleDelta: Int, widgetScale: Int): Int {
         return (scaleStart + (kotlin.math.log10((1 + value).toDouble()) / kotlin.math.log10(widgetScale.toDouble()))*scaleDelta).toInt()

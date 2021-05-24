@@ -6,8 +6,12 @@
 
     <data>
         <variable
-            name="viewmodel"
+            name="mixerViewModel"
             type="com.mpiotrowski.maudiofasttrackmixer.ui.mixer.MixerViewModel"/>
+
+        <variable
+            name="mainViewModel"
+            type="com.mpiotrowski.maudiofasttrackmixer.ui.MainViewModel"/>
     </data>
     <com.mpiotrowski.maudiofasttrackmixer.ui.views.MyLinearLayout
         android:id="@+id/layoutMain"
@@ -37,14 +41,14 @@
             android:layout_marginTop="@dimen/dimen_4dp"
             android:layout_weight="1"
             android:gravity="center"
-            app:fine="@{viewmodel.fine}"
-            app:volume="@={viewmodel.masterChannel.volume}"
-            app:mute="@={viewmodel.masterChannel.mute}"
-            app:panorama="@={viewmodel.masterChannel.panorama}"
-            app:fxVolume="@={viewmodel.masterChannel.fxReturn}"
-            app:outputIndex="@{viewmodel.masterChannel.outputIndex}"
-            app:onVolumeChanged="@{() -> viewmodel.onMasterVolumeChanged(viewmodel.masterChannel)}"
-            app:onFxVolumeChanged="@{() -> viewmodel.onFxReturnChanged(viewmodel.masterChannel, viewmodel.masterChannel.fxReturn)}"
+            app:fine="@{mixerViewModel.fine}"
+            app:volume="@={mixerViewModel.masterChannel.volume}"
+            app:mute="@={mixerViewModel.masterChannel.mute}"
+            app:panorama="@={mixerViewModel.masterChannel.panorama}"
+            app:fxVolume="@={mixerViewModel.masterChannel.fxReturn}"
+            app:outputIndex="@{mixerViewModel.masterChannel.outputIndex}"
+            app:onVolumeChanged="@{() -> mixerViewModel.onMasterVolumeChanged(mixerViewModel.masterChannel)}"
+            app:onFxVolumeChanged="@{() -> mixerViewModel.onFxReturnChanged(mixerViewModel.masterChannel, mixerViewModel.masterChannel.fxReturn)}"
             />
 
         <LinearLayout
@@ -84,7 +88,7 @@
                             android:gravity="center">
 
                             <ImageView
-                                android:src="@{viewmodel.deviceOnline ? @drawable/radio_online : @drawable/radio_offline}"
+                                android:src="@{mainViewModel.deviceOnline ? @drawable/radio_online : @drawable/radio_offline}"
                                 android:layout_width="20dp"
                                 android:layout_height="20dp"
                                 android:checked="true"
@@ -92,8 +96,8 @@
 
                             <TextView
                                 android:layout_marginLeft="@dimen/dimen_4dp"
-                                android:textColor="@{viewmodel.deviceOnline ? @color/greenOnline : @color/lighterGray}"
-                                android:text="@{viewmodel.deviceOnline ? @string/device_online : @string/device_offline}"
+                                android:textColor="@{mainViewModel.deviceOnline ? @color/greenOnline : @color/lighterGray}"
+                                android:text="@{mainViewModel.deviceOnline ? @string/device_online : @string/device_offline}"
                                 android:layout_height="wrap_content"
                                 android:layout_width="wrap_content"/>
                         </LinearLayout>
@@ -134,7 +138,7 @@
 
                 <ToggleButton
                     android:id="@+id/toggleButtonFine"
-                    android:checked="@={viewmodel.fine}"
+                    android:checked="@={mixerViewModel.fine}"
                     android:layout_marginTop="@dimen/dimen_4dp"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/dimen_40dp"
@@ -153,7 +157,7 @@
                 android:layout_gravity="center"
                 android:layout_marginLeft="@dimen/dimen_4dp"
                 android:layout_marginRight="@dimen/dimen_4dp"
-                android:text="@{viewmodel.currentScene.scene.sceneName}" />
+                android:text="@{mixerViewModel.currentScene.scene.sceneName}" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:layout_marginTop="@dimen/dimen_4dp"

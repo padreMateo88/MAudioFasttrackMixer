@@ -5,11 +5,12 @@ import com.mpiotrowski.maudiofasttrackmixer.data.Repository
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.Preset
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.PresetWithScenes
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.SceneWithComponents
+import com.mpiotrowski.maudiofasttrackmixer.usb.UsbController
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class PresetsViewModel @Inject constructor(private val repository: Repository) : ViewModel()  {
+class PresetsViewModel @Inject constructor(private val repository: Repository, private var usbController: UsbController) : ViewModel()  {
 
     lateinit var currentPresetId: String
     val allPresets: LiveData<List<PresetWithScenes>> = repository.presetsWithScenes

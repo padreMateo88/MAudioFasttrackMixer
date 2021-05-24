@@ -10,6 +10,12 @@ class MainViewModel @Inject constructor(private val repository: Repository) : Vi
 
     private val currentState = repository.currentModelState
 
+    val deviceOnline = MutableLiveData<Boolean>()
+
+    init {
+        deviceOnline.value = false
+    }
+
     fun saveCurrentDeviceState() {
         viewModelScope.launch(Dispatchers.IO) {
             currentState.value?.let {
