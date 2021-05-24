@@ -4,10 +4,11 @@ import androidx.lifecycle.*
 import com.mpiotrowski.maudiofasttrackmixer.data.Repository
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.SampleRate
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.scene_components.*
+import com.mpiotrowski.maudiofasttrackmixer.usb.UsbController
 import com.mpiotrowski.maudiofasttrackmixer.util.LogUtil
 import javax.inject.Inject
 
-class SettingsViewModel @Inject constructor(repository: Repository) : ViewModel() {
+class SettingsViewModel @Inject constructor(repository: Repository, private var usbController: UsbController) : ViewModel() {
 
     private val currentState = repository.currentModelState
     private val currentScene = repository.currentScene

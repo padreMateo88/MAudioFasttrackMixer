@@ -23,13 +23,13 @@ const val NOTIFICATION_CHANNEL_NAME = "FastTrack Ultra 8R notification"
 
 class UsbService: Service() {
 
-    private var usbConnectionHelper: UsbConnectionHelper? = null
+    private var usbConntroller: UsbController? = null
 
     private var usbDetachedReceiver: BroadcastReceiver? = null
     private val binder = UsbServiceBinder()
 
     inner class UsbServiceBinder : Binder() {
-        fun getUsbService(): UsbService = this@UsbService
+        fun getUsbConnection(): UsbController? = usbConntroller
     }
 
     override fun onBind(intent: Intent): IBinder {
@@ -41,12 +41,18 @@ class UsbService: Service() {
         moveServiceToForeground()
     }
 
-    override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
+    private fun setDeviceConnectedBroadcast() {
+        val intent = Intent(MainActivity.deviceConnectedAction)
+        sendBroadcast(intent)
 
+    }
+
+    override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
         val device: UsbDevice? = intent.getParcelableExtra(DEVICE_INTENT_EXTRA)
         device?.let {
-            usbConnectionHelper = UsbConnectionHelper()
-            usbConnectionHelper!!.connectDevice(applicationContext, device)
+            usbConntroller = UsbController()
+            usbConntroller!!.connectDevice(applicationContext, device)
+            setDeviceConnectedBroadcast()
         } ?: stopSelf()
 
         return START_STICKY
@@ -70,8 +76,8 @@ class UsbService: Service() {
                     if(device?.vendorId != USB_VENDOR_ID || device.productId != USB_PRODUCT_ID)
                         return
 
-                    usbConnectionHelper?.disconnectDevice()
-                    usbConnectionHelper = null
+                    usbConntroller?.disconnectDevice()
+                    usbConntroller = null
                     stopSelf()
                 }
             }
@@ -122,38 +128,5 @@ class UsbService: Service() {
         }
 
         startForeground(SERVICE_NOTIFICATION_ID, notification)
-    }
-
-    fun setChannelVolume(volume: Int, pan: Int, input: Int, outputPair: Int, masterVolume: Int, masterPan: Int, mute: Boolean) {
-        usbConnectionHelper?.setChannelVolume(volume, pan,input, outputPair, masterVolume, masterPan, mute)
-    }
-
-    fun setFxSend(sendValue: Int, input: Int) {
-        usbConnectionHelper?.setFxSend(sendValue, input)
-    }
-
-    fun setFxReturn(fxReturnValue: Int, outputPair: Int) {
-        usbConnectionHelper?.setFxReturn(fxReturnValue, outputPair)
-    }
-
-    //1..127 linear
-    fun setFxVolume(value: Int) {
-        usbConnectionHelper?.setFxVolume(value)
-    }
-
-    fun setFxDuration(value: Int) {
-        usbConnectionHelper?.setFxDuration(value)
-    }
-
-    fun setFxFeedback(value: Int) {
-        usbConnectionHelper?.setFxFeedback(value)
-    }
-
-    fun setNextFxType(fxType: FxType) {
-        usbConnectionHelper?.setFxType(fxType)
-    }
-
-    fun setSampleRate(sampleRate: SampleRate) {
-        usbConnectionHelper?.setSampleRate(sampleRate)
     }
 }
