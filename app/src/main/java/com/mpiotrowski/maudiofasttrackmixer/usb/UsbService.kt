@@ -10,9 +10,9 @@ import android.hardware.usb.UsbManager
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
+import android.util.Log
 import com.mpiotrowski.maudiofasttrackmixer.R
 import com.mpiotrowski.maudiofasttrackmixer.ui.MainActivity
-import com.mpiotrowski.maudiofasttrackmixer.util.LogUtil
 
 const val DEVICE_INTENT_EXTRA = "deviceIntentExtra"
 const val USB_PRODUCT_ID = 0x2081
@@ -23,13 +23,13 @@ const val NOTIFICATION_CHANNEL_NAME = "FastTrack Ultra 8R notification"
 
 class UsbService: Service() {
 
-    private var usbConntroller: UsbController? = null
+    private var usbController: UsbController? = null
 
     private var usbDetachedReceiver: BroadcastReceiver? = null
     private val binder = UsbServiceBinder()
 
     inner class UsbServiceBinder : Binder() {
-        fun getUsbConnection(): UsbController? = usbConntroller
+        fun getUsbConnection(): UsbController? = usbController
     }
 
     override fun onBind(intent: Intent): IBinder {
@@ -50,8 +50,8 @@ class UsbService: Service() {
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
         val device: UsbDevice? = intent.getParcelableExtra(DEVICE_INTENT_EXTRA)
         device?.let {
-            usbConntroller = UsbController()
-            usbConntroller!!.connectDevice(applicationContext, device)
+            usbController = UsbController()
+            usbController!!.connectDevice(applicationContext, device)
             setDeviceConnectedBroadcast()
         } ?: stopSelf()
 
@@ -68,16 +68,14 @@ class UsbService: Service() {
 
         usbDetachedReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context, intent: Intent) {
-                LogUtil.d("USB DEVICE DETACHED")
                 val action = intent.action
                 if (UsbManager.ACTION_USB_DEVICE_DETACHED == action) {
                     val device: UsbDevice? = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE)
-
                     if(device?.vendorId != USB_VENDOR_ID || device.productId != USB_PRODUCT_ID)
                         return
 
-                    usbConntroller?.disconnectDevice()
-                    usbConntroller = null
+                    usbController?.disconnectDevice()
+                    usbController = null
                     stopSelf()
                 }
             }

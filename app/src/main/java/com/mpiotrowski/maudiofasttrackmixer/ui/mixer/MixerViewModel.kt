@@ -27,7 +27,7 @@ class MixerViewModel @Inject constructor(private val repository: Repository, pri
     val fine = MutableLiveData<Boolean>()
     val deviceOnline = MutableLiveData<Boolean>()
 
-        init {
+    init {
         audioChannels.addSource(currentOutput) { outputIndex ->
             audioChannels.value = currentScene.value?.channelsByOutputsMap?.get(outputIndex)
         }

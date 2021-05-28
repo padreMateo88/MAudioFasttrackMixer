@@ -3,6 +3,8 @@
     package="com.mpiotrowski.maudiofasttrackmixer">
 
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-feature android:name="android.hardware.usb.host" />
+
 
     <application
         android:name=".MAudioFasttrackMixerApplication"
@@ -13,17 +15,14 @@
         android:supportsRtl="false"
         android:theme="@style/AppTheme.FullScreen">
         <activity android:name=".ui.MainActivity"
-            android:screenOrientation="landscape">
+            android:screenOrientation="landscape"
+            android:launchMode="singleTask" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
 
-        <service android:name=".usb.UsbService" />
-
-        <activity android:name=".ui.UsbActivity">
             <intent-filter>
                 <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
             </intent-filter>
@@ -31,6 +30,8 @@
             <meta-data android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"
                 android:resource="@xml/device_filter" />
         </activity>
+
+        <service android:name=".usb.UsbService" />
 
     </application>
 
