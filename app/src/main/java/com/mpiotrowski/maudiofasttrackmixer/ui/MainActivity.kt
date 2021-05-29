@@ -22,9 +22,6 @@ import javax.inject.Inject
 
 class MainActivity : DaggerAppCompatActivity() {
 
-
-    private var usbController: UsbController? = null
-
     companion object {
         const val deviceConnectedAction = "com.mpiotrowski.maudiofasttrackmixer.deviceConnected"
     }
@@ -32,20 +29,21 @@ class MainActivity : DaggerAppCompatActivity() {
     private var usbServiceConnection = object : ServiceConnection {
 
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
-            val binder = service as UsbService.UsbServiceBinder
-            usbController = binder.getUsbConnection()
             viewModel.deviceOnline.postValue(true)
-            Toast.makeText(this@MainActivity,"Activity: ${viewModel.hashCode()}", Toast.LENGTH_LONG).show()
         }
 
         override fun onServiceDisconnected(arg0: ComponentName) {
-            usbController = null
             viewModel.deviceOnline.value = false
         }
     }
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
+
+    @Inject
+    lateinit var usbController: UsbController
+
+
     private val viewModel by viewModels<MainViewModel> {
         viewModelFactory
     }

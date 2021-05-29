@@ -13,6 +13,7 @@ import javax.inject.Singleton
 @Component(modules = [
     AndroidSupportInjectionModule::class,
     MainActivityModule::class,
+    UsbServiceModule::class,
     AppModule::class
 ])
 interface ApplicationComponent: AndroidInjector<MAudioFasttrackMixerApplication> {

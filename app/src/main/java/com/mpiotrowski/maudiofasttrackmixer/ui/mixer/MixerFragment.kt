@@ -45,7 +45,6 @@ class MixerFragment : DaggerFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         binding.mixerViewModel = mixerViewModel
-        Toast.makeText(this.context,"Activity: ${mainViewModel.hashCode()}", Toast.LENGTH_LONG).show()
         binding.mainViewModel = mainViewModel
         prepareChannelMixer()
         prepareSceneSelector()

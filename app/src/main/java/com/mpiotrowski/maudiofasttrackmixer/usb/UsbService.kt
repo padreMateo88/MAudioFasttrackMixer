@@ -13,6 +13,9 @@ import android.os.IBinder
 import android.util.Log
 import com.mpiotrowski.maudiofasttrackmixer.R
 import com.mpiotrowski.maudiofasttrackmixer.ui.MainActivity
+import dagger.android.AndroidInjection
+import dagger.android.DaggerService
+import javax.inject.Inject
 
 const val DEVICE_INTENT_EXTRA = "deviceIntentExtra"
 const val USB_PRODUCT_ID = 0x2081
@@ -21,15 +24,15 @@ const val SERVICE_NOTIFICATION_ID = 1863
 const val NOTIFICATION_CHANNEL_ID = "FastTrack_Ultra_8R"
 const val NOTIFICATION_CHANNEL_NAME = "FastTrack Ultra 8R notification"
 
-class UsbService: Service() {
+class UsbService : DaggerService() {
 
-    private var usbController: UsbController? = null
+    @Inject
+    lateinit var usbController: UsbController
 
     private var usbDetachedReceiver: BroadcastReceiver? = null
     private val binder = UsbServiceBinder()
 
     inner class UsbServiceBinder : Binder() {
-        fun getUsbConnection(): UsbController? = usbController
     }
 
     override fun onBind(intent: Intent): IBinder {
@@ -37,6 +40,7 @@ class UsbService: Service() {
     }
 
     override fun onCreate() {
+        super.onCreate()
         registerDetachReceiver()
         moveServiceToForeground()
     }
@@ -50,8 +54,7 @@ class UsbService: Service() {
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
         val device: UsbDevice? = intent.getParcelableExtra(DEVICE_INTENT_EXTRA)
         device?.let {
-            usbController = UsbController()
-            usbController!!.connectDevice(applicationContext, device)
+            usbController.connectDevice(applicationContext, device)
             setDeviceConnectedBroadcast()
         } ?: stopSelf()
 
@@ -74,8 +77,7 @@ class UsbService: Service() {
                     if(device?.vendorId != USB_VENDOR_ID || device.productId != USB_PRODUCT_ID)
                         return
 
-                    usbController?.disconnectDevice()
-                    usbController = null
+                    usbController.disconnectDevice()
                     stopSelf()
                 }
             }

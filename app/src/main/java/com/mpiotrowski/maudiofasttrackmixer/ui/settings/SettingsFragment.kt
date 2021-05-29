@@ -13,7 +13,7 @@ import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.
 import dagger.android.support.DaggerFragment
 import javax.inject.Inject
 
-class SettingsFragment(): DaggerFragment() {
+class SettingsFragment: DaggerFragment() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
