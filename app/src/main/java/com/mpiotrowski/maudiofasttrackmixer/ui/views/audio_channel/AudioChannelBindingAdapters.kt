@@ -6,7 +6,6 @@ import androidx.databinding.BindingAdapter
 import androidx.databinding.InverseBindingAdapter
 import androidx.databinding.InverseBindingListener
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.MIXER_OUTPUTS_WITH_FX
-import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.MIXER_STEREO_OUTPUTS_COUNT
 import com.mpiotrowski.maudiofasttrackmixer.ui.views.faders.Fader
 import kotlinx.android.synthetic.main.view_channel.view.*
 
@@ -114,19 +113,17 @@ object AudioChannelBindingAdapters {
         return audioChannelView.toggleButtonSolo.isChecked
     }
 
-    @BindingAdapter(value = ["onSoloChanged","soloAttrChanged"],requireAll = false)
+    @BindingAdapter(value = ["onSoloChanged"],requireAll = false)
     @JvmStatic fun setSoloAttrChangedListener(
         audioChannelView: AudioChannelView,
-        soloChangedListener: AudioChannelView.SoloChangedListener?,
-        inverseBindingListener: InverseBindingListener
+        soloChangedListener: AudioChannelView.SoloChangedListener?
     ) {
         audioChannelView.soloListener =
-            CompoundButton.OnCheckedChangeListener { _, _ ->
-                inverseBindingListener.onChange()
-                soloChangedListener?.onSoloChanged()
-                audioChannelView.volumeChangedListener?.onVolumeChanged()
+            View.OnClickListener { soloButton ->
+                val isChecked = (soloButton as CompoundButton).isChecked
+                soloChangedListener?.onSoloChanged(isChecked)
             }
-        audioChannelView.toggleButtonSolo.setOnCheckedChangeListener(audioChannelView.soloListener)
+        audioChannelView.toggleButtonSolo.setOnClickListener(audioChannelView.soloListener)
     }
 //endregion mute
 

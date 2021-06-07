@@ -2,6 +2,7 @@ package com.mpiotrowski.maudiofasttrackmixer.usb
 
 import android.content.Context
 import android.hardware.usb.UsbDevice
+import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.Scene
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -52,4 +53,6 @@ class UsbController @Inject constructor() {
     fun setSampleRate(sampleRate: SampleRate) {
         usbConnection?.setSampleRate(sampleRate)
     }
+
+    fun loadMixerState(scene: Scene) {}
 }

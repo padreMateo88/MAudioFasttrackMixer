@@ -25,7 +25,6 @@ class MixerViewModel @Inject constructor(private val repository: Repository, pri
     val masterChannel = MediatorLiveData<MasterChannel>()
     val fxSends = MediatorLiveData<List<FxSend>>()
     val fine = MutableLiveData<Boolean>()
-    val deviceOnline = MutableLiveData<Boolean>()
 
     init {
         audioChannels.addSource(currentOutput) { outputIndex ->
@@ -81,6 +80,9 @@ class MixerViewModel @Inject constructor(private val repository: Repository, pri
 
     fun onSceneSelected(sceneIndex: Int) {
         repository.setSelectedScene(sceneIndex)
+        currentScene.value?.scene?.let {
+            usbController.loadMixerState(it)
+        }
     }
 //endregion scene control
 
@@ -94,18 +96,55 @@ class MixerViewModel @Inject constructor(private val repository: Repository, pri
         currentState.value?.preset?.isDirty = true
         audioChannel.isDirty = true
         LogUtil.d("channel ${audioChannel.inputIndex} volume ${audioChannel.volume} panorama ${audioChannel.panorama} mute ${audioChannel.mute} solo ${audioChannel.solo}")
+        masterChannel.value?.let { masterChannel ->
+            currentOutput.value?.let { currentOutput ->
+                setChannelVolume(audioChannel, currentOutput, masterChannel)
+            }
+        }
     }
 
-    fun onSoloChanged(audioChannel: AudioChannel) {
-        if (!audioChannel.solo)
-            return
+    private fun isAnySolo(): Boolean {
+        for(audioChannelItem in this.audioChannels.value!!) {
+            if(audioChannelItem.solo)
+                return true
+        }
+        return false
+    }
+
+    private fun setChannelVolume(
+        audioChannel: AudioChannel,
+        currentOutput: Int,
+        masterChannel: MasterChannel
+    ) {
+        val mute = when {
+            audioChannel.solo -> false
+            isAnySolo() -> true
+            else -> audioChannel.mute
+        }
+        LogUtil.d("setChannelVolume ${audioChannel.inputIndex} mute $mute")
+        usbController.setChannelVolume(
+            volume = audioChannel.volume * 100,
+            pan = audioChannel.panorama,
+            input = audioChannel.inputIndex,
+            outputPair = currentOutput,
+            masterVolume = masterChannel.volume,
+            masterPan = masterChannel.panorama,
+            mute = mute
+        )
+    }
+
+    fun onSoloChanged(audioChannel: AudioChannel, isChecked: Boolean) {
+        LogUtil.d("onSoloChange ${audioChannel.inputIndex} isChecked $isChecked")
+        if(audioChannel.solo != isChecked)
+            audioChannel.solo = isChecked
 
         for(audioChannelItem in this.audioChannels.value!!) {
-            if(audioChannelItem.solo && audioChannelItem != audioChannel) {
+            if (audioChannelItem.solo && audioChannelItem.inputIndex != audioChannel.inputIndex)
                 audioChannels.mutation {
                     audioChannelItem.solo = false
                 }
-            }
+
+            onChannelChanged(audioChannelItem)
         }
     }
 
@@ -113,15 +152,18 @@ class MixerViewModel @Inject constructor(private val repository: Repository, pri
         currentState.value?.preset?.isDirty = true
         fxSend.isDirty = true
         LogUtil.d("channel $fxSend")
+        usbController.setFxSend(fxSend.volume, fxSend.inputIndex)
     }
 
     fun onFxReturnChanged(masterChannel: MasterChannel, fxReturn: Int) {
         currentState.value?.preset?.isDirty = true
         masterChannel.isDirty
         LogUtil.d("fxReturn $fxReturn")
+        usbController.setFxReturn(fxReturn, masterChannel.outputIndex)
     }
 
     fun onMasterVolumeChanged(masterChannel: MasterChannel) {
+        //TODO
         currentState.value?.preset?.isDirty = true
         masterChannel.isDirty = true
         LogUtil.d("master volume ${masterChannel.volume}")

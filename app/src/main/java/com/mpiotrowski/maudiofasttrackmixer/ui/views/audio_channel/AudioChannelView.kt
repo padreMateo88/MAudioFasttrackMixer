@@ -3,6 +3,7 @@ package com.mpiotrowski.maudiofasttrackmixer.ui.views.audio_channel
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
+import android.view.View
 import android.widget.*
 import com.mpiotrowski.maudiofasttrackmixer.R
 import com.mpiotrowski.maudiofasttrackmixer.ui.views.faders.Fader
@@ -23,14 +24,14 @@ open class AudioChannelView @JvmOverloads constructor(
     var panoramaListener: Fader.ValueChangedListener? = null
 
     var muteListener: CompoundButton.OnCheckedChangeListener? = null
-    var soloListener: CompoundButton.OnCheckedChangeListener? = null
+    var soloListener: OnClickListener? = null
 
     interface VolumeChangedListener {
         fun onVolumeChanged()
     }
 
     interface SoloChangedListener {
-        fun onSoloChanged()
+        fun onSoloChanged(isChecked:Boolean)
     }
 
     interface FxVolumeChangedListener {
