@@ -10,10 +10,8 @@ import android.hardware.usb.UsbManager
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
-import android.util.Log
 import com.mpiotrowski.maudiofasttrackmixer.R
 import com.mpiotrowski.maudiofasttrackmixer.ui.MainActivity
-import dagger.android.AndroidInjection
 import dagger.android.DaggerService
 import javax.inject.Inject
 

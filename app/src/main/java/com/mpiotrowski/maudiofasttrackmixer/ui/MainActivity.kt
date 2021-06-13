@@ -5,8 +5,6 @@ import android.hardware.usb.UsbDevice
 import android.hardware.usb.UsbManager
 import android.os.Bundle
 import android.os.IBinder
-import android.util.Log
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
@@ -36,6 +34,8 @@ class MainActivity : DaggerAppCompatActivity() {
             viewModel.deviceOnline.value = false
         }
     }
+
+    private var isServiceBound = false
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
@@ -68,7 +68,7 @@ class MainActivity : DaggerAppCompatActivity() {
         }
 
         Intent(this, UsbService::class.java).also { intent ->
-            bindService(intent, usbServiceConnection as ServiceConnection, 0)
+            isServiceBound = bindService(intent, usbServiceConnection as ServiceConnection, 0)
         }
     }
 
@@ -79,6 +79,15 @@ class MainActivity : DaggerAppCompatActivity() {
 
     private fun setupBottomNavMenu(navController: NavController) {
         bottom_nav.setupWithNavController(navController)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        if (isServiceBound) {
+            unbindService(usbServiceConnection)
+            isServiceBound = false
+        }
     }
 
     override fun onPause() {
