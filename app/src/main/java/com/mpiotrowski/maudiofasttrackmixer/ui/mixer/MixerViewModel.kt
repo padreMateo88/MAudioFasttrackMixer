@@ -127,7 +127,7 @@ class MixerViewModel @Inject constructor(private val repository: Repository, pri
             pan = audioChannel.panorama,
             input = audioChannel.inputIndex,
             outputPair = currentOutput,
-            masterVolume = masterChannel.volume,
+            masterVolume = masterChannel.volume * 100,
             masterPan = masterChannel.panorama,
             mute = mute
         )
