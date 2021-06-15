@@ -5,6 +5,9 @@ import android.hardware.usb.UsbDevice
 import android.hardware.usb.UsbDeviceConnection
 import android.hardware.usb.UsbInterface
 import android.hardware.usb.UsbManager
+import android.util.Log
+import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.SampleRate
+import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.scene_components.FxSettings
 import com.mpiotrowski.maudiofasttrackmixer.util.LogUtil
 import kotlin.math.abs
 
@@ -126,9 +129,9 @@ class UsbConnectionHelper {
         }
     }
 
-    fun setFxType(fxType: FxType) {
+    fun setFxType(fxType: FxSettings.FxType) {
         if(usbDeviceState?.sameFxType(fxType)?.not() == true) {
-            if(setFxParameter(FX_TYPE, fxType.buffer, 2) >= 0) {
+            if(setFxParameter(FX_TYPE, fxType.getBuffer(), 2) >= 0) {
                 usbDeviceState?.fxType = fxType
             }
         }
@@ -146,6 +149,7 @@ class UsbConnectionHelper {
     //1..127 linear
     fun setFxDuration(value: Int) {
         if(usbDeviceState?.sameFxDuration(value)?.not() == true) {
+            Log.d("MPdebug", "DURATION $value")
             val byteArray = byteArrayOf(0.toByte(), value.toByte())
             if(setFxParameter(FX_DURATION, byteArray, 2) >= 0) {
                 usbDeviceState?.fxDuration = value

@@ -1,5 +1,8 @@
 package com.mpiotrowski.maudiofasttrackmixer.usb
 
+import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.SampleRate
+import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.scene_components.FxSettings
+
 class UsbDeviceState {
 
     val outputsMap = HashMap<Int, HashMap<Int,Int>>()
@@ -8,7 +11,7 @@ class UsbDeviceState {
 
     var sampleRate: SampleRate? = null
 
-    var fxType: FxType? = null
+    var fxType: FxSettings.FxType? = null
 
     var fxDuration: Int? = null
     var fxFeedback: Int? = null
@@ -52,7 +55,7 @@ class UsbDeviceState {
         return this.sampleRate == sampleRate
     }
 
-    fun sameFxType(fxType: FxType):Boolean {
+    fun sameFxType(fxType: FxSettings.FxType):Boolean {
         return this.fxType == fxType
     }
 

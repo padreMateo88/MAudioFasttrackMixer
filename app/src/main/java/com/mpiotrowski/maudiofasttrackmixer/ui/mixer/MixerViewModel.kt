@@ -157,7 +157,7 @@ class MixerViewModel @Inject constructor(private val repository: Repository, pri
 
     fun onFxReturnChanged(masterChannel: MasterChannel, fxReturn: Int) {
         currentState.value?.preset?.isDirty = true
-        masterChannel.isDirty
+        masterChannel.isDirty = true
         LogUtil.d("fxReturn $fxReturn")
         usbController.setFxReturn(fxReturn, masterChannel.outputIndex)
     }

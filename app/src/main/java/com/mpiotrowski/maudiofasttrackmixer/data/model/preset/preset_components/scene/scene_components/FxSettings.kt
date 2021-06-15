@@ -2,6 +2,7 @@ package com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components
 
 import androidx.room.Entity
 import androidx.room.Ignore
+import com.mpiotrowski.maudiofasttrackmixer.usb.ByteUtil
 
 @Entity
 data class FxSettings(
@@ -25,6 +26,10 @@ data class FxSettings(
 
         override fun toString(): String {
             return fxName
+        }
+
+        fun getBuffer(): ByteArray{
+            return ByteUtil.toByteArray(apiCode)
         }
     }
 }

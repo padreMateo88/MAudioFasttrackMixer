@@ -2,7 +2,9 @@ package com.mpiotrowski.maudiofasttrackmixer.usb
 
 import android.content.Context
 import android.hardware.usb.UsbDevice
+import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.SampleRate
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.Scene
+import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.scene_components.FxSettings
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -46,7 +48,7 @@ class UsbController @Inject constructor() {
         usbConnection?.setFxFeedback(value)
     }
 
-    fun setNextFxType(fxType: FxType) {
+    fun setFxType(fxType: FxSettings.FxType) {
         usbConnection?.setFxType(fxType)
     }
 
