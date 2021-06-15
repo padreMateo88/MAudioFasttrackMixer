@@ -17,7 +17,7 @@ data class AudioChannel(
     var sceneId: Long = 0,
     var outputIndex: Int,
     var inputIndex : Int,
-    var volume : Int = 75,
+    var volume : Int = 0,
     var panorama: Int = 0,
     var mute: Boolean = false,
     var solo: Boolean = false
