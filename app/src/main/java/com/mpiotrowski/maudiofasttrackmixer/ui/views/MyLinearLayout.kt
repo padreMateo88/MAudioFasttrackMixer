@@ -1,6 +1,5 @@
 package com.mpiotrowski.maudiofasttrackmixer.ui.views
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.util.AttributeSet
 import android.view.MotionEvent
@@ -9,7 +8,6 @@ import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.mpiotrowski.maudiofasttrackmixer.ui.MainActivity
 import com.mpiotrowski.maudiofasttrackmixer.ui.mixer.MixerFragment
-import com.mpiotrowski.maudiofasttrackmixer.util.OnSwipeTouchListener
 import com.mpiotrowski.maudiofasttrackmixer.util.SlideDirection
 import com.mpiotrowski.maudiofasttrackmixer.util.SlideType
 import com.mpiotrowski.maudiofasttrackmixer.util.slideAnimation
@@ -21,7 +19,6 @@ private enum class GestureDirection {
     UP,
     DOWN
 }
-private const val TIME_TO_HIDE: Long = 2500
 
 object MyRunnable : Runnable {
     private var bottomNavBar: BottomNavigationView? = null
@@ -37,27 +34,11 @@ object MyRunnable : Runnable {
 class MyLinearLayout(context: Context, attrs: AttributeSet?) : LinearLayout(context, attrs) {
     private val mTouchSlop: Int = android.view.ViewConfiguration.get(context).scaledTouchSlop
     private var gestureDirection: GestureDirection = GestureDirection.UP
-    private var previousGestureDirection: GestureDirection = GestureDirection.UP
 
     init {
         val bottomNavigationView: BottomNavigationView = getBottomBar()
         val handler: Handler? = bottomNavigationView.handler
         handler?.removeCallbacks(MyRunnable)
-        selfHide(bottomNavigationView)
-    }
-
-    private fun setOnSwipeTouchLister(bottomNavigationView: BottomNavigationView) {
-        setOnTouchListener(object : OnSwipeTouchListener(context) {
-            override fun onSwipeBottom() {
-                gestureDirection = GestureDirection.DOWN
-                setBottomBarAnimation(bottomNavigationView)
-            }
-
-            override fun onSwipeTop() {
-                gestureDirection = GestureDirection.UP
-                setBottomBarAnimation(bottomNavigationView)
-            }
-        })
     }
 
     private fun getDistance(ev: MotionEvent): Int {
@@ -89,12 +70,9 @@ class MyLinearLayout(context: Context, attrs: AttributeSet?) : LinearLayout(cont
         val activity: MainActivity = context as MainActivity
         val navHostFragment: Fragment = activity.nav_host_fragment
         val fragment: Fragment = navHostFragment.childFragmentManager.fragments[0]
-        val bottomNavigationView: BottomNavigationView = getBottomBar()
         return when (ev.actionMasked) {
             MotionEvent.ACTION_DOWN -> {
-                if (fragment !is MixerFragment) {
-                    setOnSwipeTouchLister(bottomNavigationView)
-                } else {
+                if (fragment is MixerFragment) {
                     handleMotionAction(ev)
                 }
                 false
@@ -116,43 +94,8 @@ class MyLinearLayout(context: Context, attrs: AttributeSet?) : LinearLayout(cont
         return xDiff > mTouchSlop
     }
 
-    @SuppressLint("ClickableViewAccessibility")
-    override fun onTouchEvent(event: MotionEvent): Boolean {
-        // Here we actually handle the touch event (e.g. if the action is ACTION_MOVE, scroll this container).
-        // This method will only be called if the touch event was intercepted in onInterceptTouchEvent
-        val bottomNavigationView: BottomNavigationView = getBottomBar()
-        super.onTouchEvent(event)
-        when (event.action) {
-            MotionEvent.ACTION_MOVE -> {
-                setBottomBarAnimation(bottomNavigationView)
-                return true
-            }
-        }
-        return false;
-    }
-
     private fun getBottomBar(): BottomNavigationView {
         val activity: MainActivity = context as MainActivity
         return activity.bottom_nav
-    }
-
-    private fun setBottomBarAnimation(bottomNavBar: BottomNavigationView) {
-        if (previousGestureDirection != gestureDirection) {
-            if (gestureDirection == GestureDirection.UP) {
-                bottomNavBar.slideAnimation(SlideDirection.UP, SlideType.SHOW)
-                selfHide(bottomNavBar)
-            } else if (gestureDirection == GestureDirection.DOWN) {
-                bottomNavBar.slideAnimation(SlideDirection.DOWN, SlideType.HIDE)
-            }
-            previousGestureDirection = gestureDirection
-        }
-    }
-
-    private fun selfHide(bottomNavBar: BottomNavigationView) {
-        val myRunnable = MyRunnable
-        MyRunnable.setBnb(bottomNavBar)
-        gestureDirection = GestureDirection.DOWN
-        //bottomNavBar.postDelayed(myRunnable, TIME_TO_HIDE)
-        previousGestureDirection = gestureDirection
     }
 }

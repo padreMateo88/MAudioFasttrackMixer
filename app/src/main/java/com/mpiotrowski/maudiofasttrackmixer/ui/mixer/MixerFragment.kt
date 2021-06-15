@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
-import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -46,8 +46,7 @@ class MixerFragment : DaggerFragment() {
         super.onActivityCreated(savedInstanceState)
         binding.mixerViewModel = mixerViewModel
         binding.mainViewModel = mainViewModel
-        prepareChannelMixer()
-        prepareSceneSelector()
+        prepareMeasuredViews()
 
         buttonDecreaseOutput.setOnClickListener (View.OnClickListener {
             if(outputIndex == 1)
@@ -66,25 +65,31 @@ class MixerFragment : DaggerFragment() {
         })
     }
 
-    private fun prepareChannelMixer() {
+    private fun prepareMeasuredViews() {
         view?.viewTreeObserver?.addOnGlobalLayoutListener(object : OnGlobalLayoutListener {
             override fun onGlobalLayout() {
                 view?.viewTreeObserver?.removeOnGlobalLayoutListener(this)
-                binding.recyclerViewChannels.itemAnimator = null
-                binding.recyclerViewChannels.layoutManager = LinearLayoutManager(
-                    context,
-                    LinearLayoutManager.HORIZONTAL,
-                    false
-                )
-                val channelsAdapter = ChannelsAdapter(requireActivity() as androidx.appcompat.app.AppCompatActivity, mixerViewModel)
-                channelsAdapter.setHasStableIds(true)
-                binding.recyclerViewChannels.adapter = channelsAdapter
-                binding.recyclerViewChannels.requestDisallowInterceptTouchEvent(true)
-
-                mixerViewModel.audioChannels.observe(requireActivity(), Observer {
-                        (binding.recyclerViewChannels.adapter as ChannelsAdapter).notifyDataSetChanged()
-                })
+                prepareChannelMixer()
+                prepareSceneSelector()
             }
+        })
+    }
+
+    private fun prepareChannelMixer() {
+        binding.recyclerViewChannels.itemAnimator = null
+        binding.recyclerViewChannels.layoutManager = LinearLayoutManager(
+            context,
+            LinearLayoutManager.HORIZONTAL,
+            false
+        )
+        val channelsAdapter =
+            ChannelsAdapter(requireActivity() as AppCompatActivity, mixerViewModel)
+        channelsAdapter.setHasStableIds(true)
+        binding.recyclerViewChannels.adapter = channelsAdapter
+        binding.recyclerViewChannels.requestDisallowInterceptTouchEvent(true)
+
+        mixerViewModel.audioChannels.observe(requireActivity(), Observer {
+            (binding.recyclerViewChannels.adapter as ChannelsAdapter).notifyDataSetChanged()
         })
     }
 

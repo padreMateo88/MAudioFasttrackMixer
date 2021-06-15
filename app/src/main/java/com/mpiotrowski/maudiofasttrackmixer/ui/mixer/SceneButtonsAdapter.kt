@@ -1,6 +1,7 @@
 package com.mpiotrowski.maudiofasttrackmixer.ui.mixer
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.LinearLayout
@@ -13,12 +14,14 @@ import kotlinx.android.synthetic.main.scene_buttom_item.view.*
 class SceneButtonsAdapter(private var viewModel: MixerViewModel): RecyclerView.Adapter<SceneButtonsAdapter.SceneButtonViewHolder>() {
 
     private var lastChecked : Button? = null
+    private lateinit var viewGroup : ViewGroup
 
     override fun onCreateViewHolder(parent: ViewGroup,
                                     viewType: Int): SceneButtonViewHolder {
         val layout = LayoutInflater.from(parent.context)
             .inflate(R.layout.scene_buttom_item, parent, false) as LinearLayout
-        return SceneButtonViewHolder(layout)
+        viewGroup = parent
+        return  SceneButtonViewHolder(layout)
     }
 
     override fun getItemId(position: Int): Long {
@@ -28,6 +31,9 @@ class SceneButtonsAdapter(private var viewModel: MixerViewModel): RecyclerView.A
     class SceneButtonViewHolder(val layout: LinearLayout) : RecyclerView.ViewHolder(layout)
 
     override fun onBindViewHolder(holder: SceneButtonViewHolder, position: Int) {
+        holder.itemView.rootView.layoutParams.height = if (viewGroup.height > viewGroup.width) viewGroup.width/3 else viewGroup.height/3
+        holder.itemView.rootView.layoutParams.width = viewGroup.width/3
+
         holder.layout.button.text = (position + 1).toString()
         if(viewModel.getCurrentSceneOrder() == position + 1) {
             val button = holder.layout.button
@@ -59,5 +65,6 @@ class SceneButtonsAdapter(private var viewModel: MixerViewModel): RecyclerView.A
             true
         }
     }
+
     override fun getItemCount() = SCENES_IN_PRESET_COUNT
 }
