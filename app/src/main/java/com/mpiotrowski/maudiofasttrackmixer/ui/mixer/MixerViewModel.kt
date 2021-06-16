@@ -117,6 +117,7 @@ class MixerViewModel @Inject constructor(private val repository: Repository, pri
         masterChannel: MasterChannel
     ) {
         val mute = when {
+            masterChannel.mute -> true
             audioChannel.solo -> false
             isAnySolo() -> true
             else -> audioChannel.mute
@@ -163,10 +164,12 @@ class MixerViewModel @Inject constructor(private val repository: Repository, pri
     }
 
     fun onMasterVolumeChanged(masterChannel: MasterChannel) {
-        //TODO
         currentState.value?.preset?.isDirty = true
         masterChannel.isDirty = true
         LogUtil.d("master volume ${masterChannel.volume}")
+        for(audioChannelItem in this.audioChannels.value!!) {
+            onChannelChanged(audioChannelItem)
+        }
     }
 //endregion mixer parameters listener
 }
