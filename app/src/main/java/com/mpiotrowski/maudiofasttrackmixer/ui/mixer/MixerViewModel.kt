@@ -80,7 +80,7 @@ class MixerViewModel @Inject constructor(private val repository: Repository, pri
 
     fun onSceneSelected(sceneIndex: Int) {
         repository.setSelectedScene(sceneIndex)
-        currentScene.value?.scene?.let {
+        currentScene.value?.let {
             usbController.loadMixerState(it)
         }
     }

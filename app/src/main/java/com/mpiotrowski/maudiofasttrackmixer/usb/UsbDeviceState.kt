@@ -42,10 +42,6 @@ class UsbDeviceState {
         }
     }
 
-    fun sameFxSend(input: Int, value: Int):Boolean {
-        return fxSendsMap[input] == value
-    }
-
     fun sameFxReturn(output: Int, value: Int):Boolean {
         return fxReturnsMap[output] == value
     }

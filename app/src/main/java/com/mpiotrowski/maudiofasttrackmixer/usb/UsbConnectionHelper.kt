@@ -106,27 +106,35 @@ class UsbConnectionHelper {
         }
         setVolumeRegardDeviceState(input,outputPair*2 - 1, leftLogValue)
         setVolumeRegardDeviceState(input,outputPair*2, rightLogValue)
+         //TODO
+        //setFxSend((usbDeviceState?.fxSendsMap?.get(input) ?: SEND_MIN ), input)
     }
 
     fun setFxSend(sendValue: Int, input: Int) {
-        if(usbDeviceState?.sameFxSend(input, sendValue)?.not() == true) {
-            val logValue = toLogScale(sendValue, SEND_MIN, SEND_DELTA, SEND_SCALE)
-            val buffer = toReversedByteArray(logValue)
-            if(setVolume(input, 9, buffer) >= 0){
-                usbDeviceState?.fxSendsMap?.put(input, sendValue)
-            }
+        //TODO
+//        val channelVolume = usbDeviceState?.outputsMap?.get(1)?.get(input)
+//        val scaledChannelVolume = (channelVolume ?: VOLUME_MIN) - VOLUME_MIN
+//        val channelAppliedSend = sendValue*scaledChannelVolume/VOLUME_DELTA
+//        val logValue = toLogScale(channelAppliedSend, SEND_MIN, SEND_DELTA, SEND_SCALE)
+//        Log.d("MPdebug", "logValue $logValue channelVolume $channelVolume scaledChannelVolume: $scaledChannelVolume sendValue $sendValue channelAppliedSend $channelAppliedSend")
+
+        val logValue = toLogScale(sendValue, SEND_MIN, SEND_DELTA, SEND_SCALE)
+        val buffer = toReversedByteArray(logValue)
+        if(setVolume(input, 9, buffer) >= 0){
+            usbDeviceState?.fxSendsMap?.put(input, sendValue)
         }
     }
 
     fun setFxReturn(fxReturnValue: Int, outputPair: Int) {
-        if (usbDeviceState?.sameFxReturn(outputPair,fxReturnValue)?.not() == true) {
-            val logValue = toLogScale(fxReturnValue, RETURN_MIN, RETURN_DELTA, RETURN_SCALE)
-            val buffer = toReversedByteArray(logValue)
-            if (setFxReturnVolume(outputPair*2-1, buffer) >= 0
-                && setFxReturnVolume(outputPair*2, buffer) >= 0) {
-                usbDeviceState?.fxReturnsMap?.put(outputPair,fxReturnValue)
-            }
-        }
+        //TODO
+//        if (usbDeviceState?.sameFxReturn(outputPair,fxReturnValue)?.not() == true) {
+//            val logValue = toLogScale(fxReturnValue, RETURN_MIN, RETURN_DELTA, RETURN_SCALE)
+//            val buffer = toReversedByteArray(logValue)
+//            if (setFxReturnVolume(outputPair*2-1, buffer) >= 0
+//                && setFxReturnVolume(outputPair*2, buffer) >= 0) {
+//                usbDeviceState?.fxReturnsMap?.put(outputPair,fxReturnValue)
+//            }
+//        }
     }
 
     fun setFxType(fxType: FxSettings.FxType) {

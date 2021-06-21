@@ -56,5 +56,45 @@ class UsbController @Inject constructor() {
         usbConnection?.setSampleRate(sampleRate)
     }
 
-    fun loadMixerState(scene: Scene) {}
+    fun loadMixerState(scene: SceneWithComponents) {
+
+        setFxFeedback(scene.scene.fxSettings.feedback)
+        setFxType(scene.scene.fxSettings.fxType)
+        setFxVolume(scene.scene.fxSettings.volume)
+        setFxDuration(scene.scene.fxSettings.duration)
+
+        for ((_, audioChannels) in scene.channelsByOutputsMap) {
+            for(audioChannel in audioChannels) {
+                val masterChannel = scene.mastersByOutputsMap[audioChannel.outputIndex]
+
+                val mute = when {
+                    masterChannel?.mute ?: false -> true
+                    audioChannel.solo -> false
+                    isAnySolo(audioChannels) -> true
+                    else -> audioChannel.mute
+                }
+
+                setChannelVolume(audioChannel.volume * 100, audioChannel.panorama, audioChannel.inputIndex,
+                    audioChannel.outputIndex,  (masterChannel?.volume  ?: 0) * 100,
+                    masterChannel?.panorama ?: 0, mute
+                )
+            }
+        }
+
+        for(fxSend in scene.fxSends) {
+            setFxSend(fxSend.volume, fxSend.inputIndex)
+        }
+
+        for(master in scene.masterChannels) {
+            setFxReturn(master.fxReturn, master.outputIndex)
+        }
+    }
+
+    private fun isAnySolo(audioChannels : List<AudioChannel>): Boolean {
+        for(audioChannel in audioChannels) {
+            if(audioChannel.solo)
+                return true
+        }
+        return false
+    }
 }
