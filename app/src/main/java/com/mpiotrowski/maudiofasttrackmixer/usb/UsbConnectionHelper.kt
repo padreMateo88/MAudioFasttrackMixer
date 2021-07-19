@@ -126,15 +126,19 @@ class UsbConnectionHelper {
     }
 
     fun setFxReturn(fxReturnValue: Int, outputPair: Int) {
-        //TODO
-//        if (usbDeviceState?.sameFxReturn(outputPair,fxReturnValue)?.not() == true) {
-//            val logValue = toLogScale(fxReturnValue, RETURN_MIN, RETURN_DELTA, RETURN_SCALE)
-//            val buffer = toReversedByteArray(logValue)
-//            if (setFxReturnVolume(outputPair*2-1, buffer) >= 0
-//                && setFxReturnVolume(outputPair*2, buffer) >= 0) {
-//                usbDeviceState?.fxReturnsMap?.put(outputPair,fxReturnValue)
-//            }
-//        }
+    //    TODO
+        if (usbDeviceState?.sameFxReturn(outputPair,fxReturnValue)?.not() == true) {
+            val logValue = toLogScale(fxReturnValue, RETURN_MIN, RETURN_DELTA, RETURN_SCALE)
+            val buffer = toReversedByteArray(logValue)
+
+            val retL = setFxReturnVolume(outputPair*2-1, buffer)
+            val retR = setFxReturnVolume(outputPair*2, buffer)
+            Log.d("MPdebug", "retL $retL retR $retR")
+            if (retL >= 0
+                && retR >= 0) {
+                usbDeviceState?.fxReturnsMap?.put(outputPair,fxReturnValue)
+            }
+        }
     }
 
     fun setFxType(fxType: FxSettings.FxType) {
