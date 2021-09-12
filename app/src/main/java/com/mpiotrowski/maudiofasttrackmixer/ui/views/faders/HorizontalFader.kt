@@ -38,7 +38,14 @@ abstract class HorizontalFader(context: Context, attrs: AttributeSet? = null, de
         )
         if(width <= 0 || height <= 0)
             return null
-        return Bitmap.createScaledBitmap(bitmap, (height*bitmap.width*0.5f/bitmap.height).toInt(),(height*0.5f).toInt() , false)
+
+        val dstWidth = (height*bitmap.width*0.5f/bitmap.height).toInt()
+        val dstHeight = (height*0.5f).toInt()
+
+        if(dstWidth <= 0 || dstHeight <= 0)
+            return null
+
+        return Bitmap.createScaledBitmap(bitmap, dstWidth, dstHeight, false)
     }
 
     override fun drawKnob(canvas: Canvas?) {

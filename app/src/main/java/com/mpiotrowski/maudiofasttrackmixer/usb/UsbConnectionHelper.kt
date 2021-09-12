@@ -126,7 +126,6 @@ class UsbConnectionHelper {
     }
 
     fun setFxReturn(fxReturnValue: Int, outputPair: Int) {
-    //    TODO
         if (usbDeviceState?.sameFxReturn(outputPair,fxReturnValue)?.not() == true) {
             val logValue = toLogScale(fxReturnValue, RETURN_MIN, RETURN_DELTA, RETURN_SCALE)
             val buffer = toReversedByteArray(logValue)
