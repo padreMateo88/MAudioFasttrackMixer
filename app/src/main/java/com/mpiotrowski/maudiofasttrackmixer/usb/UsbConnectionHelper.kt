@@ -106,19 +106,18 @@ class UsbConnectionHelper {
         }
         setVolumeRegardDeviceState(input,outputPair*2 - 1, leftLogValue)
         setVolumeRegardDeviceState(input,outputPair*2, rightLogValue)
-         //TODO
-        //setFxSend((usbDeviceState?.fxSendsMap?.get(input) ?: SEND_MIN ), input)
+        setFxSend((usbDeviceState?.fxSendsMap?.get(input) ?: SEND_MIN ), input)
     }
 
+    //TODO
     fun setFxSend(sendValue: Int, input: Int) {
-        //TODO
-//        val channelVolume = usbDeviceState?.outputsMap?.get(1)?.get(input)
-//        val scaledChannelVolume = (channelVolume ?: VOLUME_MIN) - VOLUME_MIN
-//        val channelAppliedSend = sendValue*scaledChannelVolume/VOLUME_DELTA
-//        val logValue = toLogScale(channelAppliedSend, SEND_MIN, SEND_DELTA, SEND_SCALE)
-//        Log.d("MPdebug", "logValue $logValue channelVolume $channelVolume scaledChannelVolume: $scaledChannelVolume sendValue $sendValue channelAppliedSend $channelAppliedSend")
-
-        val logValue = toLogScale(sendValue, SEND_MIN, SEND_DELTA, SEND_SCALE)
+        val leftVolume = (usbDeviceState?.outputsMap?.get(1)?.get(input) ?: VOLUME_MIN)
+        val rightVolume = (usbDeviceState?.outputsMap?.get(2)?.get(input) ?: VOLUME_MIN)
+        val squareVolume = if (leftVolume > rightVolume) leftVolume else rightVolume
+        val coefficient = (squareVolume - VOLUME_MIN)/VOLUME_DELTA.toFloat()
+        var logValue = (coefficient*toLogScale(sendValue, SEND_MIN, SEND_DELTA, SEND_SCALE)).toInt()
+        if(logValue == 0)
+            logValue = SEND_MIN
         val buffer = toReversedByteArray(logValue)
         if(setVolume(input, 9, buffer) >= 0){
             usbDeviceState?.fxSendsMap?.put(input, sendValue)
