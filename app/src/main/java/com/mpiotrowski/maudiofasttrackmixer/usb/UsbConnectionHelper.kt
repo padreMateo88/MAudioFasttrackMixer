@@ -9,7 +9,10 @@ import android.util.Log
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.SampleRate
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.scene_components.FxSettings
 import com.mpiotrowski.maudiofasttrackmixer.util.LogUtil
+import java.lang.Math.pow
+import java.lang.StrictMath.pow
 import kotlin.math.abs
+import kotlin.math.pow
 
 class UsbConnectionHelper {
 
@@ -100,26 +103,26 @@ class UsbConnectionHelper {
         var rightLogValue = toLogScale((masterAppliedVolume*rightPanCoefficient*rightMasterPanCoefficient).toInt(),
             VOLUME_MIN, VOLUME_DELTA, VOLUME_SCALE
         )
-        if(mute) {
+
+    if(mute) {
             leftLogValue = VOLUME_MIN
             rightLogValue = VOLUME_MIN
         }
-        setVolumeRegardDeviceState(input,outputPair*2 - 1, leftLogValue)
-        setVolumeRegardDeviceState(input,outputPair*2, rightLogValue)
+        setVolumeRegardDeviceState(input,outputPair*2 - 1, leftLogValue, volume)
+        setVolumeRegardDeviceState(input,outputPair*2, rightLogValue, volume)
         setFxSend((usbDeviceState?.fxSendsMap?.get(input) ?: SEND_MIN ), input)
     }
 
-    //TODO
     fun setFxSend(sendValue: Int, input: Int) {
-        val leftVolume = (usbDeviceState?.outputsMap?.get(1)?.get(input) ?: VOLUME_MIN)
-        val rightVolume = (usbDeviceState?.outputsMap?.get(2)?.get(input) ?: VOLUME_MIN)
-        val squareVolume = if (leftVolume > rightVolume) leftVolume else rightVolume
-        val coefficient = (squareVolume - VOLUME_MIN)/VOLUME_DELTA.toFloat()
-        var logValue = (coefficient*toLogScale(sendValue, SEND_MIN, SEND_DELTA, SEND_SCALE)).toInt()
+        val preFaderVolume = (usbDeviceState?.preFaderChannelsMap?.get(1)?.get(input) ?: VOLUME_MIN)
+        val coefficient = (preFaderVolume)/ VOLUME_SCALE.toFloat()
+        val scaledCoefficient = (coefficient - 1).pow(7) + 1
+        var logValue = (scaledCoefficient*toLogScale(sendValue, SEND_MIN, SEND_DELTA, SEND_SCALE)).toInt()
         if(logValue == 0)
             logValue = SEND_MIN
         val buffer = toReversedByteArray(logValue)
-        if(setVolume(input, 9, buffer) >= 0){
+        LogUtil.d( "SEND FX send: $sendValue coeff: $scaledCoefficient logValue: $logValue ")
+        if(setVolume(input, 9, buffer) >= 0) {
             usbDeviceState?.fxSendsMap?.put(input, sendValue)
         }
     }
@@ -131,7 +134,6 @@ class UsbConnectionHelper {
 
             val retL = setFxReturnVolume(outputPair*2-1, buffer)
             val retR = setFxReturnVolume(outputPair*2, buffer)
-            Log.d("MPdebug", "retL $retL retR $retR")
             if (retL >= 0
                 && retR >= 0) {
                 usbDeviceState?.fxReturnsMap?.put(outputPair,fxReturnValue)
@@ -159,7 +161,6 @@ class UsbConnectionHelper {
     //1..127 linear
     fun setFxDuration(value: Int) {
         if(usbDeviceState?.sameFxDuration(value)?.not() == true) {
-            Log.d("MPdebug", "DURATION $value")
             val byteArray = byteArrayOf(0.toByte(), value.toByte())
             if(setFxParameter(FX_DURATION, byteArray, 2) >= 0) {
                 usbDeviceState?.fxDuration = value
@@ -188,11 +189,11 @@ class UsbConnectionHelper {
 
 //region private low level USB calls
 
-    private fun setVolumeRegardDeviceState(input: Int, output: Int, value: Int) {
+    private fun setVolumeRegardDeviceState(input: Int, output: Int, value: Int, preFaderVolume: Int) {
         if(usbDeviceState?.sameVolume(input, output, value)?.not() == true) {
             val buffer = toReversedByteArray(value)
             if(setVolume(input, output, buffer) >= 0) {
-                usbDeviceState?.setVolume(input, output, value)
+                usbDeviceState?.setVolume(input, output, value, preFaderVolume)
             }
         }
     }
@@ -281,6 +282,11 @@ class UsbConnectionHelper {
 
     private fun toLogScale(value: Int, scaleStart: Int, scaleDelta: Int, widgetScale: Int): Int {
         return (scaleStart + (kotlin.math.log10((1 + value).toDouble()) / kotlin.math.log10(widgetScale.toDouble()))*scaleDelta).toInt()
+    }
+
+    private fun coefficientToLogScale(value: Float): Float {
+        val base = 100f
+        return kotlin.math.log(1 + value, base) / kotlin.math.log(2f, base)
     }
 
     private fun toReversedByteArray(number: Int): ByteArray {

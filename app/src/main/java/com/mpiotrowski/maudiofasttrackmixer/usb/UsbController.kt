@@ -83,11 +83,11 @@ class UsbController @Inject constructor() {
         }
 
         for(fxSend in scene.fxSends) {
-            setFxSend(fxSend.volume, fxSend.inputIndex)
+            setFxSend(fxSend.volume * 100, fxSend.inputIndex)
         }
 
         for(master in scene.masterChannels) {
-            setFxReturn(master.fxReturn, master.outputIndex)
+            setFxReturn(master.fxReturn * 100, master.outputIndex)
         }
     }
 
