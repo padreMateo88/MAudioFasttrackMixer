@@ -48,6 +48,14 @@ class MixerFragment : DaggerFragment() {
         binding.mainViewModel = mainViewModel
         prepareMeasuredViews()
 
+        mainViewModel.deviceOnline.observe(viewLifecycleOwner, Observer {
+            if(it) {
+                val currentScene = mixerViewModel.currentScene.value
+                if(currentScene != null)
+                    mixerViewModel.loadMixerState(currentScene)
+            }
+        })
+
         buttonDecreaseOutput.setOnClickListener (View.OnClickListener {
             if(outputIndex == 1)
                 return@OnClickListener

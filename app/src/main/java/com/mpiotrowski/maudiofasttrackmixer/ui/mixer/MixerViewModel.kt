@@ -84,6 +84,10 @@ class MixerViewModel @Inject constructor(private val repository: Repository, pri
             usbController.loadMixerState(it)
         }
     }
+
+    fun loadMixerState(scene:  SceneWithComponents) {
+        usbController.loadMixerState(scene)
+    }
 //endregion scene control
 
 //region mixer parameters listener
