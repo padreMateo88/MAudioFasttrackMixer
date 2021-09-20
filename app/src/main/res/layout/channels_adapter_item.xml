@@ -29,7 +29,7 @@
             app:solo="@{viewmodel.audioChannels.get(channelIndex).solo}"
             app:onSoloChanged="@{isChecked -> viewmodel.onSoloChanged(viewmodel.audioChannels.get(channelIndex), isChecked)}"
             app:onVolumeChanged="@{() -> viewmodel.onChannelChanged(viewmodel.audioChannels.get(channelIndex))}"
-            app:onFxVolumeChanged="@{() -> viewmodel.onFxSendChanged(viewmodel.fxSends.get(channelIndex))}"
+            app:onFxVolumeChanged="@{() -> viewmodel.onFxSendChanged(viewmodel.fxSends.get(channelIndex), viewmodel.audioChannels.get(channelIndex))}"
             app:outputIndex="@{viewmodel.audioChannels.get(channelIndex).outputIndex}"
             />
     </FrameLayout>

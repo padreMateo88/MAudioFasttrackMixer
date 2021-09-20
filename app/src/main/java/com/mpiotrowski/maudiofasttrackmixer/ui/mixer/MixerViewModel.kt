@@ -153,18 +153,18 @@ class MixerViewModel @Inject constructor(private val repository: Repository, pri
         }
     }
 
-    fun onFxSendChanged(fxSend: FxSend) {
+    fun onFxSendChanged(fxSend: FxSend, audioChannel: AudioChannel) {
         currentState.value?.preset?.isDirty = true
         fxSend.isDirty = true
         LogUtil.d("channel $fxSend")
-        usbController.setFxSend(fxSend.volume * 100, fxSend.inputIndex)
+        usbController.setFxSend(fxSend.volume * 100, fxSend.inputIndex, audioChannel.volume * 100, audioChannel.mute && !audioChannel.solo)
     }
 
-    fun onFxReturnChanged(masterChannel: MasterChannel, fxReturn: Int) {
+    fun onFxReturnChanged(masterChannel: MasterChannel) {
         currentState.value?.preset?.isDirty = true
         masterChannel.isDirty = true
-        LogUtil.d("fxReturn $fxReturn output ${masterChannel.outputIndex}")
-        usbController.setFxReturn(fxReturn * 100, masterChannel.outputIndex)
+        LogUtil.d("fxReturn ${masterChannel.fxReturn} output ${masterChannel.outputIndex}")
+        usbController.setFxReturn(masterChannel.fxReturn * 100, masterChannel)
     }
 
     fun onMasterVolumeChanged(masterChannel: MasterChannel) {
@@ -174,6 +174,7 @@ class MixerViewModel @Inject constructor(private val repository: Repository, pri
         for(audioChannelItem in this.audioChannels.value!!) {
             onChannelChanged(audioChannelItem)
         }
+        onFxReturnChanged(masterChannel)
     }
 //endregion mixer parameters listener
 }

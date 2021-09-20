@@ -6,6 +6,8 @@ import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.SceneWithComponents
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.scene_components.AudioChannel
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.scene_components.FxSettings
+import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.scene_components.MasterChannel
+import com.mpiotrowski.maudiofasttrackmixer.usb.UsbConnectionHelper.Companion.VOLUME_MIN
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -28,12 +30,12 @@ class UsbController @Inject constructor() {
         usbConnection?.setChannelVolume(volume, pan,input, outputPair, masterVolume, masterPan, mute)
     }
 
-    fun setFxSend(sendValue: Int, input: Int) {
-        usbConnection?.setFxSend(sendValue, input)
+    fun setFxSend(sendValue: Int, input: Int, channelVolume: Int, channelMute: Boolean ) {
+        usbConnection?.setFxSend(sendValue, input, channelVolume, channelMute)
     }
 
-    fun setFxReturn(fxReturnValue: Int, outputPair: Int) {
-        usbConnection?.setFxReturn(fxReturnValue, outputPair)
+    fun setFxReturn(fxReturnValue: Int, masterChannel: MasterChannel) {
+        usbConnection?.setFxReturn(fxReturnValue, masterChannel.outputIndex, masterChannel.volume, masterChannel.panorama, masterChannel.mute)
     }
 
     //1..127 linear
@@ -83,11 +85,14 @@ class UsbController @Inject constructor() {
         }
 
         for(fxSend in scene.fxSends) {
-            setFxSend(fxSend.volume * 100, fxSend.inputIndex)
+            val audioChannel = scene.channelsByOutputsMap[1]?.get(fxSend.inputIndex - 1)
+            val channelVolume = audioChannel?.volume ?: VOLUME_MIN
+            val channelMute = audioChannel?.mute ?: false
+            setFxSend(fxSend.volume * 100, fxSend.inputIndex, channelVolume * 100, channelMute)
         }
 
         for(master in scene.masterChannels) {
-            setFxReturn(master.fxReturn * 100, master.outputIndex)
+            setFxReturn(master.fxReturn * 100, master)
         }
     }
 

@@ -49,7 +49,7 @@
             app:fxVolume="@={mixerViewModel.masterChannel.fxReturn}"
             app:outputIndex="@{mixerViewModel.masterChannel.outputIndex}"
             app:onVolumeChanged="@{() -> mixerViewModel.onMasterVolumeChanged(mixerViewModel.masterChannel)}"
-            app:onFxVolumeChanged="@{() -> mixerViewModel.onFxReturnChanged(mixerViewModel.masterChannel, mixerViewModel.masterChannel.fxReturn)}"
+            app:onFxVolumeChanged="@{() -> mixerViewModel.onFxReturnChanged(mixerViewModel.masterChannel)}"
             />
 
         <LinearLayout

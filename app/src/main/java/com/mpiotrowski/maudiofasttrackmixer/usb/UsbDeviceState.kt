@@ -6,7 +6,6 @@ import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.
 class UsbDeviceState {
 
     private val postFaderChannelsMap = HashMap<Int, HashMap<Int,Int>>()
-    val preFaderChannelsMap = HashMap<Int, HashMap<Int,Int>>()
     val fxSendsMap = HashMap<Int,Int>()
     val fxReturnsMap = HashMap<Int, Int>()
 
@@ -32,19 +31,14 @@ class UsbDeviceState {
         }
     }
 
-    fun setVolume(input: Int, output: Int, volume: Int, preFaderVolume: Int) {
-        setVolume(input, output, volume, postFaderChannelsMap)
-        setVolume(input, output, preFaderVolume, preFaderChannelsMap)
-    }
-
-    private fun setVolume(input: Int, output: Int, value: Int, channelsMap: HashMap<Int, HashMap<Int,Int>>) {
-        var inputsMap = channelsMap[output]
+    fun setVolume(input: Int, output: Int, volume: Int) {
+        var inputsMap = postFaderChannelsMap[output]
         return if(inputsMap == null) {
             inputsMap = HashMap()
-            inputsMap[input] = value
-            channelsMap[output] = inputsMap
+            inputsMap[input] = volume
+            postFaderChannelsMap[output] = inputsMap
         } else {
-            inputsMap[input] = value
+            inputsMap[input] = volume
         }
     }
 
