@@ -17,7 +17,7 @@ data class MasterChannel (
     var sceneId: Long = 0,
     var outputIndex: Int,
     var volume : Int = 75,
-    var fxReturn : Int = 0,
+    var fxReturn : Int = 100,
     var panorama: Int = 0,
     var mute: Boolean = false
 ) {

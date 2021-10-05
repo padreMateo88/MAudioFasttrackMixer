@@ -10,7 +10,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class PresetsViewModel @Inject constructor(private val repository: Repository, private var usbController: UsbController) : ViewModel()  {
+class
+PresetsViewModel @Inject constructor(private val repository: Repository, private var usbController: UsbController) : ViewModel()  {
 
     lateinit var currentPresetId: String
     val allPresets: LiveData<List<PresetWithScenes>> = repository.presetsWithScenes
@@ -70,6 +71,7 @@ class PresetsViewModel @Inject constructor(private val repository: Repository, p
     fun loadPreset(presetToLoad: PresetWithScenes) {
         repository.setCurrentPreset(presetToLoad)
         currentPresetId = presetToLoad.preset.presetId
+        usbController.loadMixerState(presetToLoad.scenes[0])
         viewModelScope.launch(Dispatchers.IO) {
                 repository.saveCurrentPresetId(presetToLoad)
         }

@@ -6,10 +6,10 @@ import com.mpiotrowski.maudiofasttrackmixer.usb.ByteUtil
 
 @Entity
 data class FxSettings(
-    var fxType: FxType = FxType.ROOM1,
-    var duration: Int = 0,
-    var feedback: Int = 0,
-    var volume: Int = 0,
+    var fxType: FxType = FxType.HALL1,
+    var duration: Int = 100,
+    var feedback: Int = 100,
+    var volume: Int = 100,
     var fxMute: Boolean = false
 ) {
     @Ignore
