@@ -20,6 +20,7 @@
     <string name="button_solo">S</string>
     <string name="label_output">Output</string>
     <string name="button_fine">Fine</string>
+    <string name="button_mute_fx">Mute FX</string>
     <string name="default_output">Output:\n1–2</string>
     <string name="label_scene_name">scene name</string>
     <string name="label_as">as</string>

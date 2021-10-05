@@ -30,7 +30,7 @@ class SettingsViewModel @Inject constructor(repository: Repository, private var 
     fun onFxVolumeChanged(fxVolume: Int) {
         currentState.value?.preset?.isDirty = true
         LogUtil.d( "fxVolume $fxVolume")
-        usbController.setFxVolume(fxVolume*1.27.toInt())
+        usbController.setFxVolume(if(currentScene.value?.scene?.fxSettings?.fxMute == true) 1 else fxVolume*1.27.toInt())
     }
 
     fun onFxDurationChanged(fxDuration: Int) {

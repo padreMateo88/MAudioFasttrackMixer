@@ -18,7 +18,7 @@ import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.
         FxSend::class,
         CurrentPreset::class
     ],
-    version = 2
+    version = 3
 )
 @TypeConverters(Converters::class)
 abstract class PresetsDatabase : RoomDatabase() {

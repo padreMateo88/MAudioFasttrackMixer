@@ -9,7 +9,8 @@ data class FxSettings(
     var fxType: FxType = FxType.ROOM1,
     var duration: Int = 0,
     var feedback: Int = 0,
-    var volume: Int = 0
+    var volume: Int = 0,
+    var fxMute: Boolean = false
 ) {
     @Ignore
     var isDirty = false

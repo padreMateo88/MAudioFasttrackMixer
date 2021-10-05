@@ -106,6 +106,7 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:padding="4dp"
                         android:orientation="horizontal"
                         android:gravity="center_horizontal">
 
@@ -137,16 +138,36 @@
                     </LinearLayout>
                 </LinearLayout>
 
-                <ToggleButton
-                    android:id="@+id/toggleButtonFine"
-                    android:checked="@={mixerViewModel.fine}"
-                    android:layout_marginTop="@dimen/dimen_4dp"
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/dimen_40dp"
-                    android:background="@drawable/gray_selector"
-                    android:textColor="@color/radio_button_text_color_selector"
-                    android:textOff="@string/button_fine"
-                    android:textOn="@string/button_fine"/>
+                    android:layout_height="wrap_content"
+                    android:padding="4dp"
+                    android:orientation="horizontal">
+                    <ToggleButton
+                        android:id="@+id/toggleButtonFine"
+                        android:checked="@={mixerViewModel.fine}"
+                        android:layout_weight="1"
+                        android:layout_gravity="center_vertical"
+                        android:layout_width="0dp"
+                        android:layout_marginRight="2dp"
+                        android:layout_height="@dimen/dimen_40dp"
+                        android:background="@drawable/gray_selector"
+                        android:textColor="@color/radio_button_text_color_selector"
+                        android:textOff="@string/button_fine"
+                        android:textOn="@string/button_fine"/>
+                    <ToggleButton
+                        android:id="@+id/toggleButtonMuteFx"
+                        android:checked="@={mixerViewModel.muteFx}"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="1"
+                        android:background="@drawable/mute_selector"
+                        android:layout_width="0dp"
+                        android:layout_marginLeft="2dp"
+                        android:layout_height="@dimen/dimen_40dp"
+                        android:textColor="@color/radio_button_text_color_selector"
+                        android:textOff="@string/button_mute_fx"
+                        android:textOn="@string/button_mute_fx"/>
+                </LinearLayout>
             </LinearLayout>
 
             <TextView

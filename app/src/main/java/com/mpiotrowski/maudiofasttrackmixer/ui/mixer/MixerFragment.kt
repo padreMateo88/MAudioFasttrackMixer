@@ -56,6 +56,10 @@ class MixerFragment : DaggerFragment() {
             }
         })
 
+        mixerViewModel.muteFx.observe(viewLifecycleOwner, Observer {
+            mixerViewModel.onFxMuteChanged(it)
+        })
+
         buttonDecreaseOutput.setOnClickListener (View.OnClickListener {
             if(outputIndex == 1)
                 return@OnClickListener

@@ -63,7 +63,7 @@ class UsbController @Inject constructor() {
 
         setFxFeedback(scene.scene.fxSettings.feedback)
         setFxType(scene.scene.fxSettings.fxType)
-        setFxVolume(scene.scene.fxSettings.volume)
+        setFxVolume(if(scene.scene.fxSettings.fxMute) 1 else scene.scene.fxSettings.volume)
         setFxDuration(scene.scene.fxSettings.duration)
 
         for ((_, audioChannels) in scene.channelsByOutputsMap) {

@@ -25,6 +25,7 @@ class MixerViewModel @Inject constructor(private val repository: Repository, pri
     val masterChannel = MediatorLiveData<MasterChannel>()
     val fxSends = MediatorLiveData<List<FxSend>>()
     val fine = MutableLiveData<Boolean>()
+    val muteFx = MediatorLiveData<Boolean>()
 
     init {
         audioChannels.addSource(currentOutput) { outputIndex ->
@@ -45,6 +46,10 @@ class MixerViewModel @Inject constructor(private val repository: Repository, pri
 
         fxSends.addSource(currentScene) { sceneWithComponents ->
             fxSends.value = sceneWithComponents.fxSends
+        }
+
+        muteFx.addSource(currentScene) { sceneWithComponents ->
+            muteFx.value = sceneWithComponents?.scene?.fxSettings?.fxMute
         }
 
         currentOutput.value = 1
@@ -151,6 +156,12 @@ class MixerViewModel @Inject constructor(private val repository: Repository, pri
 
             onChannelChanged(audioChannelItem)
         }
+    }
+
+    fun onFxMuteChanged(muteFx: Boolean) {
+        currentScene.value?.scene?.fxSettings?.fxMute = muteFx
+        currentState.value?.preset?.isDirty = true
+        currentScene.value?.scene?.fxSettings?.let { usbController.setFxVolume( if(muteFx) 1 else it.volume) }
     }
 
     fun onFxSendChanged(fxSend: FxSend, audioChannel: AudioChannel) {
