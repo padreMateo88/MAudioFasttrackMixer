@@ -1,6 +1,8 @@
 package com.mpiotrowski.maudiofasttrackmixer.ui.mixer
 
+import android.R
 import android.os.Bundle
+import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,6 +17,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.MIXER_STEREO_OUTPUTS_COUNT
 import com.mpiotrowski.maudiofasttrackmixer.databinding.FragmentMixerBinding
 import com.mpiotrowski.maudiofasttrackmixer.ui.MainViewModel
+import com.mpiotrowski.maudiofasttrackmixer.ui.presets.dialogs.OverwritePresetDialog.*
+import com.mpiotrowski.maudiofasttrackmixer.ui.presets.dialogs.ProgressBarDialog
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_mixer.*
 import javax.inject.Inject
@@ -22,6 +26,7 @@ import javax.inject.Inject
 class MixerFragment : DaggerFragment() {
 
     var outputIndex = 1
+    private var progressDialog: ProgressBarDialog? = null
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
@@ -36,10 +41,22 @@ class MixerFragment : DaggerFragment() {
     private lateinit var binding: FragmentMixerBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                            savedInstanceState: Bundle?): View? {
+                            savedInstanceState: Bundle?): View {
        binding = FragmentMixerBinding.inflate(inflater, container, false)
+       showProgressbar()
        binding.lifecycleOwner = requireActivity()
        return binding.root
+    }
+
+    private fun showProgressbar() {
+        progressDialog = ProgressBarDialog(requireContext())
+        progressDialog?.window?.setBackgroundDrawableResource(R.color.transparent)
+        progressDialog?.show()
+        Handler().postDelayed({ progressDialog!!.dismiss() }, 2000)
+    }
+
+    private fun dismissProgressbar() {
+        progressDialog?.dismiss()
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -89,14 +106,20 @@ class MixerFragment : DaggerFragment() {
 
     private fun prepareChannelMixer() {
         binding.recyclerViewChannels.itemAnimator = null
-        binding.recyclerViewChannels.layoutManager = LinearLayoutManager(
-            context,
+        binding.recyclerViewChannels.layoutManager =  LinearLayoutManager(
+            requireContext(),
             LinearLayoutManager.HORIZONTAL,
             false
         )
         val channelsAdapter =
             ChannelsAdapter(requireActivity() as AppCompatActivity, mixerViewModel)
         channelsAdapter.setHasStableIds(true)
+        channelsAdapter.channelsDrawnListener = object: ChannelsAdapter.ChannelsDrawnListener{
+            override fun onAdapterDrawn() {
+                dismissProgressbar()
+            }
+        }
+        binding.recyclerViewChannels.setHasFixedSize(true)
         binding.recyclerViewChannels.adapter = channelsAdapter
         binding.recyclerViewChannels.requestDisallowInterceptTouchEvent(true)
 

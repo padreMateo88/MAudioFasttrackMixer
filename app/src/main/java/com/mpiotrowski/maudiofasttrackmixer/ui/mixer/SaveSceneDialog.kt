@@ -64,7 +64,7 @@ class SaveSceneDialog(private var dialogContext: Context,
             ) {
                 scenesByOrder[position + 1]?.let {
                     editTextSceneName.setText(it.scene.sceneName)
-                    editTextSceneName.setSelection(copyFrom.scene.sceneName.length)
+                    editTextSceneName.setSelection(it.scene.sceneName.length)
                 }
             }
         }

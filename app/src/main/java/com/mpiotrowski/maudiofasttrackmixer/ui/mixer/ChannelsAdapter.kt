@@ -5,13 +5,20 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.mpiotrowski.maudiofasttrackmixer.databinding.ChannelsAdapterItemBinding
+import com.mpiotrowski.maudiofasttrackmixer.util.LogUtil
 
 class ChannelsAdapter(
     private val appCompatActivity: AppCompatActivity,
     private val viewModel: MixerViewModel
-) :
-    RecyclerView.Adapter<ChannelsAdapter.ChannelViewHolder>() {
+) : RecyclerView.Adapter<ChannelsAdapter.ChannelViewHolder>() {
+
     private lateinit var viewGroup : ViewGroup
+    private var renderedItemsCount = 0
+    var channelsDrawnListener: ChannelsDrawnListener? = null
+
+    interface ChannelsDrawnListener {
+        fun onAdapterDrawn()
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup,
                                     viewType: Int): ChannelViewHolder {
@@ -33,6 +40,13 @@ class ChannelsAdapter(
         val channelsCount = viewModel.getAudioChannelsNumber()
         holder.customView.root.layoutParams.width = if(channelsCount == 0) 0 else viewGroup.width/channelsCount
         holder.customView.channelIndex = position
+        holder.customView.root.post {
+            renderedItemsCount++
+            if(renderedItemsCount == channelsCount) {
+                channelsDrawnListener?.onAdapterDrawn()
+                LogUtil.d("channels rendered")
+            }
+        }
     }
 
     override fun getItemCount(): Int {
