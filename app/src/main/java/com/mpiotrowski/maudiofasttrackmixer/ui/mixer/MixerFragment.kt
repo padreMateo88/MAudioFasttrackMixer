@@ -19,6 +19,7 @@ import com.mpiotrowski.maudiofasttrackmixer.databinding.FragmentMixerBinding
 import com.mpiotrowski.maudiofasttrackmixer.ui.MainViewModel
 import com.mpiotrowski.maudiofasttrackmixer.ui.presets.dialogs.OverwritePresetDialog.*
 import com.mpiotrowski.maudiofasttrackmixer.ui.presets.dialogs.ProgressBarDialog
+import com.mpiotrowski.maudiofasttrackmixer.util.LogUtil
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_mixer.*
 import javax.inject.Inject
@@ -52,7 +53,13 @@ class MixerFragment : DaggerFragment() {
         progressDialog = ProgressBarDialog(requireContext())
         progressDialog?.window?.setBackgroundDrawableResource(R.color.transparent)
         progressDialog?.show()
-        Handler().postDelayed({ progressDialog!!.dismiss() }, 2000)
+        Handler().postDelayed(
+            {
+                LogUtil.d("progressDialog timeout")
+                progressDialog!!.dismiss()
+            },
+            2000
+        )
     }
 
     private fun dismissProgressbar() {
