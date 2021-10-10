@@ -13,6 +13,9 @@ import android.os.IBinder
 import com.mpiotrowski.maudiofasttrackmixer.R
 import com.mpiotrowski.maudiofasttrackmixer.ui.MainActivity
 import dagger.android.DaggerService
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 const val DEVICE_INTENT_EXTRA = "deviceIntentExtra"
@@ -52,8 +55,10 @@ class UsbService : DaggerService() {
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
         val device: UsbDevice? = intent.getParcelableExtra(DEVICE_INTENT_EXTRA)
         device?.let {
-            usbController.connectDevice(applicationContext, device)
-            setDeviceConnectedBroadcast()
+            CoroutineScope(Dispatchers.Main).launch {
+                usbController.connectDevice(applicationContext, device)
+                setDeviceConnectedBroadcast()
+            }
         } ?: stopSelf()
 
         return START_STICKY
@@ -69,14 +74,15 @@ class UsbService : DaggerService() {
 
         usbDetachedReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context, intent: Intent) {
-                val action = intent.action
-                if (UsbManager.ACTION_USB_DEVICE_DETACHED == action) {
-                    val device: UsbDevice? = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE)
-                    if(device?.vendorId != USB_VENDOR_ID || device.productId != USB_PRODUCT_ID)
-                        return
-
-                    usbController.disconnectDevice()
-                    stopSelf()
+                    val action = intent.action
+                    if (UsbManager.ACTION_USB_DEVICE_DETACHED == action) {
+                        val device: UsbDevice? = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE)
+                        if(device?.vendorId != USB_VENDOR_ID || device.productId != USB_PRODUCT_ID)
+                            return
+                    CoroutineScope(Dispatchers.Main).launch {
+                        usbController.disconnectDevice()
+                        stopSelf()
+                    }
                 }
             }
         }

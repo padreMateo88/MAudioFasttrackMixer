@@ -9,9 +9,7 @@ import com.mpiotrowski.maudiofasttrackmixer.data.database.PresetsDatabase
 import com.mpiotrowski.maudiofasttrackmixer.util.LogUtil
 import dagger.Module
 import dagger.Provides
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import javax.inject.Singleton
 
 @Module
@@ -50,4 +48,14 @@ object AppModule {
     fun provideRepository(presetsDatabase: PresetsDatabase): Repository {
         return Repository(presetsDatabase.presetsDao())
     }
+
+    @JvmStatic
+    @Singleton
+    @Provides
+    fun provideUsbCoroutineScope(): CoroutineScope = GlobalScope
+
+    @JvmStatic
+    @Singleton
+    @Provides
+    fun provideUsbDispatcher(): CoroutineDispatcher = Dispatchers.IO
 }

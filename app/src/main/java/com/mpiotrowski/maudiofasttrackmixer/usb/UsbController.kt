@@ -8,55 +8,85 @@ import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.scene_components.FxSettings
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.scene_components.MasterChannel
 import com.mpiotrowski.maudiofasttrackmixer.usb.UsbConnectionHelper.Companion.VOLUME_MIN
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class UsbController @Inject constructor() {
+class UsbController @Inject constructor(val usbCoroutineScope: CoroutineScope, val usbCoroutineDispatcher: CoroutineDispatcher) {
 
     private var usbConnection: UsbConnectionHelper? = null
 
-    fun connectDevice(context: Context, device: UsbDevice) {
-        usbConnection = UsbConnectionHelper()
-        usbConnection?.connectDevice(context, device)
+    suspend fun connectDevice(context: Context, device: UsbDevice) {
+        withContext(usbCoroutineDispatcher){
+            usbConnection = UsbConnectionHelper()
+            usbConnection?.connectDevice(context, device)
+        }
     }
 
-    fun disconnectDevice() {
-        usbConnection?.disconnectDevice()
-        usbConnection = null
+    suspend fun disconnectDevice() {
+        withContext(usbCoroutineDispatcher) {
+            usbConnection?.disconnectDevice()
+            usbConnection = null
+        }
     }
 
     fun setChannelVolume(volume: Int, pan: Int, input: Int, outputPair: Int, masterVolume: Int, masterPan: Int, mute: Boolean) {
-        usbConnection?.setChannelVolume(volume, pan,input, outputPair, masterVolume, masterPan, mute)
+        usbCoroutineScope.launch(usbCoroutineDispatcher) {
+            usbConnection?.setChannelVolume(volume, pan,input, outputPair, masterVolume, masterPan, mute)
+        }
     }
 
     fun setFxSend(sendValue: Int, input: Int, channelVolume: Int, channelMute: Boolean ) {
-        usbConnection?.setFxSend(sendValue, input, channelVolume, channelMute)
+        usbCoroutineScope.launch(usbCoroutineDispatcher) {
+            usbConnection?.setFxSend(sendValue, input, channelVolume, channelMute)
+        }
     }
 
     fun setFxReturn(fxReturnValue: Int, masterChannel: MasterChannel) {
-        usbConnection?.setFxReturn(fxReturnValue, masterChannel.outputIndex, masterChannel.volume, masterChannel.panorama, masterChannel.mute)
+        usbCoroutineScope.launch(usbCoroutineDispatcher) {
+            usbConnection?.setFxReturn(
+                fxReturnValue,
+                masterChannel.outputIndex,
+                masterChannel.volume,
+                masterChannel.panorama,
+                masterChannel.mute
+            )
+        }
     }
 
     //1..127 linear
     fun setFxVolume(value: Int) {
-        usbConnection?.setFxVolume(value)
+        usbCoroutineScope.launch(usbCoroutineDispatcher) {
+            usbConnection?.setFxVolume(value)
+        }
     }
 
     fun setFxDuration(value: Int) {
-        usbConnection?.setFxDuration(value)
+        usbCoroutineScope.launch(usbCoroutineDispatcher) {
+            usbConnection?.setFxDuration(value)
+        }
     }
 
     fun setFxFeedback(value: Int) {
-        usbConnection?.setFxFeedback(value)
+        usbCoroutineScope.launch(usbCoroutineDispatcher) {
+            usbConnection?.setFxFeedback(value)
+        }
     }
 
     fun setFxType(fxType: FxSettings.FxType) {
-        usbConnection?.setFxType(fxType)
+        usbCoroutineScope.launch(usbCoroutineDispatcher) {
+            usbConnection?.setFxType(fxType)
+        }
     }
 
     fun setSampleRate(sampleRate: SampleRate) {
-        usbConnection?.setSampleRate(sampleRate)
+        usbCoroutineScope.launch(usbCoroutineDispatcher) {
+            usbConnection?.setSampleRate(sampleRate)
+        }
     }
 
     fun loadMixerState(scene: SceneWithComponents) {
