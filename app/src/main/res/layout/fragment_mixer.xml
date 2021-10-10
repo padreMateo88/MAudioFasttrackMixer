@@ -13,7 +13,7 @@
             name="mainViewModel"
             type="com.mpiotrowski.maudiofasttrackmixer.ui.MainViewModel"/>
     </data>
-    <com.mpiotrowski.maudiofasttrackmixer.ui.views.MyLinearLayout
+    <LinearLayout
         android:id="@+id/layoutMain"
         android:orientation="horizontal"
         android:gravity="center"
@@ -21,6 +21,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <LinearLayout
+            android:id="@+id/recyclerWrapperLayout"
             android:orientation="horizontal"
             android:layout_marginLeft="@dimen/dimen_4dp"
             android:layout_marginTop="@dimen/dimen_4dp"
@@ -68,7 +69,7 @@
 
                 <LinearLayout
                     android:id="@+id/linearLayout2"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:orientation="vertical"
@@ -191,5 +192,5 @@
                 android:orientation="horizontal"
                 android:overScrollMode="never" />
         </LinearLayout>
-    </com.mpiotrowski.maudiofasttrackmixer.ui.views.MyLinearLayout>
+    </LinearLayout>
 </layout>

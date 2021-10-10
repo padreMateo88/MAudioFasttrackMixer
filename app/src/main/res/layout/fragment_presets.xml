@@ -8,7 +8,7 @@
             type="com.mpiotrowski.maudiofasttrackmixer.ui.presets.PresetsViewModel"/>
     </data>
 
-    <com.mpiotrowski.maudiofasttrackmixer.ui.views.MyLinearLayout
+    <LinearLayout
         android:id="@+id/layoutMain"
         tools:ignore="RtlHardcoded"
         android:orientation="horizontal"
@@ -125,5 +125,5 @@
                 android:background="@drawable/button_unselected"
                 android:text="@string/button_save"/>
         </LinearLayout>
-    </com.mpiotrowski.maudiofasttrackmixer.ui.views.MyLinearLayout>
+    </LinearLayout>
 </layout>

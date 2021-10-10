@@ -23,7 +23,7 @@ import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_presets.*
 import javax.inject.Inject
 
-class PresetsFragment(): DaggerFragment(),
+class PresetsFragment : DaggerFragment(),
     AddPresetDialog.AddPresetListener {
 
     @Inject
