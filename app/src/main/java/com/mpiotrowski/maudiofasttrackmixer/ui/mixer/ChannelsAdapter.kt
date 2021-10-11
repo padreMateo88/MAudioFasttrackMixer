@@ -38,8 +38,7 @@ class ChannelsAdapter(
 
     override fun onBindViewHolder(holder: ChannelViewHolder, position: Int) {
         val channelsCount = viewModel.getAudioChannelsNumber()
-            //TODO
-        //holder.customView.root.layoutParams.width = if(channelsCount == 0) 0 else viewGroup.width/channelsCount
+        holder.customView.root.layoutParams.width = if(channelsCount == 0) 0 else viewGroup.width/channelsCount
         holder.customView.channelIndex = position
         holder.customView.root.post {
             renderedItemsCount++

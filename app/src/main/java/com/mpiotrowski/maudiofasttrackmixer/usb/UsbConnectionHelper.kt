@@ -117,7 +117,6 @@ class UsbConnectionHelper {
         if(logValue == 0 || channelMute)
             logValue = SEND_MIN
         val buffer = toReversedByteArray(logValue)
-        LogUtil.d( "SEND FX send: $sendValue coeff: $scaledCoefficient logValue: $logValue ")
         if(setVolume(input, 9, buffer) >= 0) {
             usbDeviceState?.fxSendsMap?.put(input, sendValue)
         }

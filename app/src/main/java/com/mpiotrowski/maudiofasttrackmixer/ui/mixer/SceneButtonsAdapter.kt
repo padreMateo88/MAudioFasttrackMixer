@@ -31,9 +31,8 @@ class SceneButtonsAdapter(private var viewModel: MixerViewModel): RecyclerView.A
     class SceneButtonViewHolder(val layout: LinearLayout) : RecyclerView.ViewHolder(layout)
 
     override fun onBindViewHolder(holder: SceneButtonViewHolder, position: Int) {
-//TODO
-//        holder.itemView.rootView.layoutParams.height = if (viewGroup.height > viewGroup.width) viewGroup.width/3 else viewGroup.height/3
-//        holder.itemView.rootView.layoutParams.width = viewGroup.width/3
+        holder.itemView.rootView.layoutParams.height = if (viewGroup.height > viewGroup.width) viewGroup.width/3 else viewGroup.height/3
+        holder.itemView.rootView.layoutParams.width = viewGroup.width/3
 
         holder.layout.button.text = (position + 1).toString()
         if(viewModel.getCurrentSceneOrder() == position + 1) {

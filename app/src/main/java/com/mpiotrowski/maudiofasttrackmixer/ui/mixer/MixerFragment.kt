@@ -1,6 +1,5 @@
 package com.mpiotrowski.maudiofasttrackmixer.ui.mixer
 
-import android.R
 import android.os.Bundle
 import android.os.Handler
 import android.view.LayoutInflater
@@ -127,24 +126,29 @@ class MixerFragment : DaggerFragment() {
             }
         }
         binding.recyclerViewChannels.setHasFixedSize(true)
-        binding.recyclerViewChannels.adapter = channelsAdapter
-        binding.recyclerViewChannels.requestDisallowInterceptTouchEvent(true)
+        binding.recyclerViewChannels.post {
+            binding.recyclerViewChannels.adapter = channelsAdapter
+            binding.recyclerViewChannels.requestDisallowInterceptTouchEvent(true)
+            mixerViewModel.audioChannels.observe(requireActivity(), Observer {
+                (binding.recyclerViewChannels.adapter as ChannelsAdapter).notifyDataSetChanged()
+            })
+        }
 
-        mixerViewModel.audioChannels.observe(requireActivity(), Observer {
-            (binding.recyclerViewChannels.adapter as ChannelsAdapter).notifyDataSetChanged()
-        })
+
     }
 
     private fun prepareSceneSelector() {
         val recyclerViewSceneButtons = binding.recyclerViewSceneButtons
         recyclerViewSceneButtons.isNestedScrollingEnabled = false
         recyclerViewSceneButtons.layoutManager = GridLayoutManager(context, 3)
-        val sceneButtonsAdapter = SceneButtonsAdapter(mixerViewModel)
-        sceneButtonsAdapter.setHasStableIds(true)
-        recyclerViewSceneButtons.adapter = sceneButtonsAdapter
-        mixerViewModel.currentScene.observe(requireActivity(), Observer {
-            (recyclerViewSceneButtons.adapter as SceneButtonsAdapter).notifyDataSetChanged()
-        })
+        recyclerViewSceneButtons.post {
+            val sceneButtonsAdapter = SceneButtonsAdapter(mixerViewModel)
+            sceneButtonsAdapter.setHasStableIds(true)
+            recyclerViewSceneButtons.adapter = sceneButtonsAdapter
+            mixerViewModel.currentScene.observe(requireActivity(), Observer {
+                (recyclerViewSceneButtons.adapter as SceneButtonsAdapter).notifyDataSetChanged()
+            })
+        }
     }
 
     companion object {

@@ -90,39 +90,49 @@ class UsbController @Inject constructor(val usbCoroutineScope: CoroutineScope, v
     }
 
     fun loadMixerState(scene: SceneWithComponents) {
+        usbCoroutineScope.launch(usbCoroutineDispatcher) {
+            usbConnection?.setFxFeedback(scene.scene.fxSettings.feedback)
+            usbConnection?.setFxType(scene.scene.fxSettings.fxType)
+            usbConnection?.setFxVolume(if (scene.scene.fxSettings.fxMute) 1 else scene.scene.fxSettings.volume)
+            usbConnection?.setFxDuration(scene.scene.fxSettings.duration)
+            for ((_, audioChannels) in scene.channelsByOutputsMap) {
+                for (audioChannel in audioChannels) {
+                    val masterChannel = scene.mastersByOutputsMap[audioChannel.outputIndex]
 
-        setFxFeedback(scene.scene.fxSettings.feedback)
-        setFxType(scene.scene.fxSettings.fxType)
-        setFxVolume(if(scene.scene.fxSettings.fxMute) 1 else scene.scene.fxSettings.volume)
-        setFxDuration(scene.scene.fxSettings.duration)
+                    val mute = when {
+                        masterChannel?.mute ?: false -> true
+                        audioChannel.solo -> false
+                        isAnySolo(audioChannels) -> true
+                        else -> audioChannel.mute
+                    }
 
-        for ((_, audioChannels) in scene.channelsByOutputsMap) {
-            for(audioChannel in audioChannels) {
-                val masterChannel = scene.mastersByOutputsMap[audioChannel.outputIndex]
-
-                val mute = when {
-                    masterChannel?.mute ?: false -> true
-                    audioChannel.solo -> false
-                    isAnySolo(audioChannels) -> true
-                    else -> audioChannel.mute
+                    usbConnection?.setChannelVolume(
+                        audioChannel.volume * 100, audioChannel.panorama, audioChannel.inputIndex,
+                        audioChannel.outputIndex, (masterChannel?.volume ?: 0) * 100,
+                        masterChannel?.panorama ?: 0, mute
+                    )
                 }
-
-                setChannelVolume(audioChannel.volume * 100, audioChannel.panorama, audioChannel.inputIndex,
-                    audioChannel.outputIndex,  (masterChannel?.volume  ?: 0) * 100,
-                    masterChannel?.panorama ?: 0, mute
+            }
+            for (fxSend in scene.fxSends) {
+                val audioChannel = scene.channelsByOutputsMap[1]?.get(fxSend.inputIndex - 1)
+                val channelVolume = audioChannel?.volume ?: VOLUME_MIN
+                val channelMute = audioChannel?.mute ?: false
+                usbConnection?.setFxSend(
+                    fxSend.volume * 100,
+                    fxSend.inputIndex,
+                    channelVolume * 100,
+                    channelMute
                 )
             }
-        }
-
-        for(fxSend in scene.fxSends) {
-            val audioChannel = scene.channelsByOutputsMap[1]?.get(fxSend.inputIndex - 1)
-            val channelVolume = audioChannel?.volume ?: VOLUME_MIN
-            val channelMute = audioChannel?.mute ?: false
-            setFxSend(fxSend.volume * 100, fxSend.inputIndex, channelVolume * 100, channelMute)
-        }
-
-        for(master in scene.masterChannels) {
-            setFxReturn(master.fxReturn * 100, master)
+            for (master in scene.masterChannels) {
+                usbConnection?.setFxReturn(
+                    master.fxReturn * 100,
+                    master.outputIndex,
+                    master.volume,
+                    master.panorama,
+                    master.mute
+                )
+            }
         }
     }
 
