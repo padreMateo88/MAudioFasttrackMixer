@@ -114,9 +114,10 @@ class UsbController @Inject constructor(val usbCoroutineScope: CoroutineScope, v
                 }
             }
             for (fxSend in scene.fxSends) {
+                val masterMute = scene.mastersByOutputsMap[1]?.volume == 0
                 val audioChannel = scene.channelsByOutputsMap[1]?.get(fxSend.inputIndex - 1)
                 val channelVolume = audioChannel?.volume ?: VOLUME_MIN
-                val channelMute = audioChannel?.mute ?: false
+                val channelMute = (audioChannel?.mute ?: false) || masterMute
                 usbConnection?.setFxSend(
                     fxSend.volume * 100,
                     fxSend.inputIndex,

@@ -56,7 +56,7 @@ class MixerFragment : DaggerFragment() {
         Handler().postDelayed(
             {
                 LogUtil.d("progressDialog timeout")
-                progressDialog!!.dismiss()
+                progressDialog?.dismiss()
             },
             2000
         )

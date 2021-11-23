@@ -113,9 +113,11 @@ class MixerViewModel @Inject constructor(private val repository: Repository, pri
     }
 
     private fun isAnySolo(): Boolean {
-        for(audioChannelItem in this.audioChannels.value!!) {
-            if(audioChannelItem.solo)
-                return true
+        this.audioChannels.value?.let {
+            for(audioChannelItem in it) {
+                if(audioChannelItem.solo)
+                    return true
+            }
         }
         return false
     }
@@ -148,13 +150,15 @@ class MixerViewModel @Inject constructor(private val repository: Repository, pri
         if(audioChannel.solo != isChecked)
             audioChannel.solo = isChecked
 
-        for(audioChannelItem in this.audioChannels.value!!) {
-            if (audioChannelItem.solo && audioChannelItem.inputIndex != audioChannel.inputIndex)
-                audioChannels.mutation {
-                    audioChannelItem.solo = false
-                }
+        this.audioChannels.value?.let {
+            for(audioChannelItem in it) {
+                if (audioChannelItem.solo && audioChannelItem.inputIndex != audioChannel.inputIndex)
+                    audioChannels.mutation {
+                        audioChannelItem.solo = false
+                    }
 
-            onChannelChanged(audioChannelItem)
+                onChannelChanged(audioChannelItem)
+            }
         }
     }
 
@@ -182,8 +186,10 @@ class MixerViewModel @Inject constructor(private val repository: Repository, pri
         currentState.value?.preset?.isDirty = true
         masterChannel.isDirty = true
         LogUtil.d("master volume ${masterChannel.volume}")
-        for(audioChannelItem in this.audioChannels.value!!) {
-            onChannelChanged(audioChannelItem)
+        this.audioChannels.value?.let {
+            for(audioChannelItem in it) {
+                onChannelChanged(audioChannelItem)
+            }
         }
         onFxReturnChanged(masterChannel)
     }

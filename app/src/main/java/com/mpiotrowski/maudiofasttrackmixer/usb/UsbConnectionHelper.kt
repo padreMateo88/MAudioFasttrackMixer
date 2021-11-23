@@ -107,14 +107,14 @@ class UsbConnectionHelper {
         }
         setVolumeRegardDeviceState(input,outputPair*2 - 1, leftLogValue)
         setVolumeRegardDeviceState(input,outputPair*2, rightLogValue)
-        setFxSend((usbDeviceState?.fxSendsMap?.get(input) ?: SEND_MIN ), input, volume, mute)
+        setFxSend((usbDeviceState?.fxSendsMap?.get(input) ?: SEND_MIN), input, volume, mute || (masterVolume == 0))
     }
 
     fun setFxSend(sendValue: Int, input: Int, channelVolume: Int, channelMute: Boolean) {
         val coefficient = channelVolume/ VOLUME_SCALE.toFloat()
         val scaledCoefficient = (coefficient - 1).pow(7) + 1
         var logValue = (scaledCoefficient*toLogScale(sendValue, SEND_MIN, SEND_DELTA, SEND_SCALE)).toInt()
-        if(logValue == 0 || channelMute)
+        if(channelVolume == 0 || channelMute)
             logValue = SEND_MIN
         val buffer = toReversedByteArray(logValue)
         if(setVolume(input, 9, buffer) >= 0) {
