@@ -90,7 +90,7 @@
                             android:gravity="center">
 
                             <ImageView
-                                android:src="@{mainViewModel.deviceOnline ? @drawable/radio_online : @drawable/radio_offline}"
+                                android:src="@{mainViewModel.deviceConnected ? @drawable/radio_online : @drawable/radio_offline}"
                                 android:layout_width="20dp"
                                 android:layout_height="20dp"
                                 android:checked="true"
@@ -98,8 +98,8 @@
 
                             <TextView
                                 android:layout_marginLeft="@dimen/dimen_4dp"
-                                android:textColor="@{mainViewModel.deviceOnline ? @color/greenOnline : @color/lighterGray}"
-                                android:text="@{mainViewModel.deviceOnline ? @string/device_online : @string/device_offline}"
+                                android:textColor="@{mainViewModel.deviceConnected ? @color/greenOnline : @color/lighterGray}"
+                                android:text="@{mainViewModel.deviceConnected ? @string/device_online : @string/device_offline}"
                                 android:layout_height="wrap_content"
                                 android:layout_width="wrap_content"/>
                         </LinearLayout>

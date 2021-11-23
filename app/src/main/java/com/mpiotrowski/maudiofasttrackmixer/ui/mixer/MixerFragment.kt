@@ -72,7 +72,7 @@ class MixerFragment : DaggerFragment() {
         binding.mainViewModel = mainViewModel
         prepareMeasuredViews()
 
-        mainViewModel.deviceOnline.observe(viewLifecycleOwner, Observer {
+        mainViewModel.deviceConfigured.observe(viewLifecycleOwner, {
             if(it) {
                 val currentScene = mixerViewModel.currentScene.value
                 if(currentScene != null)
@@ -80,7 +80,7 @@ class MixerFragment : DaggerFragment() {
             }
         })
 
-        mixerViewModel.muteFx.observe(viewLifecycleOwner, Observer {
+        mixerViewModel.muteFx.observe(viewLifecycleOwner, {
             mixerViewModel.onFxMuteChanged(it)
         })
 

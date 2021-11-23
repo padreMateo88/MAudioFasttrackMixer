@@ -27,11 +27,13 @@ class MainActivity : DaggerAppCompatActivity() {
     private var usbServiceConnection = object : ServiceConnection {
 
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
-            ///TODO
+            viewModel.deviceConnected.postValue(true)
         }
 
         override fun onServiceDisconnected(arg0: ComponentName) {
-            viewModel.deviceOnline.value = false
+            viewModel.deviceConnected.postValue(false)
+            viewModel.deviceConfigured.postValue(false)
+
         }
     }
 
@@ -60,7 +62,7 @@ class MainActivity : DaggerAppCompatActivity() {
     private fun registerDeviceConnectedReceiver() {
         deviceConnectedReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context, intent: Intent) {
-                viewModel.deviceOnline.postValue(true)
+                viewModel.deviceConfigured.postValue(true)
             }
         }
 
