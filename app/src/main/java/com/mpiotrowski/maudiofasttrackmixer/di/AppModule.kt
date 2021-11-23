@@ -23,7 +23,7 @@ object AppModule {
         val callback = object: RoomDatabase.Callback() {
             override fun onOpen(db: SupportSQLiteDatabase) {
                 super.onOpen(db)
-                LogUtil.d( "onOpen")
+                LogUtil.d( "RoomDatabase.onOpen")
                 CoroutineScope(Dispatchers.Default).launch(Dispatchers.IO) {
                     presetsDatabase.populateDatabase()
                 }

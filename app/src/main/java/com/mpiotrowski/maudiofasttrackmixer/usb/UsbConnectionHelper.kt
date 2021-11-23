@@ -161,37 +161,29 @@ class UsbConnectionHelper {
 
     //1..127 linear
     fun setFxVolume(value: Int) {
-        if (usbDeviceState?.sameFxVolume(value)?.not() == true) {
-            if(setFxParameter(FX_VOLUME, byteArrayOf(value.toByte()), 1) >= 0 ) {
-                usbDeviceState?.fxVolume = value
-            }
+        if(setFxParameter(FX_VOLUME, byteArrayOf(value.toByte()), 1) >= 0 ) {
+            usbDeviceState?.fxVolume = value
         }
     }
 
     //1..127 linear
     fun setFxDuration(value: Int) {
-        if(usbDeviceState?.sameFxDuration(value)?.not() == true) {
-            val byteArray = byteArrayOf(0.toByte(), value.toByte())
-            if(setFxParameter(FX_DURATION, byteArray, 2) >= 0) {
-                usbDeviceState?.fxDuration = value
-            }
+        val byteArray = byteArrayOf(0.toByte(), value.toByte())
+        if(setFxParameter(FX_DURATION, byteArray, 2) >= 0) {
+            usbDeviceState?.fxDuration = value
         }
     }
 
     //1..127 linear
     fun setFxFeedback(value: Int) {
-        if(usbDeviceState?.sameFxFeedback(value)?.not() == true) {
-            if(setFxParameter(FX_FEEDBACK, byteArrayOf(value.toByte()), 1) >= 0) {
-                usbDeviceState?.fxFeedback = value
-            }
+        if(setFxParameter(FX_FEEDBACK, byteArrayOf(value.toByte()), 1) >= 0) {
+            usbDeviceState?.fxFeedback = value
         }
     }
 
     fun setSampleRate(sampleRate: SampleRate) {
-        if(usbDeviceState?.sameSampleRate(sampleRate)?.not() == true) {
-            if(setSampleRate(sampleRate.buffer) >= 0) {
-                usbDeviceState?.sampleRate = sampleRate
-            }
+        if(setSampleRate(sampleRate.buffer) >= 0) {
+            usbDeviceState?.sampleRate = sampleRate
         }
     }
 

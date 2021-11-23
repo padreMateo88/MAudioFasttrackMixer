@@ -55,16 +55,4 @@ class UsbDeviceState {
         return this.fxType == fxType
     }
 
-    fun sameFxDuration(fxDuration: Int):Boolean {
-        return this.fxDuration == fxDuration
-    }
-
-    fun sameFxFeedback(fxFeedback: Int):Boolean {
-        return this.fxFeedback == fxFeedback
-    }
-
-    fun sameFxVolume(fxVolume: Int):Boolean {
-        return this.fxVolume == fxVolume
-    }
-
 }

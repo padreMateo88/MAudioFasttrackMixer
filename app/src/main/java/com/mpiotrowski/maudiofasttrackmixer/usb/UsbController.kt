@@ -21,7 +21,7 @@ class UsbController @Inject constructor(val usbCoroutineScope: CoroutineScope, v
     private var usbConnection: UsbConnectionHelper? = null
 
     suspend fun connectDevice(context: Context, device: UsbDevice) {
-        withContext(usbCoroutineDispatcher){
+        withContext(usbCoroutineDispatcher) {
             usbConnection = UsbConnectionHelper()
             usbConnection?.connectDevice(context, device)
         }
@@ -91,8 +91,8 @@ class UsbController @Inject constructor(val usbCoroutineScope: CoroutineScope, v
 
     fun loadMixerState(scene: SceneWithComponents) {
         usbCoroutineScope.launch(usbCoroutineDispatcher) {
-            usbConnection?.setFxFeedback(scene.scene.fxSettings.feedback)
             usbConnection?.setFxType(scene.scene.fxSettings.fxType)
+            usbConnection?.setFxFeedback(scene.scene.fxSettings.feedback)
             usbConnection?.setFxVolume(if (scene.scene.fxSettings.fxMute) 1 else scene.scene.fxSettings.volume)
             usbConnection?.setFxDuration(scene.scene.fxSettings.duration)
             for ((_, audioChannels) in scene.channelsByOutputsMap) {

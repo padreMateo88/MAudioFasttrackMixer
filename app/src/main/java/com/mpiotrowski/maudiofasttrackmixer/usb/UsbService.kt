@@ -47,9 +47,8 @@ class UsbService : DaggerService() {
     }
 
     private fun setDeviceConnectedBroadcast() {
-        val intent = Intent(MainActivity.deviceConnectedAction)
+        val intent = Intent(MainActivity.DEVICE_CONNECTED_ACTION)
         sendBroadcast(intent)
-
     }
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
@@ -60,7 +59,6 @@ class UsbService : DaggerService() {
                 setDeviceConnectedBroadcast()
             }
         } ?: stopSelf()
-
         return START_STICKY
     }
 
