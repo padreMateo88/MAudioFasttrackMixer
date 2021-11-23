@@ -11,9 +11,7 @@ import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.ui.setupWithNavController
 import com.mpiotrowski.maudiofasttrackmixer.R
-import com.mpiotrowski.maudiofasttrackmixer.usb.DEVICE_INTENT_EXTRA
-import com.mpiotrowski.maudiofasttrackmixer.usb.UsbController
-import com.mpiotrowski.maudiofasttrackmixer.usb.UsbService
+import com.mpiotrowski.maudiofasttrackmixer.usb.*
 import dagger.android.support.DaggerAppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
@@ -21,13 +19,15 @@ import javax.inject.Inject
 class MainActivity : DaggerAppCompatActivity() {
 
     companion object {
-        const val deviceConnectedAction = "com.mpiotrowski.maudiofasttrackmixer.deviceConnected"
+        const val DEVICE_CONNECTED_ACTION = "com.mpiotrowski.maudiofasttrackmixer.deviceConnected"
     }
+
+    private var deviceConnectedReceiver: BroadcastReceiver? = null
 
     private var usbServiceConnection = object : ServiceConnection {
 
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
-            viewModel.deviceOnline.postValue(true)
+            ///TODO
         }
 
         override fun onServiceDisconnected(arg0: ComponentName) {
@@ -54,6 +54,19 @@ class MainActivity : DaggerAppCompatActivity() {
         val navController = Navigation.findNavController(this, R.id.nav_host_fragment)
         setupBottomNavMenu(navController)
         connectUsb(intent)
+        registerDeviceConnectedReceiver()
+    }
+
+    private fun registerDeviceConnectedReceiver() {
+        deviceConnectedReceiver = object : BroadcastReceiver() {
+            override fun onReceive(context: Context, intent: Intent) {
+                viewModel.deviceOnline.postValue(true)
+            }
+        }
+
+        val filter = IntentFilter()
+        filter.addAction(DEVICE_CONNECTED_ACTION)
+        registerReceiver(deviceConnectedReceiver, filter)
     }
 
     private fun connectUsb(intent: Intent?) {
@@ -83,6 +96,9 @@ class MainActivity : DaggerAppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
+
+        unregisterReceiver(deviceConnectedReceiver)
+        deviceConnectedReceiver = null
 
         if (isServiceBound) {
             unbindService(usbServiceConnection)
