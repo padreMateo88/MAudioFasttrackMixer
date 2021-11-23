@@ -49,6 +49,16 @@ class SettingsViewModel @Inject constructor(repository: Repository, private var 
         currentState.value?.preset?.isDirty = true
         LogUtil.d( "fxType $fxType")
         usbController.setFxType(fxType)
+
+        fxSettings.value?.feedback?.let {
+            onFxFeedbackChanged(it)
+        }
+        fxSettings.value?.volume?.let {
+            onFxVolumeChanged(it)
+        }
+        fxSettings.value?.duration?.let {
+            onFxDurationChanged(it)
+        }
     }
 
     fun onSampleRateChanged(sampleRate: SampleRate) {
