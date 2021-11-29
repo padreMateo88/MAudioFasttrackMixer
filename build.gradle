@@ -22,6 +22,7 @@ buildscript {
         lifecycle_compiler_version = "2.3.1"
         nav_version = "2.3.5"
         daggerVersion = "2.27"
+        hamcrestVersion = "2.2"
     }
 
     repositories {
