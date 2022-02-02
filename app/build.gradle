@@ -75,5 +75,5 @@ dependencies {
     testImplementation "org.hamcrest:hamcrest:$hamcrestVersion"
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutinesTestVersion"
     androidTestImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutinesTestVersion"
-    testImplementation "androidx.arch.core:core-testing:$archCoreTestingVersion"
+    androidTestImplementation "androidx.arch.core:core-testing:$archCoreTestingVersion"
 }
