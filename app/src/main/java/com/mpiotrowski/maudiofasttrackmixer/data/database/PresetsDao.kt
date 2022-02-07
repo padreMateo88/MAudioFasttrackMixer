@@ -19,7 +19,7 @@ interface PresetsDao {
 
     @Transaction
     @Query("SELECT * FROM Preset WHERE presetId = :presetId")
-    fun getPreset(presetId: String): List<PresetWithScenes>
+    fun getPreset(presetId: String): PresetWithScenes?
 
     @Query("SELECT * FROM CurrentPreset WHERE id = $CURRENT_PRESET_ID")
     suspend fun getCurrentPreset(): List<CurrentPreset>

@@ -9,10 +9,13 @@ import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.CurrentPreset
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.LAST_PERSISTED_STATE_NAME
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.Preset
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.PresetWithScenes
+import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.Scene
+import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.SceneWithComponents
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.scene_components.FxSettings
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.hamcrest.CoreMatchers
+import org.hamcrest.CoreMatchers.nullValue
 import org.hamcrest.MatcherAssert
 import org.junit.After
 import org.junit.Before
@@ -46,7 +49,7 @@ class PresetsDatabaseTest {
         presetsDatabase.close()
     }
 
-    //region @GET tests
+    //region @Query tests
 
     @ExperimentalCoroutinesApi
     @Test
@@ -67,9 +70,9 @@ class PresetsDatabaseTest {
         val testPreset = Preset(presetName = "testPreset")
         val testPresetId = testPreset.presetId
         presetsDao.addPreset(testPreset)
-        val presetsMap =  presetsDao.getPreset(testPresetId).map{it.preset.presetId to it}.toMap()
-        MatcherAssert.assertThat( presetsMap.containsKey(testPresetId), CoreMatchers.`is`(true))
-        MatcherAssert.assertThat( presetsMap[testPresetId]?.preset?.presetName, CoreMatchers.`is`("testPreset"))
+        val presetFromDatabase =  presetsDao.getPreset(testPresetId)
+        MatcherAssert.assertThat( presetFromDatabase, CoreMatchers.not(nullValue()))
+        MatcherAssert.assertThat( presetFromDatabase?.preset?.presetName, CoreMatchers.`is`("testPreset"))
     }
 
     @ExperimentalCoroutinesApi
@@ -120,9 +123,9 @@ class PresetsDatabaseTest {
         MatcherAssert.assertThat( currentPreset.preset.presetName, CoreMatchers.`is`(LAST_PERSISTED_STATE_NAME))
     }
 
-    //endregion @GET tests
+    //endregion @Query tests
 
-    //region @INSERT tests
+    //region @Insert tests
 
     @ExperimentalCoroutinesApi
     @Test
@@ -145,12 +148,9 @@ class PresetsDatabaseTest {
 
         presetsDao.insertPresetWithScenes(presetWithScenes)
 
-        val presetsMap =  presetsDao.getPreset(testPresetId).map{it.preset.presetId to it}.toMap()
+        val presetFromDatabase =  presetsDao.getPreset(testPresetId)
+        MatcherAssert.assertThat( presetFromDatabase, CoreMatchers.not(nullValue()))
 
-        MatcherAssert.assertThat( presetsMap.size, CoreMatchers.`is`(1))
-        MatcherAssert.assertThat( presetsMap.containsKey(testPresetId), CoreMatchers.`is`(true))
-
-        val presetFromDatabase = presetsMap[testPreset.presetId]
         val sceneFromDatabase = presetFromDatabase?.scenes?.get(0)?.scene
 
         MatcherAssert.assertThat(sceneFromDatabase?.sceneName, CoreMatchers.`is`(insertedScene.scene.sceneName))
@@ -178,12 +178,9 @@ class PresetsDatabaseTest {
 
         presetsDao.insertPresetWithScenes(presetWithScenes)
 
-        val presetsMap =  presetsDao.getPreset(testPresetId).map{it.preset.presetId to it}.toMap()
+        val presetFromDatabase =  presetsDao.getPreset(testPresetId)
+        MatcherAssert.assertThat( presetFromDatabase, CoreMatchers.not(nullValue()))
 
-        MatcherAssert.assertThat( presetsMap.size, CoreMatchers.`is`(1))
-        MatcherAssert.assertThat( presetsMap.containsKey(testPresetId), CoreMatchers.`is`(true))
-
-        val presetFromDatabase = presetsMap[testPreset.presetId]
         val fxSendFromDatabase = presetFromDatabase?.scenes?.get(0)?.fxSends?.get(0)
 
 
@@ -209,12 +206,9 @@ class PresetsDatabaseTest {
 
         presetsDao.insertPresetWithScenes(presetWithScenes)
 
-        val presetsMap =  presetsDao.getPreset(testPresetId).map{it.preset.presetId to it}.toMap()
+        val presetFromDatabase =  presetsDao.getPreset(testPresetId)
+        MatcherAssert.assertThat( presetFromDatabase, CoreMatchers.not(nullValue()))
 
-        MatcherAssert.assertThat( presetsMap.size, CoreMatchers.`is`(1))
-        MatcherAssert.assertThat( presetsMap.containsKey(testPresetId), CoreMatchers.`is`(true))
-
-        val presetFromDatabase = presetsMap[testPreset.presetId]
         val masterChannelFromDatabase = presetFromDatabase?.scenes?.get(0)?.masterChannels?.get(0)
 
         MatcherAssert.assertThat( masterChannelFromDatabase?.volume , CoreMatchers.`is`( insertedMasterChannel.volume))
@@ -244,12 +238,9 @@ class PresetsDatabaseTest {
 
         presetsDao.insertPresetWithScenes(presetWithScenes)
 
-        val presetsMap =  presetsDao.getPreset(testPresetId).map{it.preset.presetId to it}.toMap()
+        val presetFromDatabase =  presetsDao.getPreset(testPresetId)
+        MatcherAssert.assertThat( presetFromDatabase, CoreMatchers.not(nullValue()))
 
-        MatcherAssert.assertThat( presetsMap.size, CoreMatchers.`is`(1))
-        MatcherAssert.assertThat( presetsMap.containsKey(testPresetId), CoreMatchers.`is`(true))
-
-        val presetFromDatabase = presetsMap[testPreset.presetId]
         val audioChannelFromDatabase = presetFromDatabase?.scenes?.get(0)?.audioChannels?.get(0)
 
         MatcherAssert.assertThat( audioChannelFromDatabase?.volume, CoreMatchers.`is`(insertedAudioChannel.volume))
@@ -260,7 +251,199 @@ class PresetsDatabaseTest {
         MatcherAssert.assertThat( audioChannelFromDatabase?.solo, CoreMatchers.`is`(insertedAudioChannel.solo))
     }
 
+    //endregion @Insert tests
 
-    //endregion @INSERT tests
+    //region @Update tests
+
+    @ExperimentalCoroutinesApi
+    @Test
+    @Throws(Exception::class)
+    fun updatePresetWithComponents_updateScene_sceneUpdatedCorrectly() = runTest {
+        val testPreset = Preset(presetName = "TestPreset")
+        val testPresetId = testPreset.presetId
+        val presetWithScenes = PresetWithScenes.newInstance(testPreset)
+        presetsDao.insertPresetWithScenes(presetWithScenes)
+
+        val presetToUpdate = presetsDao.getPreset(testPresetId)
+        val sceneToUpdate = presetToUpdate?.scenes?.get(0)
+
+        sceneToUpdate?.scene?.sceneName = "TestScene"
+        sceneToUpdate?.scene?.sceneOrder = 5
+        sceneToUpdate?.scene?.fxSettings?.duration = 40
+        sceneToUpdate?.scene?.fxSettings?.feedback = 50
+        sceneToUpdate?.scene?.fxSettings?.volume = 60
+        sceneToUpdate?.scene?.fxSettings?.fxMute = true
+        sceneToUpdate?.scene?.fxSettings?.fxType = FxSettings.FxType.ROOM3
+
+        presetToUpdate?.let {
+            presetsDao.updatePresetWithScenes(it, true)
+        }
+
+        val updatedPreset =  presetsDao.getPreset(testPresetId)
+
+        val updatedScene = updatedPreset?.scenes?.get(0)?.scene
+
+        MatcherAssert.assertThat(updatedScene?.sceneName, CoreMatchers.`is`(sceneToUpdate?.scene?.sceneName))
+        MatcherAssert.assertThat(updatedScene?.sceneOrder, CoreMatchers.`is`( sceneToUpdate?.scene?.sceneOrder))
+        MatcherAssert.assertThat(updatedScene?.fxSettings?.duration, CoreMatchers.`is`( sceneToUpdate?.scene?.fxSettings?.duration))
+        MatcherAssert.assertThat(updatedScene?.fxSettings?.feedback, CoreMatchers.`is`( sceneToUpdate?.scene?.fxSettings?.feedback))
+        MatcherAssert.assertThat(updatedScene?.fxSettings?.volume, CoreMatchers.`is`( sceneToUpdate?.scene?.fxSettings?.volume))
+        MatcherAssert.assertThat(updatedScene?.fxSettings?.fxMute, CoreMatchers.`is`( sceneToUpdate?.scene?.fxSettings?.fxMute))
+        MatcherAssert.assertThat(updatedScene?.fxSettings?.fxType, CoreMatchers.`is`( sceneToUpdate?.scene?.fxSettings?.fxType))
+
+    }
+
+    @ExperimentalCoroutinesApi
+    @Test
+    @Throws(Exception::class)
+    fun updatePresetWithComponents_updateFxSends_fxSendsUpdatedCorrectly() = runTest {
+        val testPreset = Preset(presetName = "TestPreset")
+        val testPresetId = testPreset.presetId
+        val presetWithScenes = PresetWithScenes.newInstance(testPreset)
+        presetsDao.insertPresetWithScenes(presetWithScenes)
+
+        val presetToUpdate = presetsDao.getPreset(testPresetId)
+        val fxSendToUpdate = presetToUpdate?.scenes?.get(0)?.fxSends?.get(0)
+
+        fxSendToUpdate?.volume = 50
+        fxSendToUpdate?.isDirty = true
+        fxSendToUpdate?.inputIndex = 2
+
+        presetToUpdate?.let {
+            presetsDao.updatePresetWithScenes(it, true)
+        }
+
+        val updatedPreset =  presetsDao.getPreset(testPresetId)
+
+        val fxSendFromDatabase = updatedPreset?.scenes?.get(0)?.fxSends?.get(0)
+
+        MatcherAssert.assertThat(fxSendFromDatabase?.volume, CoreMatchers.`is`( fxSendToUpdate?.volume))
+        MatcherAssert.assertThat(fxSendFromDatabase?.inputIndex, CoreMatchers.`is`( fxSendToUpdate?.inputIndex))
+
+    }
+
+    @ExperimentalCoroutinesApi
+    @Test
+    @Throws(Exception::class)
+    fun updatePresetWithComponents_updateMasterChannel_masterChannelUpdatedCorrectly() = runTest {
+        val testPreset = Preset(presetName = "TestPreset")
+        val testPresetId = testPreset.presetId
+        val presetWithScenes = PresetWithScenes.newInstance(testPreset)
+        presetsDao.insertPresetWithScenes(presetWithScenes)
+
+        val presetToUpdate = presetsDao.getPreset(testPresetId)
+
+        val masterChannelToUpdate = presetToUpdate?.scenes?.get(0)?.masterChannels?.get(0)
+
+        masterChannelToUpdate?.outputIndex = 1
+        masterChannelToUpdate?.volume = 20
+        masterChannelToUpdate?.fxReturn = 30
+        masterChannelToUpdate?.panorama = 40
+        masterChannelToUpdate?.mute = true
+
+        presetToUpdate?.let {
+            presetsDao.updatePresetWithScenes(it, true)
+        }
+
+        val presetFromDatabase =  presetsDao.getPreset(testPresetId)
+
+        val masterChannelFromDatabase = presetFromDatabase?.scenes?.get(0)?.masterChannels?.get(0)
+
+        MatcherAssert.assertThat( masterChannelFromDatabase?.volume , CoreMatchers.`is`( masterChannelToUpdate?.volume))
+        MatcherAssert.assertThat( masterChannelFromDatabase?.fxReturn , CoreMatchers.`is`( masterChannelToUpdate?.fxReturn))
+        MatcherAssert.assertThat( masterChannelFromDatabase?.isDirty , CoreMatchers.`is`( masterChannelToUpdate?.isDirty))
+        MatcherAssert.assertThat( masterChannelFromDatabase?.mute , CoreMatchers.`is`( masterChannelToUpdate?.mute))
+        MatcherAssert.assertThat( masterChannelFromDatabase?.panorama , CoreMatchers.`is`( masterChannelToUpdate?.panorama))
+        MatcherAssert.assertThat( masterChannelFromDatabase?.outputIndex , CoreMatchers.`is`( masterChannelToUpdate?.outputIndex))
+
+    }
+
+    @ExperimentalCoroutinesApi
+    @Test
+    @Throws(Exception::class)
+    fun updatePresetWithComponents_updateAudioChannel_audioChannelUpdatedCorrectly() = runTest {
+        val testPreset = Preset(presetName = "TestPreset")
+        val testPresetId = testPreset.presetId
+        val presetWithScenes = PresetWithScenes.newInstance(testPreset)
+        presetsDao.insertPresetWithScenes(presetWithScenes)
+
+        val presetToUpdate = presetsDao.getPreset(testPresetId)
+
+        val audioChannelToUpdate = presetToUpdate?.scenes?.get(0)?.audioChannels?.get(0)
+
+        audioChannelToUpdate?.volume = 50
+        audioChannelToUpdate?.outputIndex = 1
+        audioChannelToUpdate?.inputIndex = 2
+        audioChannelToUpdate?.panorama = 60
+        audioChannelToUpdate?.mute = true
+        audioChannelToUpdate?.solo = true
+
+        presetToUpdate?.let {
+            presetsDao.updatePresetWithScenes(it, true)
+        }
+
+        val presetFromDatabase =  presetsDao.getPreset(testPresetId)
+
+        val audioChannelFromDatabase = presetFromDatabase?.scenes?.get(0)?.audioChannels?.get(0)
+
+        MatcherAssert.assertThat( audioChannelFromDatabase?.volume, CoreMatchers.`is`(audioChannelToUpdate?.volume))
+        MatcherAssert.assertThat( audioChannelFromDatabase?.outputIndex, CoreMatchers.`is`(audioChannelToUpdate?.outputIndex ))
+        MatcherAssert.assertThat( audioChannelFromDatabase?.inputIndex, CoreMatchers.`is`(audioChannelToUpdate?.inputIndex ))
+        MatcherAssert.assertThat( audioChannelFromDatabase?.panorama, CoreMatchers.`is`(audioChannelToUpdate?.panorama))
+        MatcherAssert.assertThat( audioChannelFromDatabase?.mute, CoreMatchers.`is`(audioChannelToUpdate?.mute))
+        MatcherAssert.assertThat( audioChannelFromDatabase?.solo, CoreMatchers.`is`(audioChannelToUpdate?.solo))
+
+    }
+
+    @ExperimentalCoroutinesApi
+    @Test
+    @Throws(Exception::class)
+    fun deletePreset_afterPresetDeleted_presetNotPresentInDatabase() = runTest {
+        val testPreset = Preset(presetName = "TestPreset")
+        val testPresetId = testPreset.presetId
+        val presetWithScenes = PresetWithScenes.newInstance(testPreset)
+        presetsDao.insertPresetWithScenes(presetWithScenes)
+        val presetFromDatabase = presetsDao.getPreset(testPresetId)
+        MatcherAssert.assertThat( presetFromDatabase, CoreMatchers.not(nullValue()))
+        presetsDao.deletePreset(testPreset)
+        val presetFromDatabaseAfterDelete = presetsDao.getPreset(testPresetId)
+        MatcherAssert.assertThat( presetFromDatabaseAfterDelete, CoreMatchers.`is`(nullValue()))
+    }
+
+    @ExperimentalCoroutinesApi
+    @Test
+    @Throws(Exception::class)
+    fun deleteScene_afterSceneDeleted_sceneNotPresentInDatabase() = runTest {
+        val testPreset = Preset(presetName = "TestPreset")
+        val testPresetId = testPreset.presetId
+        val presetWithScenes = PresetWithScenes.newInstance(testPreset)
+        presetsDao.insertPresetWithScenes(presetWithScenes)
+        val presetFromDatabase = presetsDao.getPreset(testPresetId)
+        val sceneToDelete = presetFromDatabase?.scenes?.get(index = 0)
+        val deletedSceneId = sceneToDelete?.scene?.sceneId
+
+        var sceneBeforeDelete: SceneWithComponents? = null
+
+        deletedSceneId?.toInt()?.let {
+            sceneBeforeDelete =
+                presetFromDatabase.scenes.map { sceneWithComponents -> sceneWithComponents.scene.sceneId to sceneWithComponents }[it].second
+        }
+
+        MatcherAssert.assertThat( sceneBeforeDelete, CoreMatchers.not(nullValue()))
+
+        sceneToDelete?.scene?.let {
+            presetsDao.deleteScene(it)
+        }
+
+        var deletedScene: SceneWithComponents? = presetWithScenes.scenes[0]
+
+        deletedSceneId?.toInt()?.let{
+            deletedScene = presetsDao.getPreset("TestPreset")?.scenes?.map { sceneWithComponents -> sceneWithComponents.scene.sceneId to sceneWithComponents}?.get(it)?.second
+        }
+
+        MatcherAssert.assertThat( deletedScene, CoreMatchers.`is`(nullValue()))
+    }
+
+    //region @Update tests
 
 }

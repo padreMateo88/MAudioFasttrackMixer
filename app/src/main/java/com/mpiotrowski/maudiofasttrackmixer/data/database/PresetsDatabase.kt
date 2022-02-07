@@ -28,12 +28,12 @@ abstract class PresetsDatabase : RoomDatabase() {
     suspend fun populateDatabase() {
         val presetsDao = presetsDao()
         val defaultPreset = presetsDao.getPreset(DEFAULT_PRESET_ID)
-        if(defaultPreset.isEmpty()) {
+        if(defaultPreset == null) {
             presetsDao.addPreset(Preset(presetId = DEFAULT_PRESET_ID, presetName = DEFAULT_PRESET_NAME))
         }
 
         val currentState = presetsDao.getPreset(LAST_PERSISTED_STATE_ID)
-        if(currentState.isEmpty()) {
+        if(currentState == null) {
             presetsDao.addPreset(Preset(presetId = LAST_PERSISTED_STATE_ID, presetName = LAST_PERSISTED_STATE_NAME))
         }
 
