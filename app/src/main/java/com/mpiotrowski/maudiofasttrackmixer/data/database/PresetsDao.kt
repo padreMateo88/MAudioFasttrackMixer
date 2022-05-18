@@ -22,7 +22,7 @@ interface PresetsDao {
     fun getPreset(presetId: String): PresetWithScenes?
 
     @Query("SELECT * FROM CurrentPreset WHERE id = $CURRENT_PRESET_ID")
-    suspend fun getCurrentPreset(): List<CurrentPreset>
+    suspend fun getCurrentPreset(): CurrentPreset?
 
     @Query("SELECT * FROM Preset WHERE presetId in (SELECT presetId FROM CurrentPreset WHERE id = $CURRENT_PRESET_ID)")
     suspend fun getCurrentPresetInstance(): PresetWithScenes

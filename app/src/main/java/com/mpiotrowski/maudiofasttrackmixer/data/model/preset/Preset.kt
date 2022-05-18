@@ -7,7 +7,7 @@ import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.
 import java.util.*
 
 const val LAST_PERSISTED_STATE_ID = "LAST_PERSISTED_STATE"
-const val LAST_PERSISTED_STATE_NAME = ""
+const val LAST_PERSISTED_STATE_NAME = "Saved device state"
 
 const val DEFAULT_PRESET_ID = "DEFAULT_PRESET"
 const val DEFAULT_PRESET_NAME = "Default preset"

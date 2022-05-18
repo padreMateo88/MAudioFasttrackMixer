@@ -9,9 +9,9 @@ import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.CurrentPreset
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.LAST_PERSISTED_STATE_NAME
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.Preset
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.PresetWithScenes
-import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.Scene
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.SceneWithComponents
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.scene_components.FxSettings
+import com.mpiotrowski.maudiofasttrackmixer.getOrAwaitValue
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.hamcrest.CoreMatchers
@@ -82,8 +82,8 @@ class PresetsDatabaseTest {
         presetsDao.insertCurrentPreset(CurrentPreset(presetId = "testId1"))
         val currentPreset = presetsDao.getCurrentPreset()
 
-        MatcherAssert.assertThat( currentPreset.size, CoreMatchers.`is`(1))
-        MatcherAssert.assertThat( currentPreset[0].presetId, CoreMatchers.`is`("testId1"))
+        MatcherAssert.assertThat( currentPreset, CoreMatchers.not(nullValue()))
+        MatcherAssert.assertThat( currentPreset?.presetId, CoreMatchers.`is`("testId1"))
     }
 
     @ExperimentalCoroutinesApi

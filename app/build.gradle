@@ -33,6 +33,15 @@ android {
             jvmTarget = JavaVersion.VERSION_1_8.toString()
         }
     }
+
+    testOptions {
+        unitTests.returnDefaultValues = true
+    }
+
+    kapt {
+        correctErrorTypes = true
+    }
+
 }
 
 dependencies {
@@ -43,6 +52,9 @@ dependencies {
     implementation "androidx.constraintlayout:constraintlayout:$constraintlayout_version"
     androidTestImplementation "androidx.test.ext:junit:$junit_test_version"
     androidTestImplementation "androidx.test.espresso:espresso-core:$espress_core_version"
+    testImplementation "org.mockito:mockito-core:$mockitoVersion"
+    androidTestImplementation "org.mockito:mockito-core:$mockitoVersion"
+    androidTestImplementation "com.linkedin.dexmaker:dexmaker-mockito:$dexMakerVersion"
     //RecyclerView
     implementation "androidx.recyclerview:recyclerview:$recyclerview_version"
     implementation "androidx.recyclerview:recyclerview-selection:$recyclerview_selection_version"
@@ -76,4 +88,5 @@ dependencies {
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutinesTestVersion"
     androidTestImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutinesTestVersion"
     androidTestImplementation "androidx.arch.core:core-testing:$archCoreTestingVersion"
+    testImplementation "androidx.arch.core:core-testing:$archCoreTestingVersion"
 }

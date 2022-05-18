@@ -16,6 +16,7 @@ class Repository(private val presetsDao: PresetsDao) {
     private val _sceneLoadedEvent = MutableLiveData<Event<Int>>()
     private val _currentModelState = MediatorLiveData<PresetWithScenes>()
     private val _currentScene = MediatorLiveData<SceneWithComponents>()
+    private val _persistedState = presetsDao.getPersistedState()
 
     val presetsWithScenes
         get() = presetsDao.getPresetsWithScenes()
@@ -27,6 +28,8 @@ class Repository(private val presetsDao: PresetsDao) {
         get() = _currentScene
 
     init {
+        _persistedState.observeForever {}
+
         _currentScene.addSource(_currentModelState) { value ->
             if(value != null) {
                 val scenesById = value.scenes.map { it.scene.sceneId to it }.toMap()
@@ -38,7 +41,7 @@ class Repository(private val presetsDao: PresetsDao) {
             }
         }
 
-        _currentModelState.addSource(presetsDao.getPersistedState()) {
+        _currentModelState.addSource(_persistedState) {
             if(_currentModelState.value == null)
                 _currentModelState.value = it
         }
@@ -53,10 +56,7 @@ class Repository(private val presetsDao: PresetsDao) {
 
     suspend fun getCurrentPresetId(): String {
         val currentPresetList = presetsDao.getCurrentPreset()
-        return if(currentPresetList.isEmpty())
-            ""
-        else
-            currentPresetList[0].presetId
+        return currentPresetList?.presetId ?: ""
     }
 
     fun setSelectedScene(sceneIndex :Int) {
@@ -132,7 +132,7 @@ class Repository(private val presetsDao: PresetsDao) {
 //endregion save
 
 //endregion remove
-    suspend fun deletePreset(preset: Preset) {
+    fun deletePreset(preset: Preset) {
         presetsDao.deletePreset(preset)
     }
 //endregion remove

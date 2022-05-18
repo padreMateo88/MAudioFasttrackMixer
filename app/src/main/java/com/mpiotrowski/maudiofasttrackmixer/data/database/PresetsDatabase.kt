@@ -18,7 +18,8 @@ import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.
         FxSend::class,
         CurrentPreset::class
     ],
-    version = 3
+    version = 3,
+    exportSchema = false
 )
 @TypeConverters(Converters::class)
 abstract class PresetsDatabase : RoomDatabase() {
@@ -38,7 +39,7 @@ abstract class PresetsDatabase : RoomDatabase() {
         }
 
         val currentPreset = presetsDao.getCurrentPreset()
-        if(currentPreset.isEmpty()) {
+        if(currentPreset == null) {
             presetsDao.insertCurrentPreset(CurrentPreset(presetId = DEFAULT_PRESET_ID))
         }
     }

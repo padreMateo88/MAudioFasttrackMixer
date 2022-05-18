@@ -1,4 +1,4 @@
-package com.mpiotrowski.maudiofasttrackmixer.data.database
+package com.mpiotrowski.maudiofasttrackmixer
 
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LiveData

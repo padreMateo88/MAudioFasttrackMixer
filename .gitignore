@@ -339,3 +339,4 @@ $RECYCLE.BIN/
 /gradlew
 /gradlew.bat
 /.idea/deploymentTargetDropDown.xml
+/app/.idea
