@@ -1,7 +1,6 @@
 package com.mpiotrowski.maudiofasttrackmixer.data
 
 import android.content.Context
-import android.util.Log
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
@@ -72,7 +71,6 @@ class RepositoryAndroidTest {
     fun  setCurrentPreset_currentModelStateUpdated() = runTest {
         val presetNameTestValue = "TestPreset"
         val presetToLoad = PresetWithScenes.newInstance(Preset(presetName = presetNameTestValue))
-        Log.d("MPdebug", "TEST presisted sate ${presetsDao.getPersistedState().getOrAwaitValue()?.preset?.presetName}")
         repository.setCurrentPreset(presetToLoad)
         val presetNameInRepository = repository.currentModelState.getOrAwaitValue().preset.presetName
         MatcherAssert.assertThat( presetNameInRepository, CoreMatchers.`is`(presetNameTestValue))

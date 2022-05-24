@@ -72,17 +72,17 @@ class MixerFragment : DaggerFragment() {
         binding.mainViewModel = mainViewModel
         prepareMeasuredViews()
 
-        mainViewModel.deviceConfigured.observe(viewLifecycleOwner, {
-            if(it) {
+        mainViewModel.deviceConfigured.observe(viewLifecycleOwner) {
+            if (it) {
                 val currentScene = mixerViewModel.currentScene.value
-                if(currentScene != null)
+                if (currentScene != null)
                     mixerViewModel.loadMixerState(currentScene)
             }
-        })
+        }
 
-        mixerViewModel.muteFx.observe(viewLifecycleOwner, {
+        mixerViewModel.muteFx.observe(viewLifecycleOwner) {
             mixerViewModel.onFxMuteChanged(it)
-        })
+        }
 
         buttonDecreaseOutput.setOnClickListener (View.OnClickListener {
             if(outputIndex == 1)
