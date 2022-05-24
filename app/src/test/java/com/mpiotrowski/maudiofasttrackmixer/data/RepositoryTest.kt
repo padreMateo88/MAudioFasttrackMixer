@@ -1,10 +1,9 @@
 package com.mpiotrowski.maudiofasttrackmixer.data
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.lifecycle.MutableLiveData
 import com.mpiotrowski.maudiofasttrackmixer.data.database.PresetsDao
-import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.CurrentPreset
-import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.Preset
-import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.PresetWithScenes
+import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
@@ -28,6 +27,11 @@ class RepositoryTest{
     @Before
     fun init() {
         MockitoAnnotations.initMocks(this)
+
+        val lastPersistedState = MutableLiveData<PresetWithScenes>()
+        lastPersistedState.value = PresetWithScenes.newInstance(Preset(presetId = LAST_PERSISTED_STATE_ID, presetName = LAST_PERSISTED_STATE_NAME))
+        Mockito.`when`(presetsDaoMock.getPersistedState()).thenReturn(lastPersistedState)
+
         repositoryWithMockDao = Repository(presetsDaoMock)
     }
 
