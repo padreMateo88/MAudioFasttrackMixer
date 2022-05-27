@@ -92,7 +92,7 @@ class Repository(private val presetsDao: PresetsDao) {
         presetsDao.updatePresetWithScenes(presetWithScenes, saveAll)
     }
 
-    fun saveSceneWithComponents(sceneWithComponents: SceneWithComponents, saveAll: Boolean) {
+    suspend fun saveSceneWithComponents(sceneWithComponents: SceneWithComponents, saveAll: Boolean) {
         presetsDao.updateSceneWithComponents(sceneWithComponents, updateAll = saveAll)
     }
 
@@ -136,7 +136,7 @@ class Repository(private val presetsDao: PresetsDao) {
         presetsDao.updateCurrentPreset(CurrentPreset(presetId = currentPreset.preset.presetId))
     }
 
-    fun saveScene(scene: Scene) {
+    suspend fun saveScene(scene: Scene) {
         presetsDao.updateScene(scene)
     }
 //endregion save

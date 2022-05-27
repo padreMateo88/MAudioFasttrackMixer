@@ -99,25 +99,25 @@ interface PresetsDao {
 
 //region update
     @Update
-    fun updatePreset(vararg preset: Preset)
+    suspend fun updatePreset(vararg preset: Preset)
 
     @Update
-    fun updateScene(vararg scene: Scene)
+    suspend fun updateScene(vararg scene: Scene)
 
     @Update
-    fun updateMasterChannel(vararg masterChannel: MasterChannel)
+    suspend fun updateMasterChannel(vararg masterChannel: MasterChannel)
 
     @Update
-    fun updateAudioChannel(vararg audioChannel: AudioChannel)
+    suspend fun updateAudioChannel(vararg audioChannel: AudioChannel)
 
     @Update
-    fun updateFxSend(vararg fxSend: FxSend)
+    suspend fun updateFxSend(vararg fxSend: FxSend)
 
     @Update
     suspend fun updateCurrentPreset(vararg currentPreset: CurrentPreset)
 
     @Transaction
-    fun updatePresetWithScenes(presetWithScenes: PresetWithScenes, updateAll: Boolean) {
+    suspend fun updatePresetWithScenes(presetWithScenes: PresetWithScenes, updateAll: Boolean) {
         updatePreset(presetWithScenes.preset)
         updateSceneWithComponents(*presetWithScenes.scenes.toTypedArray(), updateAll = updateAll)
     }
@@ -127,7 +127,7 @@ interface PresetsDao {
         updateSceneWithComponents(*sceneWithComponents, updateAll = updateAll)
     }
 
-    fun updateSceneWithComponents(vararg scenesWithComponents: SceneWithComponents, updateAll: Boolean) {
+    suspend fun updateSceneWithComponents(vararg scenesWithComponents: SceneWithComponents, updateAll: Boolean) {
         for(sceneWithComponents in scenesWithComponents) {
             updateScene(sceneWithComponents.scene)
             updateMasterChannels(sceneWithComponents, updateAll)
@@ -136,7 +136,7 @@ interface PresetsDao {
         }
     }
 
-    fun updateMasterChannels(
+    suspend fun updateMasterChannels(
         sceneWithComponents: SceneWithComponents,
         updateAll: Boolean
     ) {
@@ -147,7 +147,7 @@ interface PresetsDao {
             }
     }
 
-    fun updateAudioChannels(
+    suspend fun updateAudioChannels(
         sceneWithComponents: SceneWithComponents,
         updateAll: Boolean
     ) {
@@ -160,7 +160,7 @@ interface PresetsDao {
 
     }
 
-    fun updateFxSends(
+    suspend fun updateFxSends(
         sceneWithComponents: SceneWithComponents,
         updateAll: Boolean
     ) {
