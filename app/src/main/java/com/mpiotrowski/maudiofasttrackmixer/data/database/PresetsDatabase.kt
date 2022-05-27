@@ -1,5 +1,6 @@
 package com.mpiotrowski.maudiofasttrackmixer.data.database
 
+import android.util.Log
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
@@ -35,7 +36,7 @@ abstract class PresetsDatabase : RoomDatabase() {
 
         val currentState = presetsDao.getPreset(LAST_PERSISTED_STATE_ID)
         if(currentState == null) {
-            presetsDao.addPreset(Preset(presetId = LAST_PERSISTED_STATE_ID, presetName = LAST_PERSISTED_STATE_NAME))
+            presetsDao.addPreset(Preset(presetId = LAST_PERSISTED_STATE_ID, presetName = DEFAULT_PRESET_NAME))
         }
 
         val currentPreset = presetsDao.getCurrentPreset()

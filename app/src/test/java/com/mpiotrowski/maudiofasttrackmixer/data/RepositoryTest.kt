@@ -4,6 +4,8 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.MutableLiveData
 import com.mpiotrowski.maudiofasttrackmixer.data.database.PresetsDao
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.*
+import com.mpiotrowski.maudiofasttrackmixer.util.mutation
+import io.mockk.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
@@ -20,8 +22,7 @@ class RepositoryTest{
     @get:Rule
     var instantExecutorRule = InstantTaskExecutorRule()
 
-    @Mock
-    lateinit var presetsDaoMock: PresetsDao
+    private val presetsDaoMockk: PresetsDao = mockk(relaxed = true)
 
     @ExperimentalCoroutinesApi
     @Before
@@ -30,9 +31,10 @@ class RepositoryTest{
 
         val lastPersistedState = MutableLiveData<PresetWithScenes>()
         lastPersistedState.value = PresetWithScenes.newInstance(Preset(presetId = LAST_PERSISTED_STATE_ID, presetName = LAST_PERSISTED_STATE_NAME))
-        Mockito.`when`(presetsDaoMock.getPersistedState()).thenReturn(lastPersistedState)
 
-        repositoryWithMockDao = Repository(presetsDaoMock)
+        every { presetsDaoMockk.getPersistedState() } returns lastPersistedState
+
+        repositoryWithMockDao = Repository(presetsDaoMockk)
     }
 
 
@@ -41,7 +43,7 @@ class RepositoryTest{
     fun  addPreset_whenCalled_daoMethodCalled() = runTest {
         val testPreset = Preset(presetName = "TestPreset", presetId = "testPresetId")
         repositoryWithMockDao.addPreset(testPreset)
-        Mockito.verify(presetsDaoMock).addPreset(testPreset)
+        coVerify {presetsDaoMockk.addPreset(testPreset)}
     }
 
     @ExperimentalCoroutinesApi
@@ -50,7 +52,7 @@ class RepositoryTest{
         val testPreset = Preset(presetName = "TestPreset", presetId = "testPresetId")
         val presetWithScenes = PresetWithScenes.newInstance(testPreset)
         repositoryWithMockDao.addPresetWithScenes(presetWithScenes)
-        Mockito.verify(presetsDaoMock).insertPresetWithScenes(presetWithScenes)
+        coVerify {presetsDaoMockk.insertPresetWithScenes(presetWithScenes)}
     }
 
     @ExperimentalCoroutinesApi
@@ -59,7 +61,7 @@ class RepositoryTest{
         val testPreset = Preset(presetName = "TestPreset", presetId = "testPresetId")
         val presetWithScenes = PresetWithScenes.newInstance(testPreset)
         repositoryWithMockDao.savePresetWithScenes(presetWithScenes, true)
-        Mockito.verify(presetsDaoMock).updatePresetWithScenes(presetWithScenes, true)
+        coVerify {presetsDaoMockk.updatePresetWithScenes(presetWithScenes, true)}
     }
 
     @ExperimentalCoroutinesApi
@@ -68,7 +70,7 @@ class RepositoryTest{
         val testPreset = Preset(presetName = "TestPreset", presetId = "testPresetId")
         val sceneWithComponents = PresetWithScenes.newInstance(testPreset).scenes[0]
         repositoryWithMockDao.saveSceneWithComponents(sceneWithComponents, true)
-        Mockito.verify(presetsDaoMock).updateSceneWithComponents(sceneWithComponents, updateAll = true)
+        coVerify {presetsDaoMockk.updateSceneWithComponents(sceneWithComponents, updateAll = true)}
     }
 
     @ExperimentalCoroutinesApi
@@ -77,7 +79,7 @@ class RepositoryTest{
         val testPreset = Preset(presetName = "TestPreset", presetId = "testPresetId")
         val presetWithScenes = PresetWithScenes.newInstance(testPreset)
         repositoryWithMockDao.saveCurrentPresetId(presetWithScenes)
-        Mockito.verify(presetsDaoMock).updateCurrentPreset(CurrentPreset(presetId = presetWithScenes.preset.presetId))
+        coVerify {presetsDaoMockk.updateCurrentPreset(CurrentPreset(presetId = presetWithScenes.preset.presetId))}
     }
 
     @ExperimentalCoroutinesApi
@@ -86,7 +88,7 @@ class RepositoryTest{
         val testPreset = Preset(presetName = "TestPreset", presetId = "testPresetId")
         val testScene = PresetWithScenes.newInstance(testPreset).scenes[0]
         repositoryWithMockDao.saveScene(testScene.scene)
-        Mockito.verify(presetsDaoMock).updateScene(testScene.scene)
+        coVerify {presetsDaoMockk.updateScene(testScene.scene)}
     }
 
     @ExperimentalCoroutinesApi
@@ -94,6 +96,13 @@ class RepositoryTest{
     fun  deletePreset_whenCalled_daoMethodCalled() = runTest {
         val testPreset = Preset(presetName = "TestPreset", presetId = "testPresetId")
         repositoryWithMockDao.deletePreset(testPreset)
-        Mockito.verify(presetsDaoMock).deletePreset(testPreset)
+        coVerify {presetsDaoMockk.deletePreset(testPreset)}
+    }
+
+    @ExperimentalCoroutinesApi
+    @Test
+    fun  getCurrentPresetId_whenCalled_daoMethodCalled() = runTest {
+        repositoryWithMockDao.getCurrentPresetId()
+        coVerify { presetsDaoMockk.getCurrentPreset() }
     }
 }

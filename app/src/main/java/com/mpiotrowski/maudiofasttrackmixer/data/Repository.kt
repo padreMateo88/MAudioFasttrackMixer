@@ -28,11 +28,10 @@ class Repository(private val presetsDao: PresetsDao) {
         get() = _currentScene
 
     init {
-        _persistedState.observeForever {}
 
         _currentScene.addSource(_currentModelState) { value ->
             if(value != null) {
-                val scenesById = value.scenes.map { it.scene.sceneId to it }.toMap()
+                val scenesById = value.scenes.associateBy { it.scene.sceneId }
 
                 if (scenesById.containsKey(currentScene.value?.scene?.sceneId))
                     _currentScene.value = scenesById[currentScene.value?.scene?.sceneId]
@@ -100,9 +99,20 @@ class Repository(private val presetsDao: PresetsDao) {
     fun notifyCurrentStateChanged() {
         _currentModelState.mutation {}
     }
-    fun setCurrentPreset(presetToLoad: PresetWithScenes) {
-        _currentModelState.mutation {
-            it.value?.copyValues(presetToLoad, presetToLoad.preset.presetName)
+
+    suspend fun setCurrentPreset(presetToLoad: PresetWithScenes) {
+        if(_currentModelState.value != null) {
+            _currentModelState.value?.copyValues(presetToLoad, presetToLoad.preset.presetName)
+        } else {
+            val lastPersistedState = presetsDao.getPersistedStateBlocking()
+
+            if(lastPersistedState != null) {
+                lastPersistedState.copyValues(presetToLoad, presetToLoad.preset.presetName)
+                _currentModelState.value = lastPersistedState
+            } else {
+                val createdLastPersistedState = presetsDao.addPreset(Preset(presetId = LAST_PERSISTED_STATE_ID, presetName = DEFAULT_PRESET_NAME))
+                _currentModelState.value = createdLastPersistedState
+            }
         }
     }
 

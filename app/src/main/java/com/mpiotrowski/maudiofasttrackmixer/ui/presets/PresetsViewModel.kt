@@ -69,11 +69,11 @@ PresetsViewModel @Inject constructor(private val repository: Repository, private
     }
 
     fun loadPreset(presetToLoad: PresetWithScenes) {
-        repository.setCurrentPreset(presetToLoad)
-        currentPresetId = presetToLoad.preset.presetId
-        usbController.loadMixerState(presetToLoad.scenes[0])
         viewModelScope.launch(Dispatchers.IO) {
-                repository.saveCurrentPresetId(presetToLoad)
+            repository.setCurrentPreset(presetToLoad)
+            currentPresetId = presetToLoad.preset.presetId
+            usbController.loadMixerState(presetToLoad.scenes[0])
+            repository.saveCurrentPresetId(presetToLoad)
         }
     }
 

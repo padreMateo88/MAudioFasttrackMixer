@@ -54,8 +54,7 @@ class PresetsDatabaseTest {
     fun populateDatabase_getPersistedState_returnsLastPersistedStatePreset() = runTest {
         presetsDatabase.populateDatabase()
         val currentPreset = presetsDao.getPersistedState().getOrAwaitValue()
-
-        MatcherAssert.assertThat( currentPreset.preset.presetName, CoreMatchers.`is`(LAST_PERSISTED_STATE_NAME))
+        MatcherAssert.assertThat( currentPreset.preset.presetId, CoreMatchers.`is`(LAST_PERSISTED_STATE_ID))
     }
 
     @ExperimentalCoroutinesApi

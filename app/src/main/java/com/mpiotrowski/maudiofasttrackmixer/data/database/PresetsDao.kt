@@ -34,6 +34,12 @@ interface PresetsDao {
     @Query("SELECT * FROM Preset WHERE presetId = \"$LAST_PERSISTED_STATE_ID\"")
     fun getPersistedState(): LiveData<PresetWithScenes>
 
+    @Query("SELECT * FROM Preset WHERE presetId = \"$LAST_PERSISTED_STATE_ID\"")
+    suspend fun getPersistedStateBlocking(): PresetWithScenes?
+
+    @Query("SELECT * FROM Preset WHERE presetId = \"$DEFAULT_PRESET_ID\"")
+    suspend fun getDefaultPresetBlocking(): PresetWithScenes?
+
 //endregion select
 
 //region insert
