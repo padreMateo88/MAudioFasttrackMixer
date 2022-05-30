@@ -53,19 +53,20 @@ interface PresetsDao {
     suspend fun insertScene(scene: Scene): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertMasterChannel(vararg masterChannel: MasterChannel)
+    suspend fun insertMasterChannel(masterChannel: MasterChannel): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAudioChannel(vararg audioChannel: AudioChannel)
+    suspend fun insertAudioChannel(audioChannel: AudioChannel): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertFxSend(vararg fxSend: FxSend)
+    suspend fun insertFxSend(fxSend: FxSend): Long
 
     @Transaction
     suspend fun insertPresetWithScenes(presetWithScenes: PresetWithScenes) {
         insertPreset(presetWithScenes.preset)
         for(sceneWithComponents in presetWithScenes.scenes) {
             val sceneId = insertScene(sceneWithComponents.scene)
+            sceneWithComponents.scene.sceneId = sceneId
             insertMasterChannelWithSceneId(*sceneWithComponents.masterChannels.toTypedArray(), sceneId = sceneId)
             insertAudioChannelWithSceneId(*sceneWithComponents.audioChannels.toTypedArray(), sceneId = sceneId)
             insertFxSendWithSceneId(*sceneWithComponents.fxSends.toTypedArray(), sceneId = sceneId)
@@ -73,21 +74,24 @@ interface PresetsDao {
     }
 
     suspend fun insertMasterChannelWithSceneId(vararg masterChannels: MasterChannel, sceneId: Long) {
-        for(masterChannel in masterChannels)
+        for(masterChannel in masterChannels) {
             masterChannel.sceneId = sceneId
-        insertMasterChannel(*masterChannels)
+            masterChannel.masterId = insertMasterChannel(masterChannel)
+        }
     }
 
     suspend fun insertAudioChannelWithSceneId(vararg audioChannels: AudioChannel, sceneId: Long) {
-        for(audioChannel in audioChannels)
+        for(audioChannel in audioChannels) {
             audioChannel.sceneId = sceneId
-        insertAudioChannel(*audioChannels)
+            audioChannel.audioChannelId = insertAudioChannel(audioChannel)
+        }
     }
 
     suspend fun insertFxSendWithSceneId(vararg fxSends: FxSend, sceneId: Long) {
-        for(fxSend in fxSends)
+        for(fxSend in fxSends) {
             fxSend.sceneId = sceneId
-        insertFxSend(*fxSends)
+            fxSend.fxSendId = insertFxSend(fxSend)
+        }
     }
 
     suspend fun addPreset(preset: Preset): PresetWithScenes {

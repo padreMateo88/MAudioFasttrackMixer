@@ -38,7 +38,8 @@ class PresetsDaoTest {
         val context = ApplicationProvider.getApplicationContext<Context>()
         presetsDatabase = Room.inMemoryDatabaseBuilder(
             context, PresetsDatabase::class.java
-        ).setTransactionExecutor(Executors.newSingleThreadExecutor())
+        )
+        .setTransactionExecutor(Executors.newSingleThreadExecutor())
         .build()
         presetsDao = presetsDatabase.presetsDao()
     }
@@ -248,7 +249,7 @@ class PresetsDaoTest {
     @ExperimentalCoroutinesApi
     @Test
     @Throws(Exception::class)
-    fun updatePresetWithComponents_updateScene_sceneUpdatedCorrectly() = runTest {
+    fun updatePresetWithScenes_updateScene_sceneUpdatedCorrectly() = runTest {
         val testPreset = Preset(presetName = "TestPreset")
         val testPresetId = testPreset.presetId
         val presetWithScenes = PresetWithScenes.newInstance(testPreset)
@@ -286,7 +287,7 @@ class PresetsDaoTest {
     @ExperimentalCoroutinesApi
     @Test
     @Throws(Exception::class)
-    fun updatePresetWithComponents_updateFxSends_fxSendsUpdatedCorrectly() = runTest {
+    fun updatePresetWithScenes_updateFxSends_fxSendsUpdatedCorrectly() = runTest {
         val testPreset = Preset(presetName = "TestPreset")
         val testPresetId = testPreset.presetId
         val presetWithScenes = PresetWithScenes.newInstance(testPreset)
@@ -315,7 +316,7 @@ class PresetsDaoTest {
     @ExperimentalCoroutinesApi
     @Test
     @Throws(Exception::class)
-    fun updatePresetWithComponents_updateMasterChannel_masterChannelUpdatedCorrectly() = runTest {
+    fun updatePresetWithScenes_updateMasterChannel_masterChannelUpdatedCorrectly() = runTest {
         val testPreset = Preset(presetName = "TestPreset")
         val testPresetId = testPreset.presetId
         val presetWithScenes = PresetWithScenes.newInstance(testPreset)
@@ -351,7 +352,7 @@ class PresetsDaoTest {
     @ExperimentalCoroutinesApi
     @Test
     @Throws(Exception::class)
-    fun updatePresetWithComponents_updateAudioChannel_audioChannelUpdatedCorrectly() = runTest {
+    fun updatePresetWithScenes_updateAudioChannel_audioChannelUpdatedCorrectly() = runTest {
         val testPreset = Preset(presetName = "TestPreset")
         val testPresetId = testPreset.presetId
         val presetWithScenes = PresetWithScenes.newInstance(testPreset)

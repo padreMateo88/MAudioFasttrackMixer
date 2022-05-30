@@ -12,6 +12,7 @@ import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.CurrentPreset
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.Preset
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.PresetWithScenes
 import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.SceneWithComponents
+import com.mpiotrowski.maudiofasttrackmixer.data.model.preset.preset_components.scene.scene_components.FxSettings
 import com.mpiotrowski.maudiofasttrackmixer.getOrAwaitValue
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
@@ -133,29 +134,26 @@ class RepositoryAndroidTest {
 
     @ExperimentalCoroutinesApi
     @Test
-    @MediumTest
     fun  saveCurrentPreset_currentModelStateUpdated() = runTest {
 
-        val testPresetID = "TestPresetID"
+        //prepare initial data state
         val originalTestPresetName = "OriginalTestPresetName"
-        val updatedTestPresetName = "UpdatedTestPresetName"
-        val testPreset = PresetWithScenes.newInstance(Preset(presetId = testPresetID, presetName = originalTestPresetName))
+        val originalFxVolume = 39
 
-        val savedPreset = presetsDao.getPreset(testPresetID)
-        val currentPreset = presetsDao.getCurrentPresetInstance()
+        val (testPreset, testPresetID) = prepareInitialDataState(
+            originalTestPresetName,
+            originalFxVolume
+        )
 
-        presetsDao.insertPresetWithScenes(testPreset)
+        //prepare updated values
+        val updatedTestPresetName = "OriginalTestPresetName"
+        val updatedFxVolume = 42
 
-        //assert that the values after update are not in database initially
-        MatcherAssert.assertThat( savedPreset?.preset?.presetName, CoreMatchers.not(updatedTestPresetName))
-        MatcherAssert.assertThat( currentPreset.preset.presetName, CoreMatchers.not(updatedTestPresetName))
-
-        //update name of the tested preset
         testPreset.preset.presetName = updatedTestPresetName
+        testPreset.scenesByOrder[1]?.fxSends?.get(1)?.volume = updatedFxVolume
 
         //run method under test
         repository.saveCurrentPreset(testPreset)
-
 
         //get updated presets
         val savedPresetAfterUpdate = presetsDao.getPreset(testPresetID)
@@ -164,7 +162,30 @@ class RepositoryAndroidTest {
         //assert updated presets in from database contain updated names
         MatcherAssert.assertThat(savedPresetAfterUpdate?.preset?.presetName, CoreMatchers.`is`(updatedTestPresetName))
         MatcherAssert.assertThat(currentPresetAfterUpdate.preset.presetName, CoreMatchers.`is`(updatedTestPresetName))
+        MatcherAssert.assertThat(savedPresetAfterUpdate?.scenesByOrder?.get(1)?.fxSends?.get(1)?.volume, CoreMatchers.`is`(updatedFxVolume))
+        MatcherAssert.assertThat(currentPresetAfterUpdate.scenesByOrder[1]?.fxSends?.get(1)?.volume, CoreMatchers.`is`(updatedFxVolume))
     }
+
+    private suspend fun prepareInitialDataState(
+        originalTestPresetName: String,
+        originalFxVolume: Int
+    ): Pair<PresetWithScenes, String> {
+
+        val testPreset = PresetWithScenes.newInstance(Preset(presetName = originalTestPresetName))
+        val testPresetID = testPreset.preset.presetId
+
+        testPreset.scenesByOrder[1]?.fxSends?.get(1)?.volume = originalFxVolume
+
+        presetsDao.insertPresetWithScenes(testPreset)
+
+        val savedPreset = presetsDao.getPreset(testPresetID)
+
+        MatcherAssert.assertThat(savedPreset?.preset?.presetName, CoreMatchers.`is`(originalTestPresetName))
+        MatcherAssert.assertThat(testPreset.scenesByOrder[1]?.fxSends?.get(1)?.volume, CoreMatchers.`is`(originalFxVolume))
+
+        return Pair(testPreset, testPresetID)
+    }
+
 
     @ExperimentalCoroutinesApi
     @Test
@@ -172,11 +193,16 @@ class RepositoryAndroidTest {
     fun  saveSceneOfCurrentPresetAs_currentModelStateUpdated() = runTest {
         val testSceneName = "test Scene 5"
         val testSceneOrder = 5
+        val testSceneChannelVolume = 22
 
         val testScene = SceneWithComponents.newInstance(testSceneName, "test Preset", testSceneOrder)
+        testScene.audioChannels[0].volume = testSceneChannelVolume
         repository.saveSceneOfCurrentPresetAs(testScene)
 
-        val updatedSceneName = presetsDao.getCurrentPresetInstance().scenesByOrder[testSceneOrder]?.scene?.sceneName
+        val updatedScene = presetsDao.getCurrentPresetInstance().scenesByOrder[testSceneOrder]
+        val updatedSceneName = updatedScene?.scene?.sceneName
+        val updatedSceneChannelVolume = updatedScene?.audioChannels?.get(0)?.volume
         MatcherAssert.assertThat(updatedSceneName, CoreMatchers.`is`(testSceneName))
+        MatcherAssert.assertThat(updatedSceneChannelVolume, CoreMatchers.`is`(testSceneChannelVolume))
     }
 }
