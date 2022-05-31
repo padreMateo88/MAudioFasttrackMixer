@@ -133,7 +133,7 @@ class RepositoryAndroidTest {
     }
 
     @ExperimentalCoroutinesApi
-    @Test
+    @MediumTest
     fun  saveCurrentPreset_currentModelStateUpdated() = runTest {
 
         //prepare initial data state

@@ -44,6 +44,7 @@ data class SceneWithComponents (
     fun copyValues(copyFrom: SceneWithComponents, sceneName: String) {
         this.scene.sceneName = sceneName
         this.scene.fxSettings = copyFrom.scene.fxSettings.copy()
+        this.scene.fxSettings.isDirty = true
         copyFxSendsValues(copyFrom)
         copyMasterChannelsValues(copyFrom)
         copyAudioChannelsValues(copyFrom)
@@ -53,7 +54,7 @@ data class SceneWithComponents (
         for (inputIndex in this.fxSendsMap.keys) {
             copyFrom.fxSendsMap[inputIndex]?.let {
                 this.fxSendsMap[inputIndex]?.volume = it.volume
-                this.fxSendsMap[inputIndex]?.isDirty = it.isDirty
+                this.fxSendsMap[inputIndex]?.isDirty = true
             }
         }
     }
@@ -65,7 +66,7 @@ data class SceneWithComponents (
             this.mastersByOutputsMap[outputIndex]?.mute = it.mute
             this.mastersByOutputsMap[outputIndex]?.panorama = it.panorama
             this.mastersByOutputsMap[outputIndex]?.volume = it.volume
-            this.mastersByOutputsMap[outputIndex]?.isDirty = it.isDirty
+            this.mastersByOutputsMap[outputIndex]?.isDirty = true
             }
         }
     }
@@ -81,7 +82,7 @@ data class SceneWithComponents (
                         copyToChannelByInputMap[inputIndex]?.volume = copyFromAudioChannel.volume
                         copyToChannelByInputMap[inputIndex]?.mute = copyFromAudioChannel.mute
                         copyToChannelByInputMap[inputIndex]?.solo = copyFromAudioChannel.solo
-                        copyToChannelByInputMap[inputIndex]?.isDirty = copyFromAudioChannel.isDirty
+                        copyToChannelByInputMap[inputIndex]?.isDirty = true
                     }
                 }
             }
