@@ -21,10 +21,18 @@ class PresetWithScenesTest {
 
         setExampleValuesToCopiedPreset(copyFromPreset)
 
+        //method under test
         destinationPreset.copyValues(copyFromPreset,newPresetName)
 
         assertSameValuesInCopyFormAndDestinationPreset(copyFromPreset, destinationPreset)
 
+    }
+
+    @Test
+    fun newInstance_correctNumberOfScenesInCreatedPreset() {
+
+        val testPreset = PresetWithScenes.newInstance(Preset(presetName = "TestPreset"))
+        MatcherAssert.assertThat(testPreset.scenes.size, `is`(SCENES_IN_PRESET_COUNT))
     }
 
     private fun setExampleValuesToCopiedPreset(copyFromPreset: PresetWithScenes) {

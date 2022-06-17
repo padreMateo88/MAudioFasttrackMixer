@@ -35,9 +35,11 @@ data class SceneWithComponents (
     var audioChannels: List<AudioChannel>
 ) {
     @Ignore
-    val fxSendsMap = fxSends.map{it.inputIndex to it}.toMap()
+    val fxSendsMap = fxSends.associateBy { it.inputIndex }
+
     @Ignore
-    val mastersByOutputsMap = masterChannels.map{it.outputIndex to it}.toMap()
+    val mastersByOutputsMap = masterChannels.associateBy { it.outputIndex }
+
     @Ignore
     val channelsByOutputsMap = audioChannels.groupBy{it.outputIndex}.toMap()
 
